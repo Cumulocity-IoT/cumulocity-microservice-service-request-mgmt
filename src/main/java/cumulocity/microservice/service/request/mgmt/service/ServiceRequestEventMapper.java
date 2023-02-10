@@ -8,11 +8,13 @@ import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.identity.ExternalIDRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
 
@@ -25,7 +27,6 @@ public class ServiceRequestEventMapper {
 	public static final String SR_PRIORITY = "sr_Priority";
 	public static final String SR_OWNER = "sr_Owner";
 	public static final String SR_EVENT_REF = "sr_EventRef";
-	public static final String SR_DEVICE_REF = "sr_DeviceRef";
 	public static final String SR_DESCRIPTION = "sr_Description";
 	public static final String SR_ALARM_REF = "sr_AlarmRef";
 	
@@ -40,7 +41,7 @@ public class ServiceRequestEventMapper {
 		mapper.setAlarmRef(serviceRequest.getAlarmRef());
 		//event.set(serviceRequest.getCustomProperties(); TODO
 		mapper.setDescription(serviceRequest.getDescription());
-		mapper.setDeviceRef(serviceRequest.getDeviceRef());
+		mapper.setSource(serviceRequest.getSource());
 		mapper.setEventRef(serviceRequest.getEventRef());
 		mapper.setOwner(serviceRequest.getOwner());
 		mapper.setPriority(serviceRequest.getPriority());
@@ -57,13 +58,12 @@ public class ServiceRequestEventMapper {
 		}
 		
 		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper(event);
-		
 		ServiceRequest serviceRequest = new ServiceRequest();
 		serviceRequest.setAlarmRef(mapper.getAlarmRef());
 		serviceRequest.setCreationTime(mapper.getCreationDateTime());
 		//serviceRequest.setCustomProperties(event.get(EVENT_TYPE)); TODO
 		serviceRequest.setDescription(mapper.getDescription());
-		serviceRequest.setDeviceRef(mapper.getDeviceRef());
+		serviceRequest.setSource(mapper.getSource());
 		serviceRequest.setEventRef(mapper.getEventRef());
 		serviceRequest.setId(mapper.getId());
 		serviceRequest.setLastUpdated(mapper.getLastUpdatedDateTime());
@@ -135,15 +135,14 @@ public class ServiceRequestEventMapper {
 		event.set(eventRef, SR_EVENT_REF);
 	}
 	
-	public ServiceRequestDataRef getDeviceRef() {
-		return parseDataRef(event.get(SR_DEVICE_REF));
+	public ServiceRequestSource getSource() {
+		return parseSource(event.getSource());
 	}
 	
-	public void setDeviceRef(ServiceRequestDataRef deviceRef) {
+	public void setSource(ServiceRequestSource source) {
 		ManagedObjectRepresentation sourceMo = new ManagedObjectRepresentation();
-		sourceMo.setId(GId.asGId(deviceRef.getId()));
+		sourceMo.setId(GId.asGId(source.getId()));
 		event.setSource(sourceMo);
-		event.set(deviceRef, SR_DEVICE_REF);
 	}
 	
 	public String getTitle() {
@@ -224,5 +223,18 @@ public class ServiceRequestEventMapper {
 		priority.setOrdinal((Long)map.get("ordinal"));
 		priority.setName((String)map.get("name"));
 		return priority;
+	}
+	
+	private ServiceRequestSource parseSource(ManagedObjectRepresentation obj) {
+		if(obj == null) {
+			return null;
+		}
+		
+		ObjectMapper mapper = new ObjectMapper();
+		ServiceRequestSource source = new ServiceRequestSource();
+		source.setId(obj.getId().getValue());
+		source.setSelf(obj.getSelf());
+		source.setAdditionalProperty("name", obj.getName());
+		return source;
 	}
 }

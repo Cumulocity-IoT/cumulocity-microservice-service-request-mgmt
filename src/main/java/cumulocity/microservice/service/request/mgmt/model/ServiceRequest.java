@@ -46,7 +46,7 @@ public class ServiceRequest {
 	@Schema(required = true, description = "Cumulocity Device (managed object) reference")
 	@NotNull
 	@Valid
-	private ServiceRequestDataRef deviceRef;
+	private ServiceRequestSource source;
 
 	@Schema(description = "Cumulocity Alarm reference")
 	@Valid

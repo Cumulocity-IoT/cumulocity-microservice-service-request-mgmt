@@ -9,7 +9,7 @@
 | **priority** | [**ServiceRequestPriority**](ServiceRequestPriority.md) |  | [optional] [default to null] |
 | **title** | **String** | Service request title / summary | [default to null] |
 | **description** | **String** | Service request detailed description | [optional] [default to null] |
-| **deviceRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [default to null] |
+| **source** | [**ServiceRequestSource**](ServiceRequestSource.md) |  | [default to null] |
 | **alarmRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
 | **eventRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
 | **seriesRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |

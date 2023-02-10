@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -45,7 +46,7 @@ public class ServiceRequestPostRqBody {
 	@Schema(required = true, description = "Cumulocity Device (managed object) reference")
 	@NotNull
 	@Valid
-	private ServiceRequestDataRef deviceRef;
+	private ServiceRequestSource source;
 
 	@Schema(description = "Cumulocity Alarm reference")
 	@Valid

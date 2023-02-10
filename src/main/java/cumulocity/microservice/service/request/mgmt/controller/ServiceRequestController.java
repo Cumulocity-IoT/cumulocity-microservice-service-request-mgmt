@@ -60,7 +60,7 @@ public class ServiceRequestController {
 	public ResponseEntity<ServiceRequest> createServiceRequest(@RequestBody ServiceRequestPostRqBody serviceRequestRqBody) {
 		log.info("Service Request: {}", serviceRequestRqBody);
 		ServiceRequest createServiceRequest = serviceRequestService.createServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
-		return new ResponseEntity<ServiceRequest>(createServiceRequest, HttpStatus.OK);
+		return new ResponseEntity<ServiceRequest>(createServiceRequest, HttpStatus.CREATED);
 	}
 
 	@Operation(summary = "GET service request list", description = "Returns a list of all service requests in IoT Platform. Additional query parameters allow to filter that list.", tags = {})

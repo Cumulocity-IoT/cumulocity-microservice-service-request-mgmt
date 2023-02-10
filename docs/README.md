@@ -40,6 +40,7 @@ All URIs are relative to *http://localhost:8080*
  - [ServiceRequestPostRqBody](./Models/ServiceRequestPostRqBody.md)
  - [ServiceRequestPriority](./Models/ServiceRequestPriority.md)
  - [ServiceRequestRef](./Models/ServiceRequestRef.md)
+ - [ServiceRequestSource](./Models/ServiceRequestSource.md)
  - [ServiceRequestStatus](./Models/ServiceRequestStatus.md)
 
 
