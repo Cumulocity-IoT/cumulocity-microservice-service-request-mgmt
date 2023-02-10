@@ -12,7 +12,9 @@ public interface ServiceRequestService {
 	
 	public ServiceRequest getServiceRequestByExternalId(String externalId);
 	
-	public RequestList<ServiceRequest> getServiceRequestByFilter(String deviceId, Integer pageSize);
+	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Boolean withTotalPages);
+	
+	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Boolean withTotalPages);
 	
 	public void deleteServiceRequest(Integer id);
 	

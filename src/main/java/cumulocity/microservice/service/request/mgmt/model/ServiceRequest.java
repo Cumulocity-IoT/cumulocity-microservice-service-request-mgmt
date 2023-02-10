@@ -73,6 +73,9 @@ public class ServiceRequest {
 	@Schema(required = true, description = "Creator / owner", example = "owner@example.com")
 	@NotNull
 	private String owner;
+	
+	@Schema(description = "Service request active flag, shows if the service request is active!", example = "true")
+	private Boolean isActive;
 
 	@Schema(description = "Custom specific properties")
 	private Map<String, String> customProperties;

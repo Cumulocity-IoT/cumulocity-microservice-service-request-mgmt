@@ -29,6 +29,7 @@ public class ServiceRequestEventMapper {
 	public static final String SR_EVENT_REF = "sr_EventRef";
 	public static final String SR_DESCRIPTION = "sr_Description";
 	public static final String SR_ALARM_REF = "sr_AlarmRef";
+	public static final String SR_ACTIVE = "sr_Active";
 	
 	private final EventRepresentation event;
 	
@@ -73,6 +74,7 @@ public class ServiceRequestEventMapper {
 		serviceRequest.setStatus(mapper.getStatus());
 		serviceRequest.setTitle(mapper.getTitle());
 		serviceRequest.setType(mapper.getServiceRequestType());
+		serviceRequest.setIsActive(mapper.getIsActive());
 		return serviceRequest;
 	}
 	
@@ -187,6 +189,20 @@ public class ServiceRequestEventMapper {
 		return event.getId().getValue();
 	}
 	
+	
+	public Boolean getIsActive() {
+		Object obj = event.get(SR_ACTIVE);
+		return obj != null;
+	}
+	
+	public void setIsActive(Boolean isActive) {
+		if(isActive) {
+			event.set(new Object(), SR_ACTIVE);
+		}else {
+			event.set(null, SR_ACTIVE);
+		}
+
+	}
 	
 	public EventRepresentation getEvent() {
 		return event;

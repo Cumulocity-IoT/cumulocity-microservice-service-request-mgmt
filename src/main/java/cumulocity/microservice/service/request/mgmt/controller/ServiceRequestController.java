@@ -63,16 +63,23 @@ public class ServiceRequestController {
 		return new ResponseEntity<ServiceRequest>(createServiceRequest, HttpStatus.CREATED);
 	}
 
-	@Operation(summary = "GET service request list", description = "Returns a list of all service requests in IoT Platform. Additional query parameters allow to filter that list.", tags = {})
+	@Operation(summary = "GET service request list", description = "Returns a list of all service requests in IoT Platform. Additional query parameters allow to filter that list. The default configuration will return all service requests which are not closed! With parameter all=true, all service requests will be returned without fillter.", tags = {})
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK") })
 	@GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<RequestList<ServiceRequest>> getServiceRequestList(
 			@Parameter(in = ParameterIn.QUERY, description = "Filter, returns all service request equal device Id", schema = @Schema()) @Valid @RequestParam(value = "deviceId", required = false) String deviceId,
-			@Parameter(in = ParameterIn.QUERY, description = "Filter, returns all service request equal status Id", schema = @Schema()) @Valid @RequestParam(value = "statusId", required = false) String statusId,
+			@Parameter(in = ParameterIn.QUERY, description = "filter, \"true\" returns all service request, \"false\" (default) returns only active service requests." , schema = @Schema()) @Valid @RequestParam(value = "all", required = false) Boolean all,
 			@Parameter(in = ParameterIn.QUERY, description = "Indicates how many entries of the collection shall be returned. The upper limit for one page is 2,000 objects.", schema = @Schema()) @Valid @RequestParam(value = "pageSize", required = false) Integer pageSize,
 			@Parameter(in = ParameterIn.QUERY, description = "When set to true, the returned result will contain in the statistics object the total number of pages. Only applicable on range queries." , schema = @Schema()) @Valid @RequestParam(value = "withTotalPages", required = false) Boolean withTotalPages) {
-		RequestList<ServiceRequest> serviceRequestByFilter = serviceRequestService.getServiceRequestByFilter(deviceId, pageSize);
+		
+		RequestList<ServiceRequest> serviceRequestByFilter = new RequestList<>();
+		if(all != null && all) {
+			serviceRequestByFilter = serviceRequestService.getAllServiceRequestByFilter(deviceId, pageSize, withTotalPages);			
+		}else {
+			serviceRequestByFilter = serviceRequestService.getActiveServiceRequestByFilter(deviceId, pageSize, withTotalPages);
+		}
+
 		return new ResponseEntity<RequestList<ServiceRequest>>(serviceRequestByFilter, HttpStatus.OK);
 	}
 
