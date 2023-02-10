@@ -1,0 +1,122 @@
+# ServiceRequestCommentControllerApi
+
+All URIs are relative to *http://localhost:8080*
+
+| Method | HTTP request | Description |
+|------------- | ------------- | -------------|
+| [**createServiceRequestCommentList**](ServiceRequestCommentControllerApi.md#createServiceRequestCommentList) | **POST** /api/service/request/{serviceRequestId}/comment | Add new service request comment to specific service request. |
+| [**deleteServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#deleteServiceRequestCommentById) | **DELETE** /api/service/request/{serviceRequestId}/comment/{commentId} | DELETE service request comment by Id |
+| [**getServiceRequestCommentList**](ServiceRequestCommentControllerApi.md#getServiceRequestCommentList) | **GET** /api/service/request/{serviceRequestId}/comment | Returns all comments of specific service request by internal Id. |
+| [**patchServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#patchServiceRequestCommentById) | **PATCH** /api/service/request/{serviceRequestId}/comment/{commentId} | PATCH service request comment by Id |
+
+
+<a name="createServiceRequestCommentList"></a>
+# **createServiceRequestCommentList**
+> List createServiceRequestCommentList(serviceRequestId, ServiceRequestComment)
+
+Add new service request comment to specific service request.
+
+    Each service request can have n comments. This endpoint adds a new comment to a specific service request.
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **serviceRequestId** | **Integer**|  | [default to null] |
+| **ServiceRequestComment** | [**ServiceRequestComment**](../Models/ServiceRequestComment.md)|  | |
+
+### Return type
+
+[**List**](../Models/ServiceRequestComment.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+<a name="deleteServiceRequestCommentById"></a>
+# **deleteServiceRequestCommentById**
+> deleteServiceRequestCommentById(serviceRequestId, commentId)
+
+DELETE service request comment by Id
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **serviceRequestId** | **Integer**|  | [default to null] |
+| **commentId** | **String**|  | [default to null] |
+
+### Return type
+
+null (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: Not defined
+
+<a name="getServiceRequestCommentList"></a>
+# **getServiceRequestCommentList**
+> List getServiceRequestCommentList(serviceRequestId)
+
+Returns all comments of specific service request by internal Id.
+
+    Each service request can have n comments. This endpoint returns the complete list of comments of a specific service request.
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **serviceRequestId** | **Integer**|  | [default to null] |
+
+### Return type
+
+[**List**](../Models/ServiceRequestComment.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+<a name="patchServiceRequestCommentById"></a>
+# **patchServiceRequestCommentById**
+> patchServiceRequestCommentById(serviceRequestId, commentId, ServiceRequestComment)
+
+PATCH service request comment by Id
+
+    updates the service request comment by Id
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **serviceRequestId** | **Integer**|  | [default to null] |
+| **commentId** | **String**|  | [default to null] |
+| **ServiceRequestComment** | [**ServiceRequestComment**](../Models/ServiceRequestComment.md)|  | |
+
+### Return type
+
+null (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: Not defined
+
