@@ -44,8 +44,7 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 
 	@Override
 	public ServiceRequest updateServiceRequest(Long id, ServiceRequestPatchRqBody serviceRequest) {
-		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequest);
-		eventMapper.setId(id);
+		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
 		EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
 		return eventMapper.map2(updatedEvent);
 	}

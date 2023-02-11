@@ -35,6 +35,9 @@ public class ServiceRequestPatchRqBody {
 	@Schema(description = "Service request detailed description")
 	private String description;
 
+	@Schema(description = "Service request active flag, shows if the service request is active!", example = "true")
+	private Boolean isActive;
+
 	@Schema(description = "Custom specific properties")
 	private Map<String, String> customProperties;
 }

@@ -50,7 +50,7 @@ DELETE service request by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **Integer**|  | [default to null] |
+| **serviceRequestId** | **Long**|  | [default to null] |
 
 ### Return type
 
@@ -77,7 +77,7 @@ GET service request by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **Integer**|  | [default to null] |
+| **serviceRequestId** | **Long**|  | [default to null] |
 
 ### Return type
 
@@ -134,7 +134,7 @@ PATCH service request by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **Integer**|  | [default to null] |
+| **serviceRequestId** | **Long**|  | [default to null] |
 | **ServiceRequestPatchRqBody** | [**ServiceRequestPatchRqBody**](../Models/ServiceRequestPatchRqBody.md)|  | |
 
 ### Return type

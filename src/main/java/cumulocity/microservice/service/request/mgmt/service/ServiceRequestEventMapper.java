@@ -54,16 +54,17 @@ public class ServiceRequestEventMapper {
 		return mapper;
 	}
 	
-	public static ServiceRequestEventMapper map2(ServiceRequestPatchRqBody serviceRequest) {
+	public static ServiceRequestEventMapper map2(Long id, ServiceRequestPatchRqBody serviceRequest) {
 		if(serviceRequest == null) {
 			return null;
 		}
 		
-		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper();
+		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper(id);
 		mapper.setDescription(serviceRequest.getDescription());
 		mapper.setPriority(serviceRequest.getPriority());
 		mapper.setStatus(serviceRequest.getStatus());
 		mapper.setTitle(serviceRequest.getTitle());
+		mapper.setIsActive(serviceRequest.getIsActive());
 		return mapper;
 		
 	}
@@ -97,6 +98,11 @@ public class ServiceRequestEventMapper {
 		event = new EventRepresentation();
 		event.setDateTime(new DateTime());
 		event.setType(EVENT_TYPE);
+	}
+	
+	public ServiceRequestEventMapper(Long id) {
+		event = new EventRepresentation();
+		event.setId(GId.asGId(id));
 	}
 	
 	public ServiceRequestEventMapper(EventRepresentation event) {
