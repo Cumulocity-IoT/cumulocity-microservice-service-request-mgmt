@@ -15,6 +15,7 @@ import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
 import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
 
+import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
@@ -42,7 +43,15 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 	}
 
 	@Override
-	public ServiceRequest getServiceRequestById(Integer id) {
+	public ServiceRequest updateServiceRequest(Long id, ServiceRequestPatchRqBody serviceRequest) {
+		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequest);
+		eventMapper.setId(id);
+		EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
+		return eventMapper.map2(updatedEvent);
+	}
+	
+	@Override
+	public ServiceRequest getServiceRequestById(Long id) {
 		EventRepresentation event = eventApi.getEvent(GId.asGId(id));
 		return ServiceRequestEventMapper.map2(event);
 	}
@@ -76,7 +85,7 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 	}
 	
 	@Override
-	public void deleteServiceRequest(Integer id) {
+	public void deleteServiceRequest(Long id) {
 		EventRepresentation eventRepresentation = new EventRepresentation();
 		eventRepresentation.setId(GId.asGId(id));
 		eventApi.delete(eventRepresentation);
@@ -122,6 +131,5 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 		PagedEventCollectionRepresentation pagedEvent = eventList.get();
 		return pagedEvent;
 	}
-
 	
 }

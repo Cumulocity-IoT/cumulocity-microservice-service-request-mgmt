@@ -88,7 +88,7 @@ public class ServiceRequestController {
 			@ApiResponse(responseCode = "200", description = "OK"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@GetMapping(path = "/{serviceRequestId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ServiceRequest> getServiceRequestById(@PathVariable Integer serviceRequestId) {
+	public ResponseEntity<ServiceRequest> getServiceRequestById(@PathVariable Long serviceRequestId) {
 		ServiceRequest serviceRequest = serviceRequestService.getServiceRequestById(serviceRequestId);
 		if(serviceRequest == null) {
 			return new ResponseEntity<ServiceRequest>(HttpStatus.NOT_FOUND);
@@ -101,17 +101,17 @@ public class ServiceRequestController {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@PatchMapping(path = "/{serviceRequestId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ServiceRequest> updateServiceRequestById(@PathVariable Integer serviceRequestId,
+	public ResponseEntity<ServiceRequest> updateServiceRequestById(@PathVariable Long serviceRequestId,
 			@RequestBody ServiceRequestPatchRqBody serviceRequestRqBody) {
-		ServiceRequest dummy = new ServiceRequest();
-		return new ResponseEntity<ServiceRequest>(dummy, HttpStatus.OK);
+		ServiceRequest serviceRequest = serviceRequestService.updateServiceRequest(serviceRequestId, serviceRequestRqBody);
+		return new ResponseEntity<ServiceRequest>(serviceRequest, HttpStatus.OK);
 	}
 
 	@Operation(summary = "DELETE service request by Id", description = "Delete a service request object at Cumulocity IoT. Related object at external system will not be deleted!", tags = {})
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "No Content"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@DeleteMapping(path = "/{serviceRequestId}")
-	public void deleteServiceRequestById(@PathVariable Integer serviceRequestId) {
+	public void deleteServiceRequestById(@PathVariable Long serviceRequestId) {
 		serviceRequestService.deleteServiceRequest(serviceRequestId);
 	}
 }

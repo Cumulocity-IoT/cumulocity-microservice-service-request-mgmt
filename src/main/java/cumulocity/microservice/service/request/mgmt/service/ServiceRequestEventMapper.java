@@ -10,6 +10,7 @@ import com.cumulocity.rest.representation.identity.ExternalIDRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
@@ -53,6 +54,20 @@ public class ServiceRequestEventMapper {
 		return mapper;
 	}
 	
+	public static ServiceRequestEventMapper map2(ServiceRequestPatchRqBody serviceRequest) {
+		if(serviceRequest == null) {
+			return null;
+		}
+		
+		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper();
+		mapper.setDescription(serviceRequest.getDescription());
+		mapper.setPriority(serviceRequest.getPriority());
+		mapper.setStatus(serviceRequest.getStatus());
+		mapper.setTitle(serviceRequest.getTitle());
+		return mapper;
+		
+	}
+	
 	public static ServiceRequest map2(EventRepresentation event) {
 		if(event == null) {
 			return null;
@@ -88,7 +103,7 @@ public class ServiceRequestEventMapper {
 		this.event = event;
 		this.event.setType(EVENT_TYPE);
 	}
-
+	
 	public ServiceRequestType getServiceRequestType() {
 		return ServiceRequestType.fromValue((String) event.get(SR_TYPE));
 	}
@@ -186,9 +201,15 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public String getId() {
-		return event.getId().getValue();
-	}
+		if(event.getId() != null) {
+			return event.getId().getValue();			
+		}
+		return null;
+	}	
 	
+	public void setId(Long id) {
+		event.setId(GId.asGId(id));
+	}
 	
 	public Boolean getIsActive() {
 		Object obj = event.get(SR_ACTIVE);
