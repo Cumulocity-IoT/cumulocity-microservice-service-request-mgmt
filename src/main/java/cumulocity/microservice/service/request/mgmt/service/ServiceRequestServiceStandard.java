@@ -61,18 +61,18 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 	}
 
 	@Override
-	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Boolean withTotalPages) {
+	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages) {
 		log.info("find all service requests!");
 		EventFilter filter = new EventFilter();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		if(deviceId != null) {
 			filter.bySource(GId.asGId(deviceId));			
 		}
-		return getServiceRequestByFilter(filter, pageSize, withTotalPages);
+		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
 	}
 
 	@Override
-	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Boolean withTotalPages) {
+	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages) {
 		log.info("find all active service requests!");
 		EventFilter filter = new EventFilter();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
@@ -80,7 +80,7 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 		if(deviceId != null) {
 			filter.bySource(GId.asGId(deviceId));			
 		}
-		return getServiceRequestByFilter(filter, pageSize, withTotalPages);
+		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
 	}
 	
 	@Override
@@ -90,12 +90,17 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 		eventApi.delete(eventRepresentation);
 	}
 
-	private RequestList<ServiceRequest> getServiceRequestByFilter(EventFilter filter, Integer pageSize, Boolean withTotalPages) {
+	private RequestList<ServiceRequest> getServiceRequestByFilter(EventFilter filter, Integer pageSize, Integer pageNumber, Boolean withTotalPages) {
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
+		
 		//TODO return specific page, eventList.getPage(null, 0, 0)
-		PagedEventCollectionRepresentation pagedEvent = getPagedEventCollection(eventList, pageSize, withTotalPages);
-		PageStatisticsRepresentation pageStatistics = pagedEvent.getPageStatistics();
-		List<EventRepresentation> events = pagedEvent.getEvents();
+		PagedEventCollectionRepresentation pagedCollection = getPagedEventCollection(eventList, pageSize, withTotalPages);
+		if(pageNumber != null) {
+			pagedCollection = eventList.getPage(pagedCollection, pageNumber, pageSize);	
+		}
+		
+		PageStatisticsRepresentation pageStatistics = pagedCollection.getPageStatistics();
+		List<EventRepresentation> events = pagedCollection.getEvents();
 		
 		List<ServiceRequest> serviceRequestList = events.stream().map(event -> {
 			return ServiceRequestEventMapper.map2(event);

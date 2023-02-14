@@ -71,13 +71,14 @@ public class ServiceRequestController {
 			@Parameter(in = ParameterIn.QUERY, description = "Filter, returns all service request equal device Id", schema = @Schema()) @Valid @RequestParam(value = "deviceId", required = false) String deviceId,
 			@Parameter(in = ParameterIn.QUERY, description = "filter, \"true\" returns all service request, \"false\" (default) returns only active service requests." , schema = @Schema()) @Valid @RequestParam(value = "all", required = false) Boolean all,
 			@Parameter(in = ParameterIn.QUERY, description = "Indicates how many entries of the collection shall be returned. The upper limit for one page is 2,000 objects.", schema = @Schema()) @Valid @RequestParam(value = "pageSize", required = false) Integer pageSize,
+			@Parameter(in = ParameterIn.QUERY, description = "The current page of the paginated results.", schema = @Schema()) @Valid @RequestParam(value = "currentPage", required = false) Integer currentPage,
 			@Parameter(in = ParameterIn.QUERY, description = "When set to true, the returned result will contain in the statistics object the total number of pages. Only applicable on range queries." , schema = @Schema()) @Valid @RequestParam(value = "withTotalPages", required = false) Boolean withTotalPages) {
 		
 		RequestList<ServiceRequest> serviceRequestByFilter = new RequestList<>();
 		if(all != null && all) {
-			serviceRequestByFilter = serviceRequestService.getAllServiceRequestByFilter(deviceId, pageSize, withTotalPages);			
+			serviceRequestByFilter = serviceRequestService.getAllServiceRequestByFilter(deviceId, pageSize, currentPage, withTotalPages);			
 		}else {
-			serviceRequestByFilter = serviceRequestService.getActiveServiceRequestByFilter(deviceId, pageSize, withTotalPages);
+			serviceRequestByFilter = serviceRequestService.getActiveServiceRequestByFilter(deviceId, pageSize, currentPage, withTotalPages);
 		}
 
 		return new ResponseEntity<RequestList<ServiceRequest>>(serviceRequestByFilter, HttpStatus.OK);
