@@ -42,5 +42,8 @@ public class ServiceRequestComment {
 	@NotNull
 	@Valid
 	private ServiceRequestCommentType type;
+	
+	@Schema(description = "File attachment of Service Request")
+	private ServiceRequestAttachment attachment;
 
 }

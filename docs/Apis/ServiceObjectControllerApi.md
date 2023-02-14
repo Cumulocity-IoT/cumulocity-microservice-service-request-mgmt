@@ -4,13 +4,13 @@ All URIs are relative to *http://localhost:8080*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**createServiceRequestCommentList1**](ServiceObjectControllerApi.md#createServiceRequestCommentList1) | **POST** /api/service/object/ | Add new service object. |
+| [**createServiceObject**](ServiceObjectControllerApi.md#createServiceObject) | **POST** /api/service/object/ | Add new service object. |
 | [**getServiceObjecttById**](ServiceObjectControllerApi.md#getServiceObjecttById) | **GET** /api/service/object/{serviceObjectId} | GET service object by Id |
 
 
-<a name="createServiceRequestCommentList1"></a>
-# **createServiceRequestCommentList1**
-> ServiceObject createServiceRequestCommentList1(ServiceObject)
+<a name="createServiceObject"></a>
+# **createServiceObject**
+> ServiceObject createServiceObject(ServiceObject)
 
 Add new service object.
 

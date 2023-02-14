@@ -7,7 +7,7 @@ All URIs are relative to *http://localhost:8080*
 
 | Class | Method | HTTP request | Description |
 |------------ | ------------- | ------------- | -------------|
-| *ServiceObjectControllerApi* | [**createServiceRequestCommentList1**](Apis/ServiceObjectControllerApi.md#createservicerequestcommentlist1) | **POST** /api/service/object/ | Add new service object. |
+| *ServiceObjectControllerApi* | [**createServiceObject**](Apis/ServiceObjectControllerApi.md#createserviceobject) | **POST** /api/service/object/ | Add new service object. |
 *ServiceObjectControllerApi* | [**getServiceObjecttById**](Apis/ServiceObjectControllerApi.md#getserviceobjecttbyid) | **GET** /api/service/object/{serviceObjectId} | GET service object by Id |
 | *ServiceRequestCommentControllerApi* | [**createServiceRequestCommentList**](Apis/ServiceRequestCommentControllerApi.md#createservicerequestcommentlist) | **POST** /api/service/request/{serviceRequestId}/comment | Add new service request comment to specific service request. |
 *ServiceRequestCommentControllerApi* | [**deleteServiceRequestCommentById**](Apis/ServiceRequestCommentControllerApi.md#deleteservicerequestcommentbyid) | **DELETE** /api/service/request/{serviceRequestId}/comment/{commentId} | DELETE service request comment by Id |
@@ -15,9 +15,11 @@ All URIs are relative to *http://localhost:8080*
 *ServiceRequestCommentControllerApi* | [**patchServiceRequestCommentById**](Apis/ServiceRequestCommentControllerApi.md#patchservicerequestcommentbyid) | **PATCH** /api/service/request/{serviceRequestId}/comment/{commentId} | PATCH service request comment by Id |
 | *ServiceRequestControllerApi* | [**createServiceRequest**](Apis/ServiceRequestControllerApi.md#createservicerequest) | **POST** /api/service/request/ | CREATE service request |
 *ServiceRequestControllerApi* | [**deleteServiceRequestById**](Apis/ServiceRequestControllerApi.md#deleteservicerequestbyid) | **DELETE** /api/service/request/{serviceRequestId} | DELETE service request by Id |
+*ServiceRequestControllerApi* | [**downloadServiceRequestAttachment**](Apis/ServiceRequestControllerApi.md#downloadservicerequestattachment) | **GET** /api/service/request/{serviceRequestId}/attachment | DOWNLOAD attachment for specific service request |
 *ServiceRequestControllerApi* | [**getServiceRequestById**](Apis/ServiceRequestControllerApi.md#getservicerequestbyid) | **GET** /api/service/request/{serviceRequestId} | GET service request by Id |
 *ServiceRequestControllerApi* | [**getServiceRequestList**](Apis/ServiceRequestControllerApi.md#getservicerequestlist) | **GET** /api/service/request/ | GET service request list |
 *ServiceRequestControllerApi* | [**updateServiceRequestById**](Apis/ServiceRequestControllerApi.md#updateservicerequestbyid) | **PATCH** /api/service/request/{serviceRequestId} | PATCH service request by Id |
+*ServiceRequestControllerApi* | [**uploadServiceRequestAttachment**](Apis/ServiceRequestControllerApi.md#uploadservicerequestattachment) | **POST** /api/service/request/{serviceRequestId}/attachment | UPLOAD attachment for specific service request |
 | *ServiceRequestExternalControllerApi* | [**getServiceRequestByExternalId**](Apis/ServiceRequestExternalControllerApi.md#getservicerequestbyexternalid) | **GET** /api/service/request/external/{serviceRequestExternalId} | GET service request by external Id |
 *ServiceRequestExternalControllerApi* | [**syncServiceRequest**](Apis/ServiceRequestExternalControllerApi.md#syncservicerequest) | **POST** /api/service/request/external/ | SYNC service request into external object |
 *ServiceRequestExternalControllerApi* | [**updateServiceRequestByExternalId**](Apis/ServiceRequestExternalControllerApi.md#updateservicerequestbyexternalid) | **PATCH** /api/service/request/external/{serviceRequestExternalId} | UPDATE service request by external Id |
@@ -37,6 +39,7 @@ All URIs are relative to *http://localhost:8080*
  - [RequestListServiceRequest](./Models/RequestListServiceRequest.md)
  - [ServiceObject](./Models/ServiceObject.md)
  - [ServiceRequest](./Models/ServiceRequest.md)
+ - [ServiceRequestAttachment](./Models/ServiceRequestAttachment.md)
  - [ServiceRequestComment](./Models/ServiceRequestComment.md)
  - [ServiceRequestDataRef](./Models/ServiceRequestDataRef.md)
  - [ServiceRequestPatchRqBody](./Models/ServiceRequestPatchRqBody.md)

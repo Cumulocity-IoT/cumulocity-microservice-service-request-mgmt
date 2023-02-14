@@ -29,7 +29,7 @@ public class ServiceObject {
 	@Schema(description = "Internal id of service object (device)", example = "18135043")
 	@NotNull
 	@NonNull
-	private Long id;
+	private String id;
 
 	@Schema(required = true, description = "External id of service object (device)", example = "34kj098fhdgn")
 	@NotNull

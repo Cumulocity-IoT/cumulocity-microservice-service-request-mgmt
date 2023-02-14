@@ -1,10 +1,14 @@
 package cumulocity.microservice.service.request.mgmt.controller;
 
+import java.net.MalformedURLException;
+
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.UserCredentials;
@@ -114,5 +119,29 @@ public class ServiceRequestController {
 	@DeleteMapping(path = "/{serviceRequestId}")
 	public void deleteServiceRequestById(@PathVariable Long serviceRequestId) {
 		serviceRequestService.deleteServiceRequest(serviceRequestId);
+	}
+	
+	@Operation(summary = "UPLOAD attachment for specific service request", description = "Upload attachment from service request", tags = {})
+	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Created"),
+			@ApiResponse(responseCode = "404", description = "Not Found"),
+			@ApiResponse(responseCode = "409", description = "Conflict") })
+	@PostMapping(path = "/{serviceRequestId}/attachment", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void uploadServiceRequestAttachment(@PathVariable String serviceRequestId,
+			@Parameter(in = ParameterIn.QUERY, description = "Mulitpart file, attachment", schema = @Schema()) @Valid @RequestParam("file") MultipartFile file,
+			@Parameter(in = ParameterIn.QUERY, description = "Controls if the attachment can be overwritten. force == true means file will be overwritten if exists, otherwise a http 409 will be returned.", schema = @Schema()) @Valid @RequestParam("force") Boolean force) {
+	}
+	
+	@Operation(summary = "DOWNLOAD attachment for specific service request", description = "Download attachment from service request", tags = {})
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok"),
+			@ApiResponse(responseCode = "404", description = "Not Found") })
+	@GetMapping(path = "/{serviceRequestId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public ResponseEntity<Resource> downloadServiceRequestAttachment(@PathVariable String serviceRequestId) {
+		Resource dummy;
+		try {
+			dummy = new UrlResource("http://dummy.com");
+			return new ResponseEntity<Resource>(dummy, HttpStatus.OK);
+		} catch (MalformedURLException e) {
+			return new ResponseEntity<Resource>( HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

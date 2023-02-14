@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestAttachment;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
@@ -31,6 +32,7 @@ public class ServiceRequestEventMapper {
 	public static final String SR_DESCRIPTION = "sr_Description";
 	public static final String SR_ALARM_REF = "sr_AlarmRef";
 	public static final String SR_ACTIVE = "sr_Active";
+	public static final String C8Y_IS_BINARY = "c8y_IsBinary";
 	
 	private final EventRepresentation event;
 	
@@ -74,6 +76,7 @@ public class ServiceRequestEventMapper {
 			return null;
 		}
 		
+		
 		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper(event);
 		ServiceRequest serviceRequest = new ServiceRequest();
 		serviceRequest.setAlarmRef(mapper.getAlarmRef());
@@ -91,6 +94,7 @@ public class ServiceRequestEventMapper {
 		serviceRequest.setTitle(mapper.getTitle());
 		serviceRequest.setType(mapper.getServiceRequestType());
 		serviceRequest.setIsActive(mapper.getIsActive());
+		serviceRequest.setAttachment(mapper.getAttachment());
 		return serviceRequest;
 	}
 	
@@ -231,6 +235,14 @@ public class ServiceRequestEventMapper {
 
 	}
 	
+	public ServiceRequestAttachment getAttachment() {
+		return parseAttachment(event.get(C8Y_IS_BINARY));
+	}
+	
+	public void setAttachment(ServiceRequestAttachment attachment) {
+		event.set(attachment, C8Y_IS_BINARY);
+	}
+	
 	public EventRepresentation getEvent() {
 		return event;
 	}
@@ -279,5 +291,17 @@ public class ServiceRequestEventMapper {
 		source.setSelf(obj.getSelf());
 		source.setAdditionalProperty("name", obj.getName());
 		return source;
+	}
+	
+	private ServiceRequestAttachment parseAttachment(Object obj) {
+		if(obj == null) {
+			return null;
+		}
+		HashMap<String, Object> map = (HashMap<String, Object>) obj;
+		ServiceRequestAttachment attachment = new ServiceRequestAttachment();
+		attachment.setLength((Long)map.get("length"));
+		attachment.setName((String)map.get("name"));
+		attachment.setType((String)map.get("type"));
+		return attachment;
 	}
 }

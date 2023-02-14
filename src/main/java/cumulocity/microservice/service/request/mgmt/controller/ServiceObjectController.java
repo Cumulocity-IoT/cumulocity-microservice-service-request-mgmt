@@ -24,7 +24,7 @@ public class ServiceObjectController {
 			@ApiResponse(responseCode = "201", description = "Created"),
 			@ApiResponse(responseCode = "404", description = "Not found")})
 	@PostMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ServiceObject> createServiceRequestCommentList(@RequestBody ServiceObject serviceObject) {
+	public ResponseEntity<ServiceObject> createServiceObject(@RequestBody ServiceObject serviceObject) {
 		ServiceObject dummy = new ServiceObject();
 		return new ResponseEntity<ServiceObject>(dummy, HttpStatus.OK);
 	}

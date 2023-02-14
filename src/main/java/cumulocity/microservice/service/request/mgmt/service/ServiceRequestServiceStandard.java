@@ -92,7 +92,7 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 
 	private RequestList<ServiceRequest> getServiceRequestByFilter(EventFilter filter, Integer pageSize, Integer pageNumber, Boolean withTotalPages) {
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
-		
+				
 		//TODO return specific page, eventList.getPage(null, 0, 0)
 		PagedEventCollectionRepresentation pagedCollection = getPagedEventCollection(eventList, pageSize, withTotalPages);
 		if(pageNumber != null) {

@@ -77,6 +77,9 @@ public class ServiceRequest {
 	@Schema(description = "Service request active flag, shows if the service request is active!", example = "true")
 	private Boolean isActive;
 
+	@Schema(description = "File attachment of Service Request")
+	private ServiceRequestAttachment attachment;
+	
 	@Schema(description = "Custom specific properties")
 	private Map<String, String> customProperties;
 }

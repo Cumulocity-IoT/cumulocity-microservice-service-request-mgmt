@@ -6,9 +6,11 @@ All URIs are relative to *http://localhost:8080*
 |------------- | ------------- | -------------|
 | [**createServiceRequest**](ServiceRequestControllerApi.md#createServiceRequest) | **POST** /api/service/request/ | CREATE service request |
 | [**deleteServiceRequestById**](ServiceRequestControllerApi.md#deleteServiceRequestById) | **DELETE** /api/service/request/{serviceRequestId} | DELETE service request by Id |
+| [**downloadServiceRequestAttachment**](ServiceRequestControllerApi.md#downloadServiceRequestAttachment) | **GET** /api/service/request/{serviceRequestId}/attachment | DOWNLOAD attachment for specific service request |
 | [**getServiceRequestById**](ServiceRequestControllerApi.md#getServiceRequestById) | **GET** /api/service/request/{serviceRequestId} | GET service request by Id |
 | [**getServiceRequestList**](ServiceRequestControllerApi.md#getServiceRequestList) | **GET** /api/service/request/ | GET service request list |
 | [**updateServiceRequestById**](ServiceRequestControllerApi.md#updateServiceRequestById) | **PATCH** /api/service/request/{serviceRequestId} | PATCH service request by Id |
+| [**uploadServiceRequestAttachment**](ServiceRequestControllerApi.md#uploadServiceRequestAttachment) | **POST** /api/service/request/{serviceRequestId}/attachment | UPLOAD attachment for specific service request |
 
 
 <a name="createServiceRequest"></a>
@@ -64,6 +66,33 @@ No authorization required
 
 - **Content-Type**: Not defined
 - **Accept**: Not defined
+
+<a name="downloadServiceRequestAttachment"></a>
+# **downloadServiceRequestAttachment**
+> File downloadServiceRequestAttachment(serviceRequestId)
+
+DOWNLOAD attachment for specific service request
+
+    Download attachment from service request
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **serviceRequestId** | **String**|  | [default to null] |
+
+### Return type
+
+**File**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/octet-stream
 
 <a name="getServiceRequestById"></a>
 # **getServiceRequestById**
@@ -150,4 +179,33 @@ No authorization required
 
 - **Content-Type**: application/json
 - **Accept**: application/json
+
+<a name="uploadServiceRequestAttachment"></a>
+# **uploadServiceRequestAttachment**
+> uploadServiceRequestAttachment(serviceRequestId, file, force)
+
+UPLOAD attachment for specific service request
+
+    Upload attachment from service request
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **serviceRequestId** | **String**|  | [default to null] |
+| **file** | **File**| Mulitpart file, attachment | [default to null] |
+| **force** | **Boolean**| Controls if the attachment can be overwritten. force &#x3D;&#x3D; true means file will be overwritten if exists, otherwise a http 409 will be returned. | [default to null] |
+
+### Return type
+
+null (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: Not defined
 
