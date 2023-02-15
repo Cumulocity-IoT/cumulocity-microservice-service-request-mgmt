@@ -1,11 +1,16 @@
 package cumulocity.microservice.service.request.mgmt.service;
 
-import java.util.List;
-
+import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 
 public interface ServiceRequestCommentService {
-	public ServiceRequestComment createComment(ServiceRequestComment serviceRequestComment, String owner);
+	public ServiceRequestComment createComment(String serviceRequestId, ServiceRequestComment serviceRequestComment, String owner);
 	
-	public List<ServiceRequestComment> getCommentListByFilter(Long deviceId, Long serviceRequestId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);
+	public RequestList<ServiceRequestComment> getCommentListByFilter(String serviceRequestId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);
+	
+	public ServiceRequestComment getCommentById(String commentId);
+	
+	public void deleteComment(String commentId);
+	
+	public ServiceRequestComment updateComment(String commentId, ServiceRequestComment serviceRequestComment);
 }

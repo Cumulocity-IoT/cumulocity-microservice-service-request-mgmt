@@ -1,10 +1,9 @@
 package cumulocity.microservice.service.request.mgmt.model;
 
-import java.time.ZonedDateTime;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.joda.time.DateTime;
 import org.springframework.validation.annotation.Validated;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,15 +24,20 @@ public class ServiceRequestComment {
 	@NotNull
 	private String owner;
 
+	@Schema(required = true, description = "Cumulocity Device (managed object) reference")
+	@NotNull
+	@Valid
+	private ServiceRequestSource source;
+	
 	@Schema(required = true, accessMode = Schema.AccessMode.READ_ONLY, description = "creation time", example = "2022-08-24T14:15:22Z")
 	@NotNull
 	@Valid
-	private ZonedDateTime creationTime;
+	private DateTime creationTime;
 
 	@Schema(required = true, accessMode = Schema.AccessMode.READ_ONLY, description = "Update date time", example = "2023-02-08T12:00:00:00Z")
 	@NotNull
 	@Valid
-	private ZonedDateTime lastUpdated;
+	private DateTime lastUpdated;
 
 	@Schema(description = "comment text", example = "This is my comment ...")
 	private String text;
