@@ -47,6 +47,10 @@ public class ServiceRequestComment {
 	@Valid
 	private ServiceRequestCommentType type;
 	
+	@Schema(description = "Internal id of service request")
+	@NotNull
+	private String serviceRequestId;
+	
 	@Schema(description = "File attachment of Service Request")
 	private ServiceRequestAttachment attachment;
 

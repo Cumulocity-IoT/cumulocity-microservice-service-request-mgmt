@@ -47,6 +47,7 @@ public class ServiceRequestCommentEventMapper {
 		serviceRequestComment.setCreationTime(mapper.getCreationDateTime());
 		serviceRequestComment.setSource(mapper.getSource());
 		serviceRequestComment.setId(mapper.getId());
+		serviceRequestComment.setServiceRequestId(mapper.getServiceRequestId());
 		serviceRequestComment.setLastUpdated(mapper.getLastUpdatedDateTime());
 		serviceRequestComment.setOwner(mapper.getOwner());
 		serviceRequestComment.setText(mapper.getText());
