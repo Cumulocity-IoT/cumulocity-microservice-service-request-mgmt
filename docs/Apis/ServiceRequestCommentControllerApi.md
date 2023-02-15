@@ -5,14 +5,14 @@ All URIs are relative to *http://localhost:8080*
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
 | [**createServiceRequestComment**](ServiceRequestCommentControllerApi.md#createServiceRequestComment) | **POST** /api/service/request/{serviceRequestId}/comment | Add new service request comment to specific service request. |
-| [**deleteServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#deleteServiceRequestCommentById) | **DELETE** /api/service/request/{serviceRequestId}/comment/{commentId} | DELETE service request comment by Id |
+| [**deleteServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#deleteServiceRequestCommentById) | **DELETE** /api/service/request/comment/{commentId} | DELETE service request comment by Id |
 | [**getServiceRequestCommentList**](ServiceRequestCommentControllerApi.md#getServiceRequestCommentList) | **GET** /api/service/request/{serviceRequestId}/comment | Returns all comments of specific service request by internal Id. |
-| [**patchServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#patchServiceRequestCommentById) | **PATCH** /api/service/request/{serviceRequestId}/comment/{commentId} | PATCH service request comment by Id |
+| [**patchServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#patchServiceRequestCommentById) | **PATCH** /api/service/request/comment/{commentId} | PATCH service request comment by Id |
 
 
 <a name="createServiceRequestComment"></a>
 # **createServiceRequestComment**
-> ServiceRequestComment createServiceRequestComment(serviceRequestId, ServiceRequestComment)
+> ServiceRequestComment createServiceRequestComment(serviceRequestId, ServiceRequestCommentRqBody)
 
 Add new service request comment to specific service request.
 
@@ -23,7 +23,7 @@ Add new service request comment to specific service request.
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **serviceRequestId** | **String**|  | [default to null] |
-| **ServiceRequestComment** | [**ServiceRequestComment**](../Models/ServiceRequestComment.md)|  | |
+| **ServiceRequestCommentRqBody** | [**ServiceRequestCommentRqBody**](../Models/ServiceRequestCommentRqBody.md)|  | |
 
 ### Return type
 
@@ -40,7 +40,7 @@ No authorization required
 
 <a name="deleteServiceRequestCommentById"></a>
 # **deleteServiceRequestCommentById**
-> deleteServiceRequestCommentById(serviceRequestId, commentId)
+> deleteServiceRequestCommentById(commentId)
 
 DELETE service request comment by Id
 
@@ -50,7 +50,6 @@ DELETE service request comment by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
 | **commentId** | **String**|  | [default to null] |
 
 ### Return type
@@ -98,7 +97,7 @@ No authorization required
 
 <a name="patchServiceRequestCommentById"></a>
 # **patchServiceRequestCommentById**
-> ServiceRequestComment patchServiceRequestCommentById(serviceRequestId, commentId, ServiceRequestComment)
+> ServiceRequestComment patchServiceRequestCommentById(commentId, ServiceRequestComment)
 
 PATCH service request comment by Id
 
@@ -108,7 +107,6 @@ PATCH service request comment by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
 | **commentId** | **String**|  | [default to null] |
 | **ServiceRequestComment** | [**ServiceRequestComment**](../Models/ServiceRequestComment.md)|  | |
 

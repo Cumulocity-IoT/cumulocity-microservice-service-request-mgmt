@@ -20,8 +20,10 @@ import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.UserCredentials;
 
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -38,14 +40,16 @@ import lombok.extern.slf4j.Slf4j;
 public class ServiceRequestCommentController {
 	
 	private ServiceRequestCommentService serviceRequestCommentService;
+	private ServiceRequestService serviceRequestService;
 
 	private ContextService<UserCredentials> contextService;
 	
 	@Autowired
-	public ServiceRequestCommentController(ServiceRequestCommentService serviceRequestCommentService,
+	public ServiceRequestCommentController(ServiceRequestCommentService serviceRequestCommentService, ServiceRequestService serviceRequestService,
 			ContextService<UserCredentials> contextService) {
 		super();
 		this.serviceRequestCommentService = serviceRequestCommentService;
+		this.serviceRequestService = serviceRequestService;
 		this.contextService = contextService;
 	}
 
@@ -55,8 +59,12 @@ public class ServiceRequestCommentController {
 			@ApiResponse(responseCode = "404", description = "Not found")})
 	@PostMapping(path = "/{serviceRequestId}/comment", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequestComment> createServiceRequestComment(
-			@PathVariable String serviceRequestId, @RequestBody ServiceRequestComment serviceRequestComment) {
-		ServiceRequestComment newServiceRequestComment = serviceRequestCommentService.createComment(serviceRequestId, serviceRequestComment, contextService.getContext().getUsername());
+			@PathVariable String serviceRequestId, @RequestBody ServiceRequestCommentRqBody serviceRequestComment) {
+		ServiceRequest serviceRequest = serviceRequestService.getServiceRequestById(serviceRequestId);
+		if(serviceRequest == null) {
+			return new ResponseEntity<ServiceRequestComment>(HttpStatus.NOT_FOUND);
+		}
+		ServiceRequestComment newServiceRequestComment = serviceRequestCommentService.createComment(serviceRequest.getSource().getId(), serviceRequestId, serviceRequestComment, contextService.getContext().getUsername());
 		return new ResponseEntity<ServiceRequestComment>(newServiceRequestComment, HttpStatus.OK);
 	}
 
@@ -77,8 +85,8 @@ public class ServiceRequestCommentController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "No Content"),
 			@ApiResponse(responseCode = "404", description = "Not Found"),
 			@ApiResponse(responseCode = "403", description = "Forbidden")})
-	@DeleteMapping(path = "/{serviceRequestId}/comment/{commentId}")
-	public ResponseEntity<Void> deleteServiceRequestCommentById(@PathVariable String serviceRequestId, @PathVariable String commentId) {
+	@DeleteMapping(path = "/comment/{commentId}")
+	public ResponseEntity<Void> deleteServiceRequestCommentById(@PathVariable String commentId) {
 		ServiceRequestComment comment = serviceRequestCommentService.getCommentById(commentId);
 		if (comment == null) {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -95,8 +103,8 @@ public class ServiceRequestCommentController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok"),
 			@ApiResponse(responseCode = "404", description = "Not Found"),
 			@ApiResponse(responseCode = "403", description = "Forbidden")})
-	@PatchMapping(path = "/{serviceRequestId}/comment/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ServiceRequestComment> patchServiceRequestCommentById(@PathVariable String serviceRequestId, @PathVariable String commentId, @RequestBody ServiceRequestComment serviceRequestComment) {
+	@PatchMapping(path = "/comment/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ServiceRequestComment> patchServiceRequestCommentById(@PathVariable String commentId, @RequestBody ServiceRequestComment serviceRequestComment) {
 		ServiceRequestComment comment = serviceRequestCommentService.getCommentById(commentId);
 		if (comment == null) {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);

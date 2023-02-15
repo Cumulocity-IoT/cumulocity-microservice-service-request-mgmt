@@ -20,7 +20,7 @@ class ServiceRequestEventMapperTest {
 	private ServiceRequestStatus status = new ServiceRequestStatus("1", "open");
 	private ServiceRequestPriority priority = new ServiceRequestPriority("high", 1L);
 	private ServiceRequestDataRef alarmRef = new ServiceRequestDataRef("https://your-tenant.cumulocity.com/alarm/alarms/18135043");
-	private ServiceRequestSource source = new ServiceRequestSource("18543", "https://your-tenant.cumulocity.com/inventory/managedObjects/18543");
+	private ServiceRequestSource source = new ServiceRequestSource("18543");
 	
 	@BeforeEach
 	void setUp() throws Exception {

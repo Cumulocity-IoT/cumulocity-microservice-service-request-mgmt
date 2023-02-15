@@ -10,6 +10,7 @@ import com.cumulocity.rest.representation.identity.ExternalIDRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestAttachment;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestCommentType;
@@ -21,17 +22,16 @@ public class ServiceRequestCommentEventMapper {
 	public static final String SR_COMMENT_TYPE = "sr_CommentType";
 	public static final String SR_OWNER = "sr_Owner";
 	public static final String C8Y_IS_BINARY = "c8y_IsBinary";
+	public static final String SR_ID = "sr_Id";
 	
 	private final EventRepresentation event;
 	
-	public static ServiceRequestCommentEventMapper map2(ServiceRequestComment serviceRequestComment) {
+	public static ServiceRequestCommentEventMapper map2(ServiceRequestCommentRqBody serviceRequestComment) {
 		if(serviceRequestComment == null) {
 			return null;
 		}
 		
 		ServiceRequestCommentEventMapper mapper = new ServiceRequestCommentEventMapper();
-		mapper.setSource(serviceRequestComment.getSource());
-		mapper.setOwner(serviceRequestComment.getOwner());
 		mapper.setText(serviceRequestComment.getText());
 		mapper.setServiceRequestType(serviceRequestComment.getType());
 		return mapper;
@@ -136,6 +136,14 @@ public class ServiceRequestCommentEventMapper {
 	
 	public void setAttachment(ServiceRequestAttachment attachment) {
 		event.set(attachment, C8Y_IS_BINARY);
+	}
+	
+	public String getServiceRequestId() {
+		return (String) event.get(SR_ID);
+	}
+	
+	public void setServiceRequestId(String serviceRequestId) {
+		event.set(serviceRequestId, SR_ID);
 	}
 	
 	public EventRepresentation getEvent() {

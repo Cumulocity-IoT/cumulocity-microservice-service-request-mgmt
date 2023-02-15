@@ -10,9 +10,9 @@ All URIs are relative to *http://localhost:8080*
 | *ServiceObjectControllerApi* | [**createServiceObject**](Apis/ServiceObjectControllerApi.md#createserviceobject) | **POST** /api/service/object/ | Add new service object. |
 *ServiceObjectControllerApi* | [**getServiceObjecttById**](Apis/ServiceObjectControllerApi.md#getserviceobjecttbyid) | **GET** /api/service/object/{serviceObjectId} | GET service object by Id |
 | *ServiceRequestCommentControllerApi* | [**createServiceRequestComment**](Apis/ServiceRequestCommentControllerApi.md#createservicerequestcomment) | **POST** /api/service/request/{serviceRequestId}/comment | Add new service request comment to specific service request. |
-*ServiceRequestCommentControllerApi* | [**deleteServiceRequestCommentById**](Apis/ServiceRequestCommentControllerApi.md#deleteservicerequestcommentbyid) | **DELETE** /api/service/request/{serviceRequestId}/comment/{commentId} | DELETE service request comment by Id |
+*ServiceRequestCommentControllerApi* | [**deleteServiceRequestCommentById**](Apis/ServiceRequestCommentControllerApi.md#deleteservicerequestcommentbyid) | **DELETE** /api/service/request/comment/{commentId} | DELETE service request comment by Id |
 *ServiceRequestCommentControllerApi* | [**getServiceRequestCommentList**](Apis/ServiceRequestCommentControllerApi.md#getservicerequestcommentlist) | **GET** /api/service/request/{serviceRequestId}/comment | Returns all comments of specific service request by internal Id. |
-*ServiceRequestCommentControllerApi* | [**patchServiceRequestCommentById**](Apis/ServiceRequestCommentControllerApi.md#patchservicerequestcommentbyid) | **PATCH** /api/service/request/{serviceRequestId}/comment/{commentId} | PATCH service request comment by Id |
+*ServiceRequestCommentControllerApi* | [**patchServiceRequestCommentById**](Apis/ServiceRequestCommentControllerApi.md#patchservicerequestcommentbyid) | **PATCH** /api/service/request/comment/{commentId} | PATCH service request comment by Id |
 | *ServiceRequestControllerApi* | [**createServiceRequest**](Apis/ServiceRequestControllerApi.md#createservicerequest) | **POST** /api/service/request/ | CREATE service request |
 *ServiceRequestControllerApi* | [**deleteServiceRequestById**](Apis/ServiceRequestControllerApi.md#deleteservicerequestbyid) | **DELETE** /api/service/request/{serviceRequestId} | DELETE service request by Id |
 *ServiceRequestControllerApi* | [**downloadServiceRequestAttachment**](Apis/ServiceRequestControllerApi.md#downloadservicerequestattachment) | **GET** /api/service/request/{serviceRequestId}/attachment | DOWNLOAD attachment for specific service request |
@@ -42,6 +42,7 @@ All URIs are relative to *http://localhost:8080*
  - [ServiceRequest](./Models/ServiceRequest.md)
  - [ServiceRequestAttachment](./Models/ServiceRequestAttachment.md)
  - [ServiceRequestComment](./Models/ServiceRequestComment.md)
+ - [ServiceRequestCommentRqBody](./Models/ServiceRequestCommentRqBody.md)
  - [ServiceRequestDataRef](./Models/ServiceRequestDataRef.md)
  - [ServiceRequestPatchRqBody](./Models/ServiceRequestPatchRqBody.md)
  - [ServiceRequestPostRqBody](./Models/ServiceRequestPostRqBody.md)
