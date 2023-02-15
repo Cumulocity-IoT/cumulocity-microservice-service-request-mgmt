@@ -8,9 +8,9 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 public interface ServiceRequestService {
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequest, String owner);
 	
-	public ServiceRequest updateServiceRequest(Long id, ServiceRequestPatchRqBody serviceRequest);
+	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest);
 	
-	public ServiceRequest getServiceRequestById(Long id);
+	public ServiceRequest getServiceRequestById(String id);
 	
 	public ServiceRequest getServiceRequestByExternalId(String externalId);
 	
@@ -18,5 +18,5 @@ public interface ServiceRequestService {
 	
 	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);
 	
-	public void deleteServiceRequest(Long id);
+	public void deleteServiceRequest(String id);
 }

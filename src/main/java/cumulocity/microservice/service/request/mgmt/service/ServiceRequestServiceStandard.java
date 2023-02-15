@@ -43,14 +43,14 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 	}
 
 	@Override
-	public ServiceRequest updateServiceRequest(Long id, ServiceRequestPatchRqBody serviceRequest) {
+	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest) {
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
 		EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
 		return eventMapper.map2(updatedEvent);
 	}
 	
 	@Override
-	public ServiceRequest getServiceRequestById(Long id) {
+	public ServiceRequest getServiceRequestById(String id) {
 		EventRepresentation event = eventApi.getEvent(GId.asGId(id));
 		return ServiceRequestEventMapper.map2(event);
 	}
@@ -84,7 +84,7 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 	}
 	
 	@Override
-	public void deleteServiceRequest(Long id) {
+	public void deleteServiceRequest(String id) {
 		EventRepresentation eventRepresentation = new EventRepresentation();
 		eventRepresentation.setId(GId.asGId(id));
 		eventApi.delete(eventRepresentation);

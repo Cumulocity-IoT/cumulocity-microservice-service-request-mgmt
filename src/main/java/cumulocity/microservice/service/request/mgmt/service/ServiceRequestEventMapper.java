@@ -56,7 +56,7 @@ public class ServiceRequestEventMapper {
 		return mapper;
 	}
 	
-	public static ServiceRequestEventMapper map2(Long id, ServiceRequestPatchRqBody serviceRequest) {
+	public static ServiceRequestEventMapper map2(String id, ServiceRequestPatchRqBody serviceRequest) {
 		if(serviceRequest == null) {
 			return null;
 		}
@@ -104,7 +104,7 @@ public class ServiceRequestEventMapper {
 		event.setType(EVENT_TYPE);
 	}
 	
-	public ServiceRequestEventMapper(Long id) {
+	public ServiceRequestEventMapper(String id) {
 		event = new EventRepresentation();
 		event.setId(GId.asGId(id));
 	}

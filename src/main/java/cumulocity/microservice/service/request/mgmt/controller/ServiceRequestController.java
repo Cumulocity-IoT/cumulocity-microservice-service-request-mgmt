@@ -94,7 +94,7 @@ public class ServiceRequestController {
 			@ApiResponse(responseCode = "200", description = "OK"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@GetMapping(path = "/{serviceRequestId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ServiceRequest> getServiceRequestById(@PathVariable Long serviceRequestId) {
+	public ResponseEntity<ServiceRequest> getServiceRequestById(@PathVariable String serviceRequestId) {
 		ServiceRequest serviceRequest = serviceRequestService.getServiceRequestById(serviceRequestId);
 		if(serviceRequest == null) {
 			return new ResponseEntity<ServiceRequest>(HttpStatus.NOT_FOUND);
@@ -107,7 +107,7 @@ public class ServiceRequestController {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@PatchMapping(path = "/{serviceRequestId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ServiceRequest> updateServiceRequestById(@PathVariable Long serviceRequestId,
+	public ResponseEntity<ServiceRequest> updateServiceRequestById(@PathVariable String serviceRequestId,
 			@RequestBody ServiceRequestPatchRqBody serviceRequestRqBody) {
 		ServiceRequest serviceRequest = serviceRequestService.updateServiceRequest(serviceRequestId, serviceRequestRqBody);
 		return new ResponseEntity<ServiceRequest>(serviceRequest, HttpStatus.OK);
@@ -117,7 +117,7 @@ public class ServiceRequestController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "No Content"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@DeleteMapping(path = "/{serviceRequestId}")
-	public void deleteServiceRequestById(@PathVariable Long serviceRequestId) {
+	public void deleteServiceRequestById(@PathVariable String serviceRequestId) {
 		serviceRequestService.deleteServiceRequest(serviceRequestId);
 	}
 	
