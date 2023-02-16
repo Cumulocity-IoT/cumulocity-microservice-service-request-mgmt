@@ -4,11 +4,11 @@ All URIs are relative to *http://localhost:8080*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**createServiceRequest**](ServiceRequestControllerApi.md#createServiceRequest) | **POST** /api/service/request/ | CREATE service request |
+| [**createServiceRequest**](ServiceRequestControllerApi.md#createServiceRequest) | **POST** /api/service/request | CREATE service request |
 | [**deleteServiceRequestById**](ServiceRequestControllerApi.md#deleteServiceRequestById) | **DELETE** /api/service/request/{serviceRequestId} | DELETE service request by Id |
 | [**downloadServiceRequestAttachment**](ServiceRequestControllerApi.md#downloadServiceRequestAttachment) | **GET** /api/service/request/{serviceRequestId}/attachment | DOWNLOAD attachment for specific service request |
 | [**getServiceRequestById**](ServiceRequestControllerApi.md#getServiceRequestById) | **GET** /api/service/request/{serviceRequestId} | GET service request by Id |
-| [**getServiceRequestList**](ServiceRequestControllerApi.md#getServiceRequestList) | **GET** /api/service/request/ | GET service request list |
+| [**getServiceRequestList**](ServiceRequestControllerApi.md#getServiceRequestList) | **GET** /api/service/request | GET service request list |
 | [**updateServiceRequestById**](ServiceRequestControllerApi.md#updateServiceRequestById) | **PATCH** /api/service/request/{serviceRequestId} | PATCH service request by Id |
 | [**uploadServiceRequestAttachment**](ServiceRequestControllerApi.md#uploadServiceRequestAttachment) | **POST** /api/service/request/{serviceRequestId}/attachment | UPLOAD attachment for specific service request |
 

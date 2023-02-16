@@ -23,7 +23,7 @@ public class ServiceObjectController {
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "201", description = "Created"),
 			@ApiResponse(responseCode = "404", description = "Not found")})
-	@PostMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceObject> createServiceObject(@RequestBody ServiceObject serviceObject) {
 		ServiceObject dummy = new ServiceObject();
 		return new ResponseEntity<ServiceObject>(dummy, HttpStatus.OK);

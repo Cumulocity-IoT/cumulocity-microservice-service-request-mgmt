@@ -4,9 +4,9 @@ All URIs are relative to *http://localhost:8080*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**createServiceRequestPriorityList**](ServiceRequestPriorityControllerApi.md#createServiceRequestPriorityList) | **POST** /api/service/request/priority/ | CREATE or UPDATE complete priority list |
+| [**createServiceRequestPriorityList**](ServiceRequestPriorityControllerApi.md#createServiceRequestPriorityList) | **POST** /api/service/request/priority | CREATE or UPDATE complete priority list |
 | [**deleteServiceRequestpriorityById**](ServiceRequestPriorityControllerApi.md#deleteServiceRequestpriorityById) | **DELETE** /api/service/request/priority/{priorityOrdinal} | DELETE service request priority |
-| [**getServiceRequestPriorityList**](ServiceRequestPriorityControllerApi.md#getServiceRequestPriorityList) | **GET** /api/service/request/priority/ | GET service request priority list |
+| [**getServiceRequestPriorityList**](ServiceRequestPriorityControllerApi.md#getServiceRequestPriorityList) | **GET** /api/service/request/priority | GET service request priority list |
 | [**getServiceRequestpriorityById**](ServiceRequestPriorityControllerApi.md#getServiceRequestpriorityById) | **GET** /api/service/request/priority/{priorityOrdinal} | GET service request priority by ordinal |
 
 

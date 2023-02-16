@@ -5,7 +5,7 @@ All URIs are relative to *http://localhost:8080*
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
 | [**getServiceRequestByExternalId**](ServiceRequestExternalControllerApi.md#getServiceRequestByExternalId) | **GET** /api/service/request/external/{serviceRequestExternalId} | GET service request by external Id |
-| [**syncServiceRequest**](ServiceRequestExternalControllerApi.md#syncServiceRequest) | **POST** /api/service/request/external/ | SYNC service request into external object |
+| [**syncServiceRequest**](ServiceRequestExternalControllerApi.md#syncServiceRequest) | **POST** /api/service/request/external | SYNC service request into external object |
 | [**updateServiceRequestByExternalId**](ServiceRequestExternalControllerApi.md#updateServiceRequestByExternalId) | **PATCH** /api/service/request/external/{serviceRequestExternalId} | UPDATE service request by external Id |
 
 

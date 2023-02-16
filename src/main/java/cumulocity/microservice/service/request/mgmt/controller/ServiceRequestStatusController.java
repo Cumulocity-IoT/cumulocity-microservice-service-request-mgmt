@@ -29,7 +29,7 @@ public class ServiceRequestStatusController {
 	@Operation(summary = "CREATE or UPDATE service request status list", description = "Creates or updates complete status list.", tags = {})
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequestStatus.class))) })
-	@PostMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ServiceRequestStatus>> createServiceRequestStatusList(
 			@RequestBody List<ServiceRequestStatus> serviceRequestStatusList) {
 		List<ServiceRequestStatus> dummy = new ArrayList<>();
@@ -39,7 +39,7 @@ public class ServiceRequestStatusController {
 	@Operation(summary = "GET service request status list", description = "Returns complete service request status list", tags = {})
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ServiceRequestStatus.class)))) })
-	@GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ServiceRequestStatus>> getServiceRequestStatusList() {
 		List<ServiceRequestStatus> dummy = new ArrayList<>();
 		return new ResponseEntity<List<ServiceRequestStatus>>(dummy, HttpStatus.OK);

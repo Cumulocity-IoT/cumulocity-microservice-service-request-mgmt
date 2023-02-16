@@ -63,7 +63,7 @@ public class ServiceRequestController {
 	@Operation(summary = "CREATE service request", description = "Creates a new service request object at Cumulocity IoT Platform.", tags={  })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))) })
-	@PostMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequest> createServiceRequest(@Valid @RequestBody ServiceRequestPostRqBody serviceRequestRqBody) {
 		log.info("Service Request: {}", serviceRequestRqBody);
 		ServiceRequest createServiceRequest = serviceRequestService.createServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
@@ -73,7 +73,7 @@ public class ServiceRequestController {
 	@Operation(summary = "GET service request list", description = "Returns a list of all service requests in IoT Platform. Additional query parameters allow to filter that list. The default configuration will return all service requests which are not closed! With parameter all=true, all service requests will be returned without fillter.", tags = {})
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK") })
-	@GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<RequestList<ServiceRequest>> getServiceRequestList(
 			@Parameter(in = ParameterIn.QUERY, description = "Filter, returns all service request equal device Id", schema = @Schema()) @Valid @RequestParam(value = "deviceId", required = false) String deviceId,
 			@Parameter(in = ParameterIn.QUERY, description = "filter, \"true\" returns all service request, \"false\" (default) returns only active service requests." , schema = @Schema()) @Valid @RequestParam(value = "all", required = false) Boolean all,

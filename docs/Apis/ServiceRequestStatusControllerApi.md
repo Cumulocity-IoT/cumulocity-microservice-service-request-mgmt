@@ -4,10 +4,10 @@ All URIs are relative to *http://localhost:8080*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**createServiceRequestStatusList**](ServiceRequestStatusControllerApi.md#createServiceRequestStatusList) | **POST** /api/service/request/status/ | CREATE or UPDATE service request status list |
+| [**createServiceRequestStatusList**](ServiceRequestStatusControllerApi.md#createServiceRequestStatusList) | **POST** /api/service/request/status | CREATE or UPDATE service request status list |
 | [**deleteServiceRequestStatusById**](ServiceRequestStatusControllerApi.md#deleteServiceRequestStatusById) | **DELETE** /api/service/request/status/{statusId} | DELETE service request status by Id |
 | [**getServiceRequestStatusById**](ServiceRequestStatusControllerApi.md#getServiceRequestStatusById) | **GET** /api/service/request/status/{statusId} | GET service request status by Id |
-| [**getServiceRequestStatusList**](ServiceRequestStatusControllerApi.md#getServiceRequestStatusList) | **GET** /api/service/request/status/ | GET service request status list |
+| [**getServiceRequestStatusList**](ServiceRequestStatusControllerApi.md#getServiceRequestStatusList) | **GET** /api/service/request/status | GET service request status list |
 
 
 <a name="createServiceRequestStatusList"></a>

@@ -4,7 +4,7 @@ All URIs are relative to *http://localhost:8080*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**createServiceObject**](ServiceObjectControllerApi.md#createServiceObject) | **POST** /api/service/object/ | Add new service object. |
+| [**createServiceObject**](ServiceObjectControllerApi.md#createServiceObject) | **POST** /api/service/object | Add new service object. |
 | [**getServiceObjecttById**](ServiceObjectControllerApi.md#getServiceObjecttById) | **GET** /api/service/object/{serviceObjectId} | GET service object by Id |
 
 

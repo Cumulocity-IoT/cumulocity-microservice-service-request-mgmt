@@ -29,7 +29,7 @@ public class ServiceRequestPriorityController {
 	@Operation(summary = "CREATE or UPDATE complete priority list", description = "Creates or updates complete priority list.", tags = {})
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ServiceRequestPriority.class)))) })
-	@PostMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ServiceRequestPriority>> createServiceRequestPriorityList(
 			@RequestBody List<ServiceRequestPriority> serviceRequestPriorityList) {
 		List<ServiceRequestPriority> dummy = new ArrayList<>();
@@ -39,7 +39,7 @@ public class ServiceRequestPriorityController {
 	@Operation(summary = "GET service request priority list", description = "Returns complete list of priorities which are available.", tags = {})
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ServiceRequestPriority.class)))) })
-	@GetMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ServiceRequestPriority>> getServiceRequestPriorityList() {
 		List<ServiceRequestPriority> dummy = new ArrayList<>();
 		return new ResponseEntity<List<ServiceRequestPriority>>(dummy, HttpStatus.OK);

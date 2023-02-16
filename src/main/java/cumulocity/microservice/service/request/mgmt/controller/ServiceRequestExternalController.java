@@ -32,7 +32,7 @@ public class ServiceRequestExternalController {
     @Operation(summary = "SYNC service request into external object", description = "Triggers the adapter to update or create new external object at external system. If ServiceRequestRef contains already an externalId it is most likely an update. If the request body contains only internalId a new object must be created.", tags={  })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequestRef.class))) })
-	@PostMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequestRef> syncServiceRequest(@RequestBody ServiceRequestRef serviceRequestRef) {
 		// TODO
 		return new ResponseEntity<ServiceRequestRef>(serviceRequestRef, HttpStatus.OK);
