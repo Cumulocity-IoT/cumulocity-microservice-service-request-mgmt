@@ -12,6 +12,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -45,6 +46,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
  */
 @RestController
 @RequestMapping("/api/service/request")
+@Validated
 public class ServiceRequestController {
 	private static final Logger log = LoggerFactory.getLogger(ServiceRequestController.class);
 	
@@ -62,7 +64,7 @@ public class ServiceRequestController {
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))) })
 	@PostMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ServiceRequest> createServiceRequest(@RequestBody ServiceRequestPostRqBody serviceRequestRqBody) {
+	public ResponseEntity<ServiceRequest> createServiceRequest(@Valid @RequestBody ServiceRequestPostRqBody serviceRequestRqBody) {
 		log.info("Service Request: {}", serviceRequestRqBody);
 		ServiceRequest createServiceRequest = serviceRequestService.createServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
 		return new ResponseEntity<ServiceRequest>(createServiceRequest, HttpStatus.CREATED);
@@ -108,7 +110,7 @@ public class ServiceRequestController {
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@PatchMapping(path = "/{serviceRequestId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequest> updateServiceRequestById(@PathVariable String serviceRequestId,
-			@RequestBody ServiceRequestPatchRqBody serviceRequestRqBody) {
+			@Valid @RequestBody ServiceRequestPatchRqBody serviceRequestRqBody) {
 		ServiceRequest serviceRequest = serviceRequestService.updateServiceRequest(serviceRequestId, serviceRequestRqBody);
 		return new ResponseEntity<ServiceRequest>(serviceRequest, HttpStatus.OK);
 	}

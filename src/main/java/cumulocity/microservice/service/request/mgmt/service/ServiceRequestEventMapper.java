@@ -47,7 +47,6 @@ public class ServiceRequestEventMapper {
 		mapper.setDescription(serviceRequest.getDescription());
 		mapper.setSource(serviceRequest.getSource());
 		mapper.setEventRef(serviceRequest.getEventRef());
-		mapper.setOwner(serviceRequest.getOwner());
 		mapper.setPriority(serviceRequest.getPriority());
 		mapper.setSeriesRef(serviceRequest.getSeriesRef());
 		mapper.setStatus(serviceRequest.getStatus());
@@ -119,6 +118,9 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setServiceRequestType(ServiceRequestType serviceRequestType) {
+		if(serviceRequestType == null) {
+			return;
+		}
 		event.set(serviceRequestType.toString(), SR_TYPE);
 	}
 	
@@ -127,6 +129,9 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setStatus(ServiceRequestStatus status) {
+		if(status == null) {
+			return;
+		}
 		event.set(status, SR_STATUS);
 	}
 	
@@ -135,6 +140,9 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setSeriesRef(ServiceRequestDataRef seriesRef) {
+		if(seriesRef == null) {
+			return;
+		}
 		event.set(seriesRef, SR_SERIES_REF);
 	}
 	
@@ -143,6 +151,9 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setPriority(ServiceRequestPriority priority) {
+		if(priority == null) {
+			return;
+		}
 		event.set(priority, SR_PRIORITY);
 	}
 	
@@ -151,6 +162,9 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setOwner(String owner) {
+		if(owner == null) {
+			return;
+		}
 		event.set(owner, SR_OWNER);
 	}
 	
@@ -159,6 +173,9 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setEventRef(ServiceRequestDataRef eventRef) {
+		if(eventRef == null) {
+			return;
+		}
 		event.set(eventRef, SR_EVENT_REF);
 	}
 	
@@ -167,6 +184,9 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setSource(ServiceRequestSource source) {
+		if(source == null) {
+			return;
+		}
 		ManagedObjectRepresentation sourceMo = new ManagedObjectRepresentation();
 		sourceMo.setId(GId.asGId(source.getId()));
 		event.setSource(sourceMo);
@@ -177,6 +197,9 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setTitle(String title) {
+		if(title == null) {
+			return;
+		}
 		event.setText(title);
 	}
 	
@@ -185,6 +208,9 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setDescription(String description) {
+		if(description == null) {
+			return;
+		}
 		event.set(description, SR_DESCRIPTION);
 	}
 	
@@ -193,6 +219,9 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setAlarmRef(ServiceRequestDataRef alarmRef) {
+		if(alarmRef == null) {
+			return;
+		}
 		event.set(alarmRef, SR_ALARM_REF);
 	}
 	
@@ -217,7 +246,11 @@ public class ServiceRequestEventMapper {
 		return null;
 	}	
 	
-	public void setId(Long id) {
+	public void setId(String id) {
+		if(id == null) {
+			return;
+		}
+		
 		event.setId(GId.asGId(id));
 	}
 	
@@ -227,6 +260,10 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setIsActive(Boolean isActive) {
+		if(isActive == null) {
+			return;
+		}
+		
 		if(isActive) {
 			event.set(new Object(), SR_ACTIVE);
 		}else {
@@ -240,6 +277,9 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setAttachment(ServiceRequestAttachment attachment) {
+		if(attachment == null) {
+			return;
+		}
 		event.set(attachment, C8Y_IS_BINARY);
 	}
 	

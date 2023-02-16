@@ -77,7 +77,10 @@ public class ServiceRequestCommentEventMapper {
 	}
 	
 	public void setServiceRequestType(ServiceRequestCommentType serviceRequestCommentType) {
-		event.set(serviceRequestCommentType.toString(), SR_COMMENT_TYPE);
+		if(serviceRequestCommentType == null) {
+			return;
+		}
+		event.set(serviceRequestCommentType.toString(), SR_COMMENT_TYPE);	
 	}
 	
 	public String getOwner() {
@@ -85,6 +88,9 @@ public class ServiceRequestCommentEventMapper {
 	}
 	
 	public void setOwner(String owner) {
+		if(owner == null) {
+			return;
+		}
 		event.set(owner, SR_OWNER);
 	}
 	
@@ -93,6 +99,9 @@ public class ServiceRequestCommentEventMapper {
 	}
 	
 	public void setSource(ServiceRequestSource source) {
+		if(source == null) {
+			return;
+		}
 		ManagedObjectRepresentation sourceMo = new ManagedObjectRepresentation();
 		sourceMo.setId(GId.asGId(source.getId()));
 		event.setSource(sourceMo);
@@ -103,10 +112,16 @@ public class ServiceRequestCommentEventMapper {
 	}
 	
 	public void setText(String title) {
+		if(title == null) {
+			return;
+		}
 		event.setText(title);
 	}
 	
 	public void setExternalId(String externalId) {
+		if(externalId == null) {
+			return;
+		}
 		ExternalIDRepresentation externalIdRepresentation = new ExternalIDRepresentation();
 		externalIdRepresentation.setExternalId(externalId);
 		event.setExternalSource(externalIdRepresentation);
@@ -127,7 +142,10 @@ public class ServiceRequestCommentEventMapper {
 		return null;
 	}	
 	
-	public void setId(Long id) {
+	public void setId(String id) {
+		if(id == null) {
+			return;
+		}
 		event.setId(GId.asGId(id));
 	}
 	
@@ -136,6 +154,9 @@ public class ServiceRequestCommentEventMapper {
 	}
 	
 	public void setAttachment(ServiceRequestAttachment attachment) {
+		if(attachment == null) {
+			return;
+		}
 		event.set(attachment, C8Y_IS_BINARY);
 	}
 	
@@ -144,6 +165,9 @@ public class ServiceRequestCommentEventMapper {
 	}
 	
 	public void setServiceRequestId(String serviceRequestId) {
+		if(serviceRequestId == null) {
+			return;
+		}
 		event.set(serviceRequestId, SR_ID);
 	}
 	

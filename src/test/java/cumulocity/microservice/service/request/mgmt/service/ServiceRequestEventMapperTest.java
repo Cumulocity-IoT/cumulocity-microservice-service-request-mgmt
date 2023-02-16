@@ -34,7 +34,6 @@ class ServiceRequestEventMapperTest {
 		serviceRequest.setDescription("Hello my friend, i need some help. Could you please ...");
 		serviceRequest.setSource(source);
 		serviceRequest.setEventRef(null);
-		serviceRequest.setOwner("owner@example.com");
 		serviceRequest.setPriority(priority);
 		serviceRequest.setSeriesRef(null);		
 		serviceRequest.setStatus(status);
