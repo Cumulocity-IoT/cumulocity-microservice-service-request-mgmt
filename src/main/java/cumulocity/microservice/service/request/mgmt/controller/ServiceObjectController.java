@@ -34,7 +34,7 @@ public class ServiceObjectController {
 			@ApiResponse(responseCode = "200", description = "OK"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@GetMapping(path = "/{serviceObjectId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ServiceObject> getServiceObjecttById(@PathVariable Long serviceObjectId) {
+	public ResponseEntity<ServiceObject> getServiceObjecttById(@PathVariable String serviceObjectId) {
 		ServiceObject serviceObject = new ServiceObject();
 		if(serviceObject == null) {
 			return new ResponseEntity<ServiceObject>(HttpStatus.NOT_FOUND);

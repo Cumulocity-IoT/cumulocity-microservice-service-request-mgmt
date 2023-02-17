@@ -45,7 +45,7 @@ GET service object by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceObjectId** | **Long**|  | [default to null] |
+| **serviceObjectId** | **String**|  | [default to null] |
 
 ### Return type
 
