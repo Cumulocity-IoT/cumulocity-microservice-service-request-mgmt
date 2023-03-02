@@ -7,7 +7,7 @@ All URIs are relative to *http://localhost:8080*
 | [**createServiceRequestComment**](ServiceRequestCommentControllerApi.md#createServiceRequestComment) | **POST** /api/service/request/{serviceRequestId}/comment | Add new service request comment to specific service request. |
 | [**deleteServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#deleteServiceRequestCommentById) | **DELETE** /api/service/request/comment/{commentId} | DELETE service request comment by Id |
 | [**getServiceRequestCommentList**](ServiceRequestCommentControllerApi.md#getServiceRequestCommentList) | **GET** /api/service/request/{serviceRequestId}/comment | Returns all comments of specific service request by internal Id. |
-| [**patchServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#patchServiceRequestCommentById) | **PATCH** /api/service/request/comment/{commentId} | PATCH service request comment by Id |
+| [**patchServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#patchServiceRequestCommentById) | **PUT** /api/service/request/comment/{commentId} | PATCH service request comment by Id |
 
 
 <a name="createServiceRequestComment"></a>

@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
+import com.cumulocity.rest.representation.event.EventMediaType;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.sdk.client.PagingParam;
 import com.cumulocity.sdk.client.QueryParam;
+import com.cumulocity.sdk.client.RestConnector;
+import com.cumulocity.sdk.client.SDKException;
 import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
@@ -27,9 +30,11 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 	
 	private EventApi eventApi;
 	
+	private RestConnector restConnector;
 	
-	public ServiceRequestServiceStandard(EventApi eventApi) {
+	public ServiceRequestServiceStandard(EventApi eventApi, RestConnector restConnector) {
 		this.eventApi = eventApi;
+		this.restConnector = restConnector;
 	}
 
 	@Override
@@ -135,5 +140,18 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 		PagedEventCollectionRepresentation pagedEvent = eventList.get();
 		return pagedEvent;
 	}
+	
+	private void uploadAttachment(byte[] attachment, String eventId) {
+		String url = getSelfUri() + "/" + eventId + "/binaries";
+		restConnector.postFile(url, null, attachment, EventRepresentation.class);
+	}
+	
+	private void downloadAttachment() {
+		restConnector.get(null, null);	
+	}
+	
+    private String getSelfUri() throws SDKException {
+        return "";
+    }
 	
 }
