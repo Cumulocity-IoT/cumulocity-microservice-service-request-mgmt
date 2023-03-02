@@ -3,11 +3,12 @@ package cumulocity.microservice.service.request.mgmt.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
-import com.cumulocity.rest.representation.event.EventMediaType;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.sdk.client.PagingParam;
 import com.cumulocity.sdk.client.QueryParam;
@@ -32,6 +33,7 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 	
 	private RestConnector restConnector;
 	
+	@Autowired
 	public ServiceRequestServiceStandard(EventApi eventApi, RestConnector restConnector) {
 		this.eventApi = eventApi;
 		this.restConnector = restConnector;
@@ -141,17 +143,19 @@ public class ServiceRequestServiceStandard implements ServiceRequestService {
 		return pagedEvent;
 	}
 	
-	private void uploadAttachment(byte[] attachment, String eventId) {
-		String url = getSelfUri() + "/" + eventId + "/binaries";
-		restConnector.postFile(url, null, attachment, EventRepresentation.class);
-	}
-	
-	private void downloadAttachment() {
-		restConnector.get(null, null);	
-	}
-	
-    private String getSelfUri() throws SDKException {
-        return "";
-    }
+//	private void uploadAttachment(String fileName, byte[] attachment, String eventId) {
+//		BinaryInfo binaryInfo = new BinaryInfo();
+//		binaryInfo.setName(fileName);
+//		binaryInfo.setType(eventId);
+//		restConnector.postFile(getEventBinaryUri(eventId), binaryInfo, attachment, BinaryInfo.class);
+//	}
+//
+//	private void downloadAttachment(String eventId) {
+//		restConnector.get(getEventBinaryUri(eventId), MediaType.APPLICATION_OCTET_STREAM_TYPE);
+//	}
+//
+//	private String getEventBinaryUri(String eventId) throws SDKException {
+//		return String.format("/event/events/%s/binaries", eventId);
+//	}
 	
 }
