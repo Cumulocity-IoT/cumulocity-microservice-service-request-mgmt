@@ -104,7 +104,7 @@ public class ServiceRequestController {
 		return new ResponseEntity<ServiceRequest>(serviceRequest, HttpStatus.OK);
 	}
 
-	@Operation(summary = "PATCH service request by Id", description = "Updates specific service request.", tags = {})
+	@Operation(summary = "PUT service request by Id", description = "Updates specific service request.", tags = {})
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))),
 			@ApiResponse(responseCode = "404", description = "Not Found") })

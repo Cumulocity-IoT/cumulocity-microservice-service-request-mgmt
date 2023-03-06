@@ -99,7 +99,7 @@ public class ServiceRequestCommentController {
 		return new ResponseEntity(HttpStatus.NO_CONTENT);
 	}
 	
-	@Operation(summary = "PATCH service request comment by Id", description = "updates specific service request comment. This operation is only allowed by owner of comment!", tags = {})
+	@Operation(summary = "PUT service request comment by Id", description = "updates specific service request comment. This operation is only allowed by owner of comment!", tags = {})
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok"),
 			@ApiResponse(responseCode = "404", description = "Not Found"),
 			@ApiResponse(responseCode = "403", description = "Forbidden")})
