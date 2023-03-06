@@ -26,7 +26,6 @@ public class ServiceRequestPriorityServiceStandard implements ServiceRequestPrio
 
 	@Override
 	public List<ServiceRequestPriority> createOrUpdatePriorityList(List<ServiceRequestPriority> priorityList) {
-		getPriorityList();
 		ManagedObjectRepresentation managedObject = getManagedObjectRepresentation();
 		if (managedObject == null) {
 			/* CREATE */
