@@ -59,7 +59,7 @@ public class ServiceRequestPriorityController {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequestPriority.class))),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@GetMapping(path = "/{priorityOrdinal}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ServiceRequestPriority> getServiceRequestpriorityById(@PathVariable String priorityOrdinal) {
+	public ResponseEntity<ServiceRequestPriority> getServiceRequestpriorityById(@PathVariable Long priorityOrdinal) {
 		ServiceRequestPriority priority = priorityService.getPriority(priorityOrdinal);
 		if (priority == null) {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -71,7 +71,7 @@ public class ServiceRequestPriorityController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "No Content"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@DeleteMapping(path = "/{priorityOrdinal}")
-	public ResponseEntity<Void> deleteServiceRequestpriorityById(@PathVariable String priorityOrdinal) {
+	public ResponseEntity<Void> deleteServiceRequestpriorityById(@PathVariable Long priorityOrdinal) {
 		ServiceRequestPriority priority = priorityService.getPriority(priorityOrdinal);
 		if (priority == null) {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);

@@ -48,7 +48,7 @@ public class ServiceRequestPriorityServiceStandard implements ServiceRequestPrio
 	}
 
 	@Override
-	public ServiceRequestPriority getPriority(String priorityOrdinal) {
+	public ServiceRequestPriority getPriority(Long priorityOrdinal) {
 		ManagedObjectRepresentation managedObject = getManagedObjectRepresentation();
 		if(managedObject == null) {
 			return null;
@@ -61,7 +61,7 @@ public class ServiceRequestPriorityServiceStandard implements ServiceRequestPrio
 	}
 
 	@Override
-	public void deletePriority(String priorityOrdinal) {
+	public void deletePriority(Long priorityOrdinal) {
 		ManagedObjectRepresentation managedObject = getManagedObjectRepresentation();
 		if (managedObject == null) {
 			return;
