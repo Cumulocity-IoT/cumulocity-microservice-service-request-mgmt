@@ -1,4 +1,4 @@
-# Documentation for OpenAPI definition
+# Documentation for Cumulocity Service Request API
 
 <a name="documentation-for-api-endpoints"></a>
 ## Documentation for API Endpoints
