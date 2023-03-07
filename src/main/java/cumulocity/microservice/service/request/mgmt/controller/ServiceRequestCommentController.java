@@ -104,7 +104,7 @@ public class ServiceRequestCommentController {
 			@ApiResponse(responseCode = "404", description = "Not Found"),
 			@ApiResponse(responseCode = "403", description = "Forbidden")})
 	@PutMapping(path = "/comment/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ServiceRequestComment> patchServiceRequestCommentById(@PathVariable String commentId, @RequestBody ServiceRequestComment serviceRequestComment) {
+	public ResponseEntity<ServiceRequestComment> patchServiceRequestCommentById(@PathVariable String commentId, @RequestBody ServiceRequestCommentRqBody serviceRequestComment) {
 		ServiceRequestComment comment = serviceRequestCommentService.getCommentById(commentId);
 		if (comment == null) {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);

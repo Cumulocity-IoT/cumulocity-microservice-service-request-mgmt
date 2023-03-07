@@ -13,5 +13,5 @@ public interface ServiceRequestCommentService {
 	
 	public void deleteComment(String commentId);
 	
-	public ServiceRequestComment updateComment(String commentId, ServiceRequestComment serviceRequestComment);
+	public ServiceRequestComment updateComment(String commentId, ServiceRequestCommentRqBody serviceRequestComment);
 }

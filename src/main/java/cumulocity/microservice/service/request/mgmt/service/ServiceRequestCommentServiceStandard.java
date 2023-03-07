@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.sdk.client.PagingParam;
@@ -55,21 +56,23 @@ public class ServiceRequestCommentServiceStandard implements ServiceRequestComme
 	}
 
 	@Override
-	public ServiceRequestComment getCommentById(String commentId) {
-		// TODO Auto-generated method stub
-		return null;
+	public ServiceRequestComment getCommentById(String id) {
+		EventRepresentation event = eventApi.getEvent(GId.asGId(id));
+		return ServiceRequestCommentEventMapper.map2(event);
 	}
 
 	@Override
-	public void deleteComment(String commentId) {
-		// TODO Auto-generated method stub
-		
+	public void deleteComment(String id) {
+		EventRepresentation eventRepresentation = new EventRepresentation();
+		eventRepresentation.setId(GId.asGId(id));
+		eventApi.delete(eventRepresentation);
 	}
 
 	@Override
-	public ServiceRequestComment updateComment(String commentId, ServiceRequestComment serviceRequestComment) {
-		// TODO Auto-generated method stub
-		return null;
+	public ServiceRequestComment updateComment(String id, ServiceRequestCommentRqBody serviceRequestComment) {
+		ServiceRequestCommentEventMapper eventMapper = ServiceRequestCommentEventMapper.map2(id, serviceRequestComment);
+		EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
+		return ServiceRequestCommentEventMapper.map2(updatedEvent);
 	}
 	
 	private RequestList<ServiceRequestComment> getServiceRequestByFilter(EventFilter filter, Integer pageSize, Integer pageNumber, Boolean withTotalPages) {
