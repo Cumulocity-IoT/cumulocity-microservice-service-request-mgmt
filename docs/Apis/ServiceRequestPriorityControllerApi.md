@@ -47,7 +47,7 @@ DELETE service request priority
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **priorityOrdinal** | **String**|  | [default to null] |
+| **priorityOrdinal** | **Long**|  | [default to null] |
 
 ### Return type
 
@@ -96,7 +96,7 @@ GET service request priority by ordinal
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **priorityOrdinal** | **String**|  | [default to null] |
+| **priorityOrdinal** | **Long**|  | [default to null] |
 
 ### Return type
 

@@ -7,7 +7,7 @@ All URIs are relative to *http://localhost:8080*
 | [**createServiceRequestComment**](ServiceRequestCommentControllerApi.md#createServiceRequestComment) | **POST** /api/service/request/{serviceRequestId}/comment | Add new service request comment to specific service request. |
 | [**deleteServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#deleteServiceRequestCommentById) | **DELETE** /api/service/request/comment/{commentId} | DELETE service request comment by Id |
 | [**getServiceRequestCommentList**](ServiceRequestCommentControllerApi.md#getServiceRequestCommentList) | **GET** /api/service/request/{serviceRequestId}/comment | Returns all comments of specific service request by internal Id. |
-| [**patchServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#patchServiceRequestCommentById) | **PUT** /api/service/request/comment/{commentId} | PATCH service request comment by Id |
+| [**patchServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#patchServiceRequestCommentById) | **PUT** /api/service/request/comment/{commentId} | PUT service request comment by Id |
 
 
 <a name="createServiceRequestComment"></a>
@@ -97,9 +97,9 @@ No authorization required
 
 <a name="patchServiceRequestCommentById"></a>
 # **patchServiceRequestCommentById**
-> ServiceRequestComment patchServiceRequestCommentById(commentId, ServiceRequestComment)
+> ServiceRequestComment patchServiceRequestCommentById(commentId, ServiceRequestCommentRqBody)
 
-PATCH service request comment by Id
+PUT service request comment by Id
 
     updates specific service request comment. This operation is only allowed by owner of comment!
 
@@ -108,7 +108,7 @@ PATCH service request comment by Id
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **commentId** | **String**|  | [default to null] |
-| **ServiceRequestComment** | [**ServiceRequestComment**](../Models/ServiceRequestComment.md)|  | |
+| **ServiceRequestCommentRqBody** | [**ServiceRequestCommentRqBody**](../Models/ServiceRequestCommentRqBody.md)|  | |
 
 ### Return type
 

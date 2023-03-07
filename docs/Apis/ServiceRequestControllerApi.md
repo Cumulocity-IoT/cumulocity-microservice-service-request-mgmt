@@ -9,7 +9,7 @@ All URIs are relative to *http://localhost:8080*
 | [**downloadServiceRequestAttachment**](ServiceRequestControllerApi.md#downloadServiceRequestAttachment) | **GET** /api/service/request/{serviceRequestId}/attachment | DOWNLOAD attachment for specific service request |
 | [**getServiceRequestById**](ServiceRequestControllerApi.md#getServiceRequestById) | **GET** /api/service/request/{serviceRequestId} | GET service request by Id |
 | [**getServiceRequestList**](ServiceRequestControllerApi.md#getServiceRequestList) | **GET** /api/service/request | GET service request list |
-| [**updateServiceRequestById**](ServiceRequestControllerApi.md#updateServiceRequestById) | **PUT** /api/service/request/{serviceRequestId} | PATCH service request by Id |
+| [**updateServiceRequestById**](ServiceRequestControllerApi.md#updateServiceRequestById) | **PUT** /api/service/request/{serviceRequestId} | PUT service request by Id |
 | [**uploadServiceRequestAttachment**](ServiceRequestControllerApi.md#uploadServiceRequestAttachment) | **POST** /api/service/request/{serviceRequestId}/attachment | UPLOAD attachment for specific service request |
 
 
@@ -156,7 +156,7 @@ No authorization required
 # **updateServiceRequestById**
 > ServiceRequest updateServiceRequestById(serviceRequestId, ServiceRequestPatchRqBody)
 
-PATCH service request by Id
+PUT service request by Id
 
     Updates specific service request.
 
