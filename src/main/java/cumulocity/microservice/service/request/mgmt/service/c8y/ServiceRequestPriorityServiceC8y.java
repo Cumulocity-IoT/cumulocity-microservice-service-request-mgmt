@@ -1,4 +1,4 @@
-package cumulocity.microservice.service.request.mgmt.service;
+package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,14 +12,15 @@ import com.cumulocity.sdk.client.inventory.InventoryFilter;
 import com.cumulocity.sdk.client.inventory.ManagedObjectCollection;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestPriorityService;
 
 @Service
-public class ServiceRequestPriorityServiceStandard implements ServiceRequestPriorityService {
+public class ServiceRequestPriorityServiceC8y implements ServiceRequestPriorityService {
 
 	private InventoryApi inventoryApi;
 
 	@Autowired
-	public ServiceRequestPriorityServiceStandard(InventoryApi inventoryApi) {
+	public ServiceRequestPriorityServiceC8y(InventoryApi inventoryApi) {
 		super();
 		this.inventoryApi = inventoryApi;
 	}

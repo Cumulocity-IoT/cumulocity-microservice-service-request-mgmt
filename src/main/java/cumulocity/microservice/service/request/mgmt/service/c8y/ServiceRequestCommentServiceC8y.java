@@ -1,4 +1,4 @@
-package cumulocity.microservice.service.request.mgmt.service;
+package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,14 +20,15 @@ import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCom
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
 
 @Service
-public class ServiceRequestCommentServiceStandard implements ServiceRequestCommentService {
+public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentService {
 
 	private EventApi eventApi;
 	
 	@Autowired
-	public ServiceRequestCommentServiceStandard(EventApi eventApi) {
+	public ServiceRequestCommentServiceC8y(EventApi eventApi) {
 		super();
 		this.eventApi = eventApi;
 	}

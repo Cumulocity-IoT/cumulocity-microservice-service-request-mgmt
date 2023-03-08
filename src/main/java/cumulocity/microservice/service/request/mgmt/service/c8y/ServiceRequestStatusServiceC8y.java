@@ -1,4 +1,4 @@
-package cumulocity.microservice.service.request.mgmt.service;
+package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,13 +12,14 @@ import com.cumulocity.sdk.client.inventory.ManagedObjectCollection;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusService;
 
 @Service
-public class ServiceRequestStatusServiceStandard implements ServiceRequestStatusService {
+public class ServiceRequestStatusServiceC8y implements ServiceRequestStatusService {
 
 	private InventoryApi inventoryApi;
 	
-	public ServiceRequestStatusServiceStandard(InventoryApi inventoryApi) {
+	public ServiceRequestStatusServiceC8y(InventoryApi inventoryApi) {
 		this.inventoryApi = inventoryApi;
 	}
 

@@ -1,4 +1,4 @@
-package cumulocity.microservice.service.request.mgmt.service;
+package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import java.util.HashMap;
 

@@ -1,4 +1,4 @@
-package cumulocity.microservice.service.request.mgmt.service;
+package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,18 +23,19 @@ import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPat
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class ServiceRequestServiceStandard implements ServiceRequestService {
+public class ServiceRequestServiceC8y implements ServiceRequestService {
 	
 	private EventApi eventApi;
 	
 	private RestConnector restConnector;
 	
 	@Autowired
-	public ServiceRequestServiceStandard(EventApi eventApi, RestConnector restConnector) {
+	public ServiceRequestServiceC8y(EventApi eventApi, RestConnector restConnector) {
 		this.eventApi = eventApi;
 		this.restConnector = restConnector;
 	}

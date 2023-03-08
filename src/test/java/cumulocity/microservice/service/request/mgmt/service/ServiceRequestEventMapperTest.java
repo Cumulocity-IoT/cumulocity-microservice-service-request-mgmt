@@ -14,6 +14,7 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
+import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestEventMapper;
 
 class ServiceRequestEventMapperTest {	
 	
