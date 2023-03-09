@@ -1,5 +1,7 @@
 package cumulocity.microservice.service.request.mgmt.service;
 
+import org.springframework.core.io.Resource;
+
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
@@ -19,4 +21,6 @@ public interface ServiceRequestService {
 	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);
 	
 	public void deleteServiceRequest(String id);
+
+	public void uploadAttachment(Resource resource, String contentType, byte[] fileBytes, String serviceRequestId);
 }

@@ -1,5 +1,6 @@
 package cumulocity.microservice.service.request.mgmt.controller;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 
 import javax.validation.Valid;
@@ -131,6 +132,14 @@ public class ServiceRequestController {
 	public void uploadServiceRequestAttachment(@PathVariable String serviceRequestId,
 			@Parameter(in = ParameterIn.QUERY, description = "Mulitpart file, attachment", schema = @Schema()) @Valid @RequestParam("file") MultipartFile file,
 			@Parameter(in = ParameterIn.QUERY, description = "Controls if the attachment can be overwritten. force == true means file will be overwritten if exists, otherwise a http 409 will be returned.", schema = @Schema()) @Valid @RequestParam("force") Boolean force) {
+		
+		try {
+			byte[] fileBytes = file.getBytes();
+			
+			serviceRequestService.uploadAttachment(file.getResource(), file.getContentType(), fileBytes, serviceRequestId);
+		} catch (IOException e) {
+			log.error("File uploaded failed!", e);
+		}
 	}
 	
 	@Operation(summary = "DOWNLOAD attachment for specific service request", description = "Download attachment from service request", tags = {})

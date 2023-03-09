@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import com.cumulocity.model.idtype.GId;
@@ -13,7 +13,6 @@ import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.sdk.client.PagingParam;
 import com.cumulocity.sdk.client.QueryParam;
 import com.cumulocity.sdk.client.RestConnector;
-import com.cumulocity.sdk.client.SDKException;
 import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
@@ -32,12 +31,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	
 	private EventApi eventApi;
 	
-	private RestConnector restConnector;
+	private EventAttachmentApi eventAttachmentApi;
 	
 	@Autowired
-	public ServiceRequestServiceC8y(EventApi eventApi, RestConnector restConnector) {
+	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi) {
 		this.eventApi = eventApi;
-		this.restConnector = restConnector;
+		this.eventAttachmentApi = eventAttachmentApi;
 	}
 
 	@Override
@@ -143,20 +142,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		PagedEventCollectionRepresentation pagedEvent = eventList.get();
 		return pagedEvent;
 	}
+
+	@Override
+	public void uploadAttachment(Resource resource, String contentType, byte[] bytes, String serviceRequestId) {
+		log.info("Attachment info: Filename: {}, ContentType: {}", resource.getFilename(), contentType);
+		BinaryInfo binaryInfo = new BinaryInfo();
+		binaryInfo.setName(resource.getFilename());
+		binaryInfo.setType(contentType);
+		eventAttachmentApi.uploadEventAttachment(binaryInfo, resource, serviceRequestId);
+	}
 	
-//	private void uploadAttachment(String fileName, byte[] attachment, String eventId) {
-//		BinaryInfo binaryInfo = new BinaryInfo();
-//		binaryInfo.setName(fileName);
-//		binaryInfo.setType(eventId);
-//		restConnector.postFile(getEventBinaryUri(eventId), binaryInfo, attachment, BinaryInfo.class);
-//	}
-//
-//	private void downloadAttachment(String eventId) {
-//		restConnector.get(getEventBinaryUri(eventId), MediaType.APPLICATION_OCTET_STREAM_TYPE);
-//	}
-//
-//	private String getEventBinaryUri(String eventId) throws SDKException {
-//		return String.format("/event/events/%s/binaries", eventId);
-//	}
 	
 }
