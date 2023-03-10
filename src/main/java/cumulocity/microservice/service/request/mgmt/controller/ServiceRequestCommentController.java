@@ -1,5 +1,7 @@
 package cumulocity.microservice.service.request.mgmt.controller;
 
+import java.io.IOException;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.UserCredentials;
@@ -115,5 +118,23 @@ public class ServiceRequestCommentController {
 		
 		ServiceRequestComment updatedComment = serviceRequestCommentService.updateComment(commentId, serviceRequestComment);
 		return new ResponseEntity(updatedComment, HttpStatus.OK);
+	}
+	
+	@Operation(summary = "UPLOAD attachment for specific comment", description = "Upload attachment for service request comment", tags = {})
+	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Created"),
+			@ApiResponse(responseCode = "404", description = "Not Found"),
+			@ApiResponse(responseCode = "409", description = "Conflict") })
+	@PostMapping(path = "/{serviceRequestId}/attachment", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void uploadServiceRequestCommentAttachment(@PathVariable String commentId,
+			@Parameter(in = ParameterIn.QUERY, description = "Mulitpart file, attachment", schema = @Schema()) @Valid @RequestParam("file") MultipartFile file,
+			@Parameter(in = ParameterIn.QUERY, description = "Controls if the attachment can be overwritten. force == true means file will be overwritten if exists, otherwise a http 409 will be returned.", schema = @Schema()) @Valid @RequestParam("force") Boolean force) {
+		
+		try {
+			byte[] fileBytes = file.getBytes();
+			
+			serviceRequestCommentService.uploadAttachment(file.getResource(), file.getContentType(), fileBytes, commentId);
+		} catch (IOException e) {
+			log.error("File uploaded failed!", e);
+		}
 	}
 }

@@ -1,5 +1,7 @@
 package cumulocity.microservice.service.request.mgmt.service;
 
+import org.springframework.core.io.Resource;
+
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
@@ -14,4 +16,6 @@ public interface ServiceRequestCommentService {
 	public void deleteComment(String commentId);
 	
 	public ServiceRequestComment updateComment(String commentId, ServiceRequestCommentRqBody serviceRequestComment);
+	
+	public void uploadAttachment(Resource resource, String contentType, byte[] fileBytes, String commentId);
 }

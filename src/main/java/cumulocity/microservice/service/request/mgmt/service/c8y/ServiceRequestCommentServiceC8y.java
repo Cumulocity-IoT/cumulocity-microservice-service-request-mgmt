@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import com.cumulocity.model.idtype.GId;
@@ -21,16 +22,21 @@ import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentService {
 
 	private EventApi eventApi;
 	
+	private EventAttachmentApi eventAttachmentApi;
+	
 	@Autowired
-	public ServiceRequestCommentServiceC8y(EventApi eventApi) {
+	public ServiceRequestCommentServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi) {
 		super();
 		this.eventApi = eventApi;
+		this.eventAttachmentApi = eventAttachmentApi;
 	}
 
 	@Override
@@ -119,6 +125,15 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 		
 		PagedEventCollectionRepresentation pagedEvent = eventList.get();
 		return pagedEvent;
+	}
+
+	@Override
+	public void uploadAttachment(Resource resource, String contentType, byte[] bytes, String commentId) {
+		log.info("Attachment info: Filename: {}, ContentType: {}", resource.getFilename(), contentType);
+		BinaryInfo binaryInfo = new BinaryInfo();
+		binaryInfo.setName(resource.getFilename());
+		binaryInfo.setType(contentType);
+		eventAttachmentApi.uploadEventAttachment(binaryInfo, resource, commentId);
 	}
 
 }
