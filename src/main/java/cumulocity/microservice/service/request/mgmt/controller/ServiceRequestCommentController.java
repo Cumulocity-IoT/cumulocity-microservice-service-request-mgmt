@@ -124,7 +124,7 @@ public class ServiceRequestCommentController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Created"),
 			@ApiResponse(responseCode = "404", description = "Not Found"),
 			@ApiResponse(responseCode = "409", description = "Conflict") })
-	@PostMapping(path = "/{serviceRequestId}/attachment", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/comment/{commentId}/attachment", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void uploadServiceRequestCommentAttachment(@PathVariable String commentId,
 			@Parameter(in = ParameterIn.QUERY, description = "Mulitpart file, attachment", schema = @Schema()) @Valid @RequestParam("file") MultipartFile file,
 			@Parameter(in = ParameterIn.QUERY, description = "Controls if the attachment can be overwritten. force == true means file will be overwritten if exists, otherwise a http 409 will be returned.", schema = @Schema()) @Valid @RequestParam("force") Boolean force) {

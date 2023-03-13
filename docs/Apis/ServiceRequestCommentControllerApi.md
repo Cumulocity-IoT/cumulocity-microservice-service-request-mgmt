@@ -8,6 +8,7 @@ All URIs are relative to *http://localhost:8080*
 | [**deleteServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#deleteServiceRequestCommentById) | **DELETE** /api/service/request/comment/{commentId} | DELETE service request comment by Id |
 | [**getServiceRequestCommentList**](ServiceRequestCommentControllerApi.md#getServiceRequestCommentList) | **GET** /api/service/request/{serviceRequestId}/comment | Returns all comments of specific service request by internal Id. |
 | [**patchServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#patchServiceRequestCommentById) | **PUT** /api/service/request/comment/{commentId} | PUT service request comment by Id |
+| [**uploadServiceRequestCommentAttachment**](ServiceRequestCommentControllerApi.md#uploadServiceRequestCommentAttachment) | **POST** /api/service/request/comment/{commentId}/attachment | UPLOAD attachment for specific comment |
 
 
 <a name="createServiceRequestComment"></a>
@@ -122,4 +123,33 @@ No authorization required
 
 - **Content-Type**: application/json
 - **Accept**: application/json
+
+<a name="uploadServiceRequestCommentAttachment"></a>
+# **uploadServiceRequestCommentAttachment**
+> uploadServiceRequestCommentAttachment(commentId, file, force)
+
+UPLOAD attachment for specific comment
+
+    Upload attachment for service request comment
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **commentId** | **String**|  | [default to null] |
+| **file** | **File**| Mulitpart file, attachment | [default to null] |
+| **force** | **Boolean**| Controls if the attachment can be overwritten. force &#x3D;&#x3D; true means file will be overwritten if exists, otherwise a http 409 will be returned. | [default to null] |
+
+### Return type
+
+null (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: Not defined
 
