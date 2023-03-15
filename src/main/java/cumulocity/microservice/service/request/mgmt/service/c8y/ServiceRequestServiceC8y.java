@@ -3,6 +3,7 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,6 @@ import com.cumulocity.rest.representation.PageStatisticsRepresentation;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.sdk.client.PagingParam;
 import com.cumulocity.sdk.client.QueryParam;
-import com.cumulocity.sdk.client.RestConnector;
 import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
@@ -70,22 +70,27 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages) {
 		log.info("find all service requests!");
-		EventFilter filter = new EventFilter();
+		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		if(deviceId != null) {
-			filter.bySource(GId.asGId(deviceId));			
+			filter.bySource(GId.asGId(deviceId));
+			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
+			log.info(StringUtils.join(filter.getQueryParams()));
 		}
+
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
 	}
 
 	@Override
 	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages) {
 		log.info("find all active service requests!");
-		EventFilter filter = new EventFilter();
+		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
 		if(deviceId != null) {
-			filter.bySource(GId.asGId(deviceId));			
+			filter.bySource(GId.asGId(deviceId));
+			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
+			log.info(StringUtils.join(filter.getQueryParams()));
 		}
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
 	}
