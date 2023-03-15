@@ -68,29 +68,27 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 
 	@Override
-	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages) {
+	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String sourceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages) {
 		log.info("find all service requests!");
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
-		if(deviceId != null) {
-			filter.bySource(GId.asGId(deviceId));
+		if(sourceId != null) {
+			filter.bySource(GId.asGId(sourceId));
 			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
-			log.info(StringUtils.join(filter.getQueryParams()));
 		}
 
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
 	}
 
 	@Override
-	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages) {
+	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String sourceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages) {
 		log.info("find all active service requests!");
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
-		if(deviceId != null) {
-			filter.bySource(GId.asGId(deviceId));
+		if(sourceId != null) {
+			filter.bySource(GId.asGId(sourceId));
 			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
-			log.info(StringUtils.join(filter.getQueryParams()));
 		}
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
 	}
