@@ -39,6 +39,9 @@ jobs:
         cd target
         ARTIFACT=`ls | grep .zip` && export ARTIFACT
 
+    - name: Show env
+      run: env | grep ARTIFACT
+
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
