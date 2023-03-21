@@ -40,7 +40,7 @@ jobs:
         ARTIFACT=`ls | grep .zip` && export ARTIFACT
 
     - name: Show env
-      run: env | grep ARTIFACT
+      run: env
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
