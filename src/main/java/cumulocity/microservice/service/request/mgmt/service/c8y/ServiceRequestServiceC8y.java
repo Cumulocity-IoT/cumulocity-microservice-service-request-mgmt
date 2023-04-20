@@ -74,7 +74,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		if(sourceId != null) {
 			filter.bySource(GId.asGId(sourceId));
-			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
+			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.FALSE);
 		}
 
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
@@ -88,7 +88,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
 		if(sourceId != null) {
 			filter.bySource(GId.asGId(sourceId));
-			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
+			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.FALSE);
 		}
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
 	}
