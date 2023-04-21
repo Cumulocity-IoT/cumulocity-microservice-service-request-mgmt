@@ -7,7 +7,7 @@
 
 	<groupId>cumulocity.microservice</groupId>
 	<artifactId>cumulocity-microservice-service-request-mgmt</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.4-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
