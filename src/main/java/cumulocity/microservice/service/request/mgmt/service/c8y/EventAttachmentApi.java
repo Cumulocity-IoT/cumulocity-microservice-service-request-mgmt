@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.cumulocity.microservice.api.CumulocityClientProperties;
 import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
 import com.cumulocity.model.idtype.GId;
@@ -27,12 +28,15 @@ public class EventAttachmentApi {
 		
 	private ContextService<MicroserviceCredentials> contextService;
 	
+	private final CumulocityClientProperties clientProperties;
+	
 	private EventApi eventApi;
 	
 	@Autowired
-	public EventAttachmentApi(ContextService<MicroserviceCredentials> contextService, EventApi eventApi) {
+	public EventAttachmentApi(ContextService<MicroserviceCredentials> contextService, CumulocityClientProperties clientProperties, EventApi eventApi) {
 		super();
 		this.contextService = contextService;
+		this.clientProperties = clientProperties;
 		this.eventApi = eventApi;
 	}
 	
@@ -55,7 +59,7 @@ public class EventAttachmentApi {
 		MultiValueMap<String,HttpEntity<?>> body = multipartBodyBuilder.build();
 		HttpEntity<MultiValueMap<String, HttpEntity<?>>> requestEntity = new HttpEntity<>(body, headers);
 
-		String serverUrl = event.getSelf() + "/binaries";
+		String serverUrl = clientProperties.getBaseURL() + "/event/events/" + eventId + "/binaries";
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<EventBinary> response = restTemplate.postForEntity(serverUrl, requestEntity, EventBinary.class);
 		if(response.getStatusCodeValue() >= 300) {
