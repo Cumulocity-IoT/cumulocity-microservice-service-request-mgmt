@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.MultipartBodyBuilder;
@@ -67,6 +68,34 @@ public class EventAttachmentApi {
 			return null;
 		}
 		return response.getBody();
+	}
+	
+	public EventAttachment downloadEventAttachment(final String eventId) {
+		EventRepresentation event = eventApi.getEvent(GId.asGId(eventId));
+		if(event == null) {
+			return null;
+		}
+		
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
+
+		String serverUrl = clientProperties.getBaseURL() + "/event/events/" + eventId + "/binaries";
+		RestTemplate restTemplate = new RestTemplate();
+		
+		
+		EventAttachment attachment = restTemplate.execute(serverUrl, HttpMethod.GET, clientHttpRequest -> {
+			clientHttpRequest.getHeaders().set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
+		}, clientHttpResponse -> {
+			EventAttachment eventAttachment = new EventAttachment();
+			
+			eventAttachment.setContentDispostion(clientHttpResponse.getHeaders().getContentDisposition());
+			eventAttachment.setContentType(clientHttpResponse.getHeaders().getContentType());
+			eventAttachment.setAttachment(clientHttpResponse.getBody().readAllBytes());
+			return eventAttachment;
+		});
+		
+		return attachment;
 	}
 	
 }
