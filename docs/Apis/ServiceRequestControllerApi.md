@@ -69,7 +69,7 @@ No authorization required
 
 <a name="downloadServiceRequestAttachment"></a>
 # **downloadServiceRequestAttachment**
-> File downloadServiceRequestAttachment(serviceRequestId)
+> List downloadServiceRequestAttachment(serviceRequestId)
 
 DOWNLOAD attachment for specific service request
 
@@ -83,7 +83,7 @@ DOWNLOAD attachment for specific service request
 
 ### Return type
 
-**File**
+**List**
 
 ### Authorization
 

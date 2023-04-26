@@ -87,12 +87,16 @@ public class EventAttachmentApi {
 		EventAttachment attachment = restTemplate.execute(serverUrl, HttpMethod.GET, clientHttpRequest -> {
 			clientHttpRequest.getHeaders().set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
 		}, clientHttpResponse -> {
-			//TODO currently i load the byte array of file in memory, better solution would be to use a stream. I am not sure to implement that yet.
+			//TODO currently the byte array of file is stored in memory, better solution would be to use a stream. I am not sure to implement that yet.
 			EventAttachment eventAttachment = new EventAttachment();
 			
 			eventAttachment.setContentDispostion(clientHttpResponse.getHeaders().getContentDisposition());
 			eventAttachment.setContentType(clientHttpResponse.getHeaders().getContentType());
 			eventAttachment.setAttachment(clientHttpResponse.getBody().readAllBytes());
+			
+			clientHttpResponse.getRawStatusCode();
+			clientHttpResponse.getStatusText();
+			log.info("Download event attachment response; HTTP StatusCode: {}, Text: {}", clientHttpResponse.getRawStatusCode(), clientHttpResponse.getStatusText());
 			return eventAttachment;
 		});
 		
