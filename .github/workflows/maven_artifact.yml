@@ -10,7 +10,7 @@ name: Java CI with Maven and uploading artifact
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "develop", "main" ]
 
 jobs:
   build:
