@@ -6,6 +6,7 @@ import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPat
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
+import cumulocity.microservice.service.request.mgmt.service.c8y.EventAttachment;
 
 public interface ServiceRequestService {
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequest, String owner);
@@ -23,4 +24,6 @@ public interface ServiceRequestService {
 	public void deleteServiceRequest(String id);
 
 	public void uploadAttachment(Resource resource, String contentType, byte[] fileBytes, String serviceRequestId);
+	
+	public EventAttachment downloadAttachment(String serviceRequestId);
 }

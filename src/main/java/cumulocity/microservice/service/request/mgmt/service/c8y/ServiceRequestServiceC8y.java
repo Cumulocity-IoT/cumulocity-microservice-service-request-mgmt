@@ -1,5 +1,7 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,7 +76,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		if(sourceId != null) {
 			filter.bySource(GId.asGId(sourceId));
-			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
+			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.FALSE);
 		}
 
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
@@ -88,7 +90,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
 		if(sourceId != null) {
 			filter.bySource(GId.asGId(sourceId));
-			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
+			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.FALSE);
 		}
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
 	}
@@ -154,6 +156,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		binaryInfo.setType(contentType);
 		eventAttachmentApi.uploadEventAttachment(binaryInfo, resource, serviceRequestId);
 	}
-	
+
+	@Override
+	public EventAttachment downloadAttachment(String serviceRequestId) {
+		log.info("Attachment info: Service request {}", serviceRequestId);
+		return eventAttachmentApi.downloadEventAttachment(serviceRequestId);
+	}
 	
 }
