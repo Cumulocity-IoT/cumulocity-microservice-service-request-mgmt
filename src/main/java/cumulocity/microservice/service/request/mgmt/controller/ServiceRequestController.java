@@ -1,15 +1,13 @@
 package cumulocity.microservice.service.request.mgmt.controller;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +29,7 @@ import com.cumulocity.microservice.context.credentials.UserCredentials;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
+import cumulocity.microservice.service.request.mgmt.service.c8y.EventAttachment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -146,13 +145,17 @@ public class ServiceRequestController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@GetMapping(path = "/{serviceRequestId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-	public ResponseEntity<Resource> downloadServiceRequestAttachment(@PathVariable String serviceRequestId) {
-		Resource dummy;
+	public ResponseEntity<byte[]> downloadServiceRequestAttachment(@PathVariable String serviceRequestId) {
+		
+		
 		try {
-			dummy = new UrlResource("http://dummy.com");
-			return new ResponseEntity<Resource>(dummy, HttpStatus.OK);
-		} catch (MalformedURLException e) {
-			return new ResponseEntity<Resource>( HttpStatus.INTERNAL_SERVER_ERROR);
+			EventAttachment attachment = serviceRequestService.downloadAttachment(serviceRequestId);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(attachment.getContentType());
+			headers.setContentDisposition(attachment.getContentDispostion());
+			return new ResponseEntity<byte[]>(attachment.getAttachment(), headers, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity( HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

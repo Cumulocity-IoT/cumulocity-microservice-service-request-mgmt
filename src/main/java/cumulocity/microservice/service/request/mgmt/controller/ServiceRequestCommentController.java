@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
+import cumulocity.microservice.service.request.mgmt.service.c8y.EventAttachment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -135,6 +137,24 @@ public class ServiceRequestCommentController {
 			serviceRequestCommentService.uploadAttachment(file.getResource(), file.getContentType(), fileBytes, commentId);
 		} catch (IOException e) {
 			log.error("File uploaded failed!", e);
+		}
+	}
+	
+	@Operation(summary = "DOWNLOAD attachment for specific comment", description = "Download attachment for comment", tags = {})
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok"),
+			@ApiResponse(responseCode = "404", description = "Not Found") })
+	@GetMapping(path = "/comment/{commentId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public ResponseEntity<byte[]> downloadServiceRequestCommentAttachment(@PathVariable String commentId) {
+		
+		
+		try {
+			EventAttachment attachment = serviceRequestCommentService.downloadAttachment(commentId);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(attachment.getContentType());
+			headers.setContentDisposition(attachment.getContentDispostion());
+			return new ResponseEntity<byte[]>(attachment.getAttachment(), headers, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity( HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

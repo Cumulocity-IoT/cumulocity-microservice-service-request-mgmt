@@ -5,6 +5,7 @@ import org.springframework.core.io.Resource;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
+import cumulocity.microservice.service.request.mgmt.service.c8y.EventAttachment;
 
 public interface ServiceRequestCommentService {
 	public ServiceRequestComment createComment(String deviceId, String serviceRequestId, ServiceRequestCommentRqBody serviceRequestComment, String owner);
@@ -18,4 +19,6 @@ public interface ServiceRequestCommentService {
 	public ServiceRequestComment updateComment(String commentId, ServiceRequestCommentRqBody serviceRequestComment);
 	
 	public void uploadAttachment(Resource resource, String contentType, byte[] fileBytes, String commentId);
+	
+	public EventAttachment downloadAttachment(String commentId);
 }

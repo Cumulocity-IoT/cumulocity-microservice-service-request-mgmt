@@ -136,4 +136,10 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 		eventAttachmentApi.uploadEventAttachment(binaryInfo, resource, commentId);
 	}
 
+	@Override
+	public EventAttachment downloadAttachment(String commentId) {
+		log.info("Attachment info: Service request comment {}", commentId);
+		return eventAttachmentApi.downloadEventAttachment(commentId);
+	}
+
 }

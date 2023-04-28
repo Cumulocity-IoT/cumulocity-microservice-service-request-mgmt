@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.MultipartBodyBuilder;
@@ -47,6 +48,8 @@ public class EventAttachmentApi {
 			return null;
 		}
 		
+		//TODO Before sending this data to cumulocity an validation should be done: file size, does the content type fit etc.
+		
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -67,6 +70,39 @@ public class EventAttachmentApi {
 			return null;
 		}
 		return response.getBody();
+	}
+	
+	public EventAttachment downloadEventAttachment(final String eventId) {
+		EventRepresentation event = eventApi.getEvent(GId.asGId(eventId));
+		if(event == null) {
+			return null;
+		}
+		
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
+
+		String serverUrl = clientProperties.getBaseURL() + "/event/events/" + eventId + "/binaries";
+		RestTemplate restTemplate = new RestTemplate();
+		
+		
+		EventAttachment attachment = restTemplate.execute(serverUrl, HttpMethod.GET, clientHttpRequest -> {
+			clientHttpRequest.getHeaders().set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
+		}, clientHttpResponse -> {
+			//TODO currently the byte array of file is stored in memory, better solution would be to use a stream.
+			EventAttachment eventAttachment = new EventAttachment();
+			
+			eventAttachment.setContentDispostion(clientHttpResponse.getHeaders().getContentDisposition());
+			eventAttachment.setContentType(clientHttpResponse.getHeaders().getContentType());
+			eventAttachment.setAttachment(clientHttpResponse.getBody().readAllBytes());
+			
+			clientHttpResponse.getRawStatusCode();
+			clientHttpResponse.getStatusText();
+			log.info("Download event attachment response; HTTP StatusCode: {}, Text: {}", clientHttpResponse.getRawStatusCode(), clientHttpResponse.getStatusText());
+			return eventAttachment;
+		});
+		
+		return attachment;
 	}
 	
 }

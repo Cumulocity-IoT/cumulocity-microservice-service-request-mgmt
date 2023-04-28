@@ -6,6 +6,7 @@ All URIs are relative to *http://localhost:8080*
 |------------- | ------------- | -------------|
 | [**createServiceRequestComment**](ServiceRequestCommentControllerApi.md#createServiceRequestComment) | **POST** /api/service/request/{serviceRequestId}/comment | Add new service request comment to specific service request. |
 | [**deleteServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#deleteServiceRequestCommentById) | **DELETE** /api/service/request/comment/{commentId} | DELETE service request comment by Id |
+| [**downloadServiceRequestCommentAttachment**](ServiceRequestCommentControllerApi.md#downloadServiceRequestCommentAttachment) | **GET** /api/service/request/comment/{commentId}/attachment | DOWNLOAD attachment for specific comment |
 | [**getServiceRequestCommentList**](ServiceRequestCommentControllerApi.md#getServiceRequestCommentList) | **GET** /api/service/request/{serviceRequestId}/comment | Returns all comments of specific service request by internal Id. |
 | [**patchServiceRequestCommentById**](ServiceRequestCommentControllerApi.md#patchServiceRequestCommentById) | **PUT** /api/service/request/comment/{commentId} | PUT service request comment by Id |
 | [**uploadServiceRequestCommentAttachment**](ServiceRequestCommentControllerApi.md#uploadServiceRequestCommentAttachment) | **POST** /api/service/request/comment/{commentId}/attachment | UPLOAD attachment for specific comment |
@@ -65,6 +66,33 @@ No authorization required
 
 - **Content-Type**: Not defined
 - **Accept**: Not defined
+
+<a name="downloadServiceRequestCommentAttachment"></a>
+# **downloadServiceRequestCommentAttachment**
+> List downloadServiceRequestCommentAttachment(commentId)
+
+DOWNLOAD attachment for specific comment
+
+    Download attachment for comment
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **commentId** | **String**|  | [default to null] |
+
+### Return type
+
+**List**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/octet-stream
 
 <a name="getServiceRequestCommentList"></a>
 # **getServiceRequestCommentList**
