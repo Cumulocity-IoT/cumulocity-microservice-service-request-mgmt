@@ -48,6 +48,8 @@ public class EventAttachmentApi {
 			return null;
 		}
 		
+		//TODO Before sending this data to cumulocity an validation should be done: file size, does the content type fit etc.
+		
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -87,7 +89,7 @@ public class EventAttachmentApi {
 		EventAttachment attachment = restTemplate.execute(serverUrl, HttpMethod.GET, clientHttpRequest -> {
 			clientHttpRequest.getHeaders().set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
 		}, clientHttpResponse -> {
-			//TODO currently the byte array of file is stored in memory, better solution would be to use a stream. I am not sure to implement that yet.
+			//TODO currently the byte array of file is stored in memory, better solution would be to use a stream.
 			EventAttachment eventAttachment = new EventAttachment();
 			
 			eventAttachment.setContentDispostion(clientHttpResponse.getHeaders().getContentDisposition());
