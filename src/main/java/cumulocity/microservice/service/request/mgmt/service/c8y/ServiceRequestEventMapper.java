@@ -32,6 +32,7 @@ public class ServiceRequestEventMapper {
 	public static final String SR_DESCRIPTION = "sr_Description";
 	public static final String SR_ALARM_REF = "sr_AlarmRef";
 	public static final String SR_ACTIVE = "sr_Active";
+	public static final String SR_EXTERNAL_ID = "sr_ExternalId";
 	public static final String C8Y_IS_BINARY = "c8y_IsBinary";
 	
 	private final EventRepresentation event;
@@ -66,6 +67,7 @@ public class ServiceRequestEventMapper {
 		mapper.setStatus(serviceRequest.getStatus());
 		mapper.setTitle(serviceRequest.getTitle());
 		mapper.setIsActive(serviceRequest.getIsActive());
+		mapper.setExternalId(serviceRequest.getExternalId());
 		return mapper;
 		
 	}
@@ -94,6 +96,7 @@ public class ServiceRequestEventMapper {
 		serviceRequest.setType(mapper.getServiceRequestType());
 		serviceRequest.setIsActive(mapper.getIsActive());
 		serviceRequest.setAttachment(mapper.getAttachment());
+		serviceRequest.setExternalId(mapper.getExternalId());
 		return serviceRequest;
 	}
 	
@@ -229,6 +232,13 @@ public class ServiceRequestEventMapper {
 		ExternalIDRepresentation externalIdRepresentation = new ExternalIDRepresentation();
 		externalIdRepresentation.setExternalId(externalId);
 		event.setExternalSource(externalIdRepresentation);
+	}
+	
+	public String getExternalId() {
+		if(event.getExternalSource() == null) {
+			return null;
+		}
+		return event.getExternalSource().getExternalId();
 	}
 	
 	public DateTime getCreationDateTime() {
