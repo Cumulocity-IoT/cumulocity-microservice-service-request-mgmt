@@ -2,6 +2,8 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,11 +90,39 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
+		filter.byFragmentValue(Boolean.TRUE.toString());
 		if(sourceId != null) {
 			filter.bySource(GId.asGId(sourceId));
 			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.FALSE);
 		}
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
+	}
+	
+	@Override
+	public List<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned) {
+		log.info("find all active service requests!");
+		EventFilterExtend filter = new EventFilterExtend();
+		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
+		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
+		filter.byFragmentValue(Boolean.TRUE.toString());
+		
+		EventCollection eventList = eventApi.getEventsByFilter(filter);
+		
+		//TODO return specific page, eventList.getPage(null, 0, 0)
+		Iterable<EventRepresentation> allPages = eventList.get(2000).allPages();
+		List<ServiceRequest> serviceRequestList = new ArrayList<>();
+		for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {
+			EventRepresentation eventRepresentation = iterator.next();
+			Object externalId = eventRepresentation.get(ServiceRequestEventMapper.SR_EXTERNAL_ID);
+			if(assigned && externalId != null) {
+				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
+				serviceRequestList.add(sr);
+			}else if(!assigned && externalId == null) {
+				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
+				serviceRequestList.add(sr);
+			}
+		}
+		return serviceRequestList;
 	}
 	
 	@Override
@@ -162,5 +192,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		log.info("Attachment info: Service request {}", serviceRequestId);
 		return eventAttachmentApi.downloadEventAttachment(serviceRequestId);
 	}
+
+
 	
 }
