@@ -108,7 +108,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
 		
-		//TODO return specific page, eventList.getPage(null, 0, 0)
 		Iterable<EventRepresentation> allPages = eventList.get(2000).allPages();
 		List<ServiceRequest> serviceRequestList = new ArrayList<>();
 		for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {

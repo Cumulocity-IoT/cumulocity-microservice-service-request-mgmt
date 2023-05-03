@@ -263,21 +263,15 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public Boolean getIsActive() {
-		Object obj = event.get(SR_ACTIVE);
-		return obj != null;
+		String active = (String) event.get(SR_ACTIVE);
+		return Boolean.valueOf(active);
 	}
 	
 	public void setIsActive(Boolean isActive) {
 		if(isActive == null) {
 			return;
 		}
-		
-		if(isActive) {
-			event.set(new Object(), SR_ACTIVE);
-		}else {
-			event.set(null, SR_ACTIVE);
-		}
-
+		event.set(isActive, SR_ACTIVE);
 	}
 	
 	public ServiceRequestAttachment getAttachment() {
