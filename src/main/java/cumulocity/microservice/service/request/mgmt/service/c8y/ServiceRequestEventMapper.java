@@ -229,16 +229,14 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setExternalId(String externalId) {
-		ExternalIDRepresentation externalIdRepresentation = new ExternalIDRepresentation();
-		externalIdRepresentation.setExternalId(externalId);
-		event.setExternalSource(externalIdRepresentation);
+		if(externalId == null) {
+			return;
+		}
+		event.set(externalId, SR_EXTERNAL_ID);
 	}
 	
 	public String getExternalId() {
-		if(event.getExternalSource() == null) {
-			return null;
-		}
-		return event.getExternalSource().getExternalId();
+		return (String)event.get(SR_EXTERNAL_ID);
 	}
 	
 	public DateTime getCreationDateTime() {
