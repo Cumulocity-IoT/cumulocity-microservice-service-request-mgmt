@@ -1,5 +1,7 @@
 package cumulocity.microservice.service.request.mgmt.service;
 
+import java.util.List;
+
 import org.springframework.core.io.Resource;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
@@ -15,11 +17,11 @@ public interface ServiceRequestService {
 	
 	public ServiceRequest getServiceRequestById(String id);
 	
-	public ServiceRequest getServiceRequestByExternalId(String externalId);
-	
 	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);
 	
 	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);
+	
+	public List<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned);
 	
 	public void deleteServiceRequest(String id);
 

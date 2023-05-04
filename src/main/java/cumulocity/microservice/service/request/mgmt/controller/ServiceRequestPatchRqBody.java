@@ -31,6 +31,9 @@ public class ServiceRequestPatchRqBody {
 
 	@Schema(description = "Service request active flag, shows if the service request is active!", example = "true")
 	private Boolean isActive;
+	
+	@Schema(description = "Service request external ID, contains the service request object ID of the external system.", example = "123456789")
+	private String externalId;
 
 	@Schema(description = "Custom specific properties")
 	private Map<String, String> customProperties;
