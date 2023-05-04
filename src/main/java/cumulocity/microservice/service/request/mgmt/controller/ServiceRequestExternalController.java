@@ -47,7 +47,7 @@ public class ServiceRequestExternalController {
 		this.serviceRequestService = serviceRequestService;
 	}
 
-	@Operation(summary = "GET service request list", description = "Returns a list of all service requests in IoT Platform. Additional query parameters allow to filter that list. The default configuration will return all service requests which are not closed! With parameter all=true, all service requests will be returned without fillter.", tags = {})
+	@Operation(summary = "GET service request list", description = "Returns a list of all service requests in IoT Platform. Additional query parameter allow to filter that list. Parameter assigned=false returns all service requests which are not assigned to external object. Parameter assigned=true returns all assigned service requests.", tags = {})
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK") })
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

@@ -17,8 +17,6 @@ public interface ServiceRequestService {
 	
 	public ServiceRequest getServiceRequestById(String id);
 	
-	public ServiceRequest getServiceRequestByExternalId(String externalId);
-	
 	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);
 	
 	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);

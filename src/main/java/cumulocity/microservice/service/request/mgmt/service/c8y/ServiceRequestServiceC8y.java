@@ -1,13 +1,10 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -64,11 +61,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	public ServiceRequest getServiceRequestById(String id) {
 		EventRepresentation event = eventApi.getEvent(GId.asGId(id));
 		return ServiceRequestEventMapper.map2(event);
-	}
-
-	@Override
-	public ServiceRequest getServiceRequestByExternalId(String externalId) {
-		return null;
 	}
 
 	@Override
