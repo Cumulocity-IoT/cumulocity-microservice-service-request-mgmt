@@ -271,7 +271,7 @@ public class ServiceRequestEventMapper {
 		if(isActive == null) {
 			return;
 		}
-		event.set(isActive, SR_ACTIVE);
+		event.set(isActive.toString(), SR_ACTIVE);
 	}
 	
 	public ServiceRequestAttachment getAttachment() {
