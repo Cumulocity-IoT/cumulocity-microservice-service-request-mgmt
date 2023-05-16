@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
+import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.sdk.client.PagingParam;
 import com.cumulocity.sdk.client.QueryParam;
+import com.cumulocity.sdk.client.alarm.AlarmApi;
 import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
@@ -32,12 +34,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	
 	private EventApi eventApi;
 	
+	private AlarmApi alarmApi;
+	
 	private EventAttachmentApi eventAttachmentApi;
 	
 	@Autowired
-	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi) {
+	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi) {
 		this.eventApi = eventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
+		this.alarmApi = alarmApi;
 	}
 
 	@Override
@@ -47,6 +52,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		eventMapper.setIsActive(Boolean.TRUE);
 		EventRepresentation createdEvent = eventApi.create(eventMapper.getEvent());
 		ServiceRequest newServiceRequest = ServiceRequestEventMapper.map2(createdEvent);
+		if(newServiceRequest.getAlarmRef() != null) {
+			AlarmRepresentation alarmRepresentation = new AlarmRepresentation();
+			alarmRepresentation.setId(GId.asGId(newServiceRequest.getAlarmRef().getId()));
+			alarmRepresentation.set(newServiceRequest.getId(), "sr_EventId");
+			alarmApi.update(alarmRepresentation);
+		}
 		return newServiceRequest;
 	}
 
