@@ -13,6 +13,7 @@ import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 import com.cumulocity.rest.representation.event.EventRepresentation;
+import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.cumulocity.sdk.client.PagingParam;
 import com.cumulocity.sdk.client.QueryParam;
 import com.cumulocity.sdk.client.alarm.AlarmApi;
@@ -20,6 +21,7 @@ import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
 import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
+import com.cumulocity.sdk.client.inventory.InventoryApi;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
@@ -37,12 +39,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	private AlarmApi alarmApi;
 	
 	private EventAttachmentApi eventAttachmentApi;
+
+	private InventoryApi inventoryApi;
 	
 	@Autowired
-	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi) {
+	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi, InventoryApi inventoryApi) {
 		this.eventApi = eventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
+		this.inventoryApi = inventoryApi;
 	}
 
 	@Override
@@ -52,20 +57,41 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		eventMapper.setIsActive(Boolean.TRUE);
 		EventRepresentation createdEvent = eventApi.create(eventMapper.getEvent());
 		ServiceRequest newServiceRequest = ServiceRequestEventMapper.map2(createdEvent);
-		if(newServiceRequest.getAlarmRef() != null) {
-			AlarmRepresentation alarmRepresentation = new AlarmRepresentation();
-			alarmRepresentation.setId(GId.asGId(newServiceRequest.getAlarmRef().getId()));
-			alarmRepresentation.set(newServiceRequest.getId(), "sr_EventId");
+		
+		//Update Alarm
+		AlarmMapper alarmMapper = AlarmMapper.map2(newServiceRequest);
+		if(alarmMapper != null) {
+			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
 			alarmApi.update(alarmRepresentation);
 		}
+		
+		//Update Managed Object
+		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
+		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source, newServiceRequest);
+		moMapper.addServiceRequestPriorityCounter(newServiceRequest.getPriority().getName());
+		inventoryApi.update(moMapper.getManagedObjectRepresentation());
+		
 		return newServiceRequest;
 	}
 
 	@Override
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest) {
+		ServiceRequest originalServiceRequest = getServiceRequestById(id);
+		
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
 		EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
-		return eventMapper.map2(updatedEvent);
+		
+		ServiceRequest updatedServiceRequest = eventMapper.map2(updatedEvent);
+		
+		//Update Managed Object
+		if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(updatedServiceRequest.getIsActive())) {
+			ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(updatedServiceRequest.getSource().getId()));
+			ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source, updatedServiceRequest);
+			moMapper.removeServiceRequestPriorityCounter(updatedServiceRequest.getPriority().getName());
+			inventoryApi.update(moMapper.getManagedObjectRepresentation());			
+		}
+		
+		return updatedServiceRequest;
 	}
 	
 	@Override
