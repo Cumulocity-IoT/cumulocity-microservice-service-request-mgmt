@@ -123,7 +123,7 @@ No authorization required
 
 <a name="getServiceRequestList"></a>
 # **getServiceRequestList**
-> RequestListServiceRequest getServiceRequestList(sourceId, all, pageSize, currentPage, withTotalPages)
+> RequestListServiceRequest getServiceRequestList(sourceId, statusList, priorityList, all, pageSize, currentPage, withTotalPages)
 
 GET service request list
 
@@ -134,6 +134,8 @@ GET service request list
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **sourceId** | **String**| Filter, returns all service request equal source Id | [optional] [default to null] |
+| **statusList** | [**List**](../Models/String.md)| Filter, returns all service request with status defined in that list | [optional] [default to null] |
+| **priorityList** | [**List**](../Models/Long.md)| Filter, returns all service request with priority defined in that list | [optional] [default to null] |
 | **all** | **Boolean**| filter, \&quot;true\&quot; returns all service request, \&quot;false\&quot; (default) returns only active service requests. | [optional] [default to null] |
 | **pageSize** | **Integer**| Indicates how many entries of the collection shall be returned. The upper limit for one page is 2,000 objects. | [optional] [default to null] |
 | **currentPage** | **Integer**| The current page of the paginated results. | [optional] [default to null] |

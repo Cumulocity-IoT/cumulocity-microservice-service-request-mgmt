@@ -17,9 +17,9 @@ public interface ServiceRequestService {
 	
 	public ServiceRequest getServiceRequestById(String id);
 	
-	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);
+	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList);
 	
-	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);
+	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList);
 	
 	public List<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned);
 	
