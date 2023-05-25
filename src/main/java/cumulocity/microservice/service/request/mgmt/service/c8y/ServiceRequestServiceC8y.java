@@ -117,13 +117,21 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			filter.bySource(GId.asGId(sourceId));
 			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.FALSE);
 		}
-
-		boolean isMicroserviceFilter = ArrayUtils.isNotEmpty(statusList) || ArrayUtils.isNotEmpty(priorityList);
-		if(isMicroserviceFilter) {
-			Predicate<ServiceRequest> filterPredicatePriority = sr -> ArrayUtils.contains(priorityList, sr.getPriority().getOrdinal());
-			Predicate<ServiceRequest> filterPredicateStatus = sr -> ArrayUtils.contains(statusList, sr.getStatus().getId());
+		boolean isStatusFilter = ArrayUtils.isNotEmpty(statusList);
+		boolean isPriorityFilter = ArrayUtils.isNotEmpty(priorityList);
+		
+		if(isStatusFilter || isPriorityFilter) {
+			Predicate<ServiceRequest> filterPredicate = sr -> sr.getStatus() != null && sr.getPriority() != null;
 			
-			return getServiceRequestByFilterAndInternalFilter(filter, filterPredicatePriority.and(filterPredicateStatus), pageSize, pageNumber, withTotalPages);
+			if(isStatusFilter) {
+				filterPredicate.and(sr -> ArrayUtils.contains(statusList, sr.getStatus().getId()));
+			}
+			
+			if(isPriorityFilter) {
+				filterPredicate.and(sr -> ArrayUtils.contains(priorityList, sr.getPriority().getOrdinal()));
+			}
+						
+			return getServiceRequestByFilterAndInternalFilter(filter, filterPredicate, pageSize, pageNumber, withTotalPages);
 		}
 		
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
@@ -142,12 +150,20 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.FALSE);
 		}
 		
-		boolean isMicroserviceFilter = ArrayUtils.isNotEmpty(statusList) || ArrayUtils.isNotEmpty(priorityList);
-		if(isMicroserviceFilter) {
-			Predicate<ServiceRequest> filterPredicatePriority = sr -> ArrayUtils.contains(priorityList, sr.getPriority().getOrdinal());
-			Predicate<ServiceRequest> filterPredicateStatus = sr -> ArrayUtils.contains(statusList, sr.getStatus().getId());
+		boolean isStatusFilter = ArrayUtils.isNotEmpty(statusList);
+		boolean isPriorityFilter = ArrayUtils.isNotEmpty(priorityList);
+		if(isStatusFilter || isPriorityFilter) {
+			Predicate<ServiceRequest> filterPredicate = sr -> sr.getStatus() != null && sr.getPriority() != null;
 			
-			return getServiceRequestByFilterAndInternalFilter(filter, filterPredicatePriority.and(filterPredicateStatus), pageSize, pageNumber, withTotalPages);
+			if(isStatusFilter) {
+				filterPredicate = filterPredicate.and(sr -> ArrayUtils.contains(statusList, sr.getStatus().getId()));
+			}
+			
+			if(isPriorityFilter) {
+				filterPredicate = filterPredicate.and(sr -> ArrayUtils.contains(priorityList, sr.getPriority().getOrdinal()));
+			}
+						
+			return getServiceRequestByFilterAndInternalFilter(filter, filterPredicate, pageSize, pageNumber, withTotalPages);
 		}
 		
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
@@ -215,6 +231,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	private RequestList<ServiceRequest> getServiceRequestByFilterAndInternalFilter(EventFilter filter,
 			Predicate<ServiceRequest> serviceRequestFilter, Integer pageSize, Integer pageNumber,
 			Boolean withTotalPages) {
+		
+		pageNumber = pageNumber != null ? pageNumber : 0;
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
 
 		Iterable<EventRepresentation> allPages = eventList.get(2000).allPages();

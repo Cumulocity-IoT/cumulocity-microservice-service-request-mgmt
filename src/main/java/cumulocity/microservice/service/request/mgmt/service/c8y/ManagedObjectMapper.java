@@ -52,7 +52,7 @@ public class ManagedObjectMapper {
 		
 		Map<String, Long> priorityCounterMap = (Map<String, Long>) object;
 		Long count = priorityCounterMap.get(priorityName);
-		priorityCounterMap.put(priorityName, count+1);
+		priorityCounterMap.put(priorityName, count != null ? count+1: 1);			
 		managedObjectRepresentation.set(priorityCounterMap, SR_ACTIVE_STATUS);
 	}
 	
