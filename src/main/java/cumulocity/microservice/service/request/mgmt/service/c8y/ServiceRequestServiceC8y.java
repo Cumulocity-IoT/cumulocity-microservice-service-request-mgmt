@@ -233,6 +233,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			Boolean withTotalPages) {
 		
 		pageNumber = pageNumber != null ? pageNumber : 0;
+		pageSize = pageSize != null ? pageSize : 5;
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
 
 		Iterable<EventRepresentation> allPages = eventList.get(2000).allPages();
