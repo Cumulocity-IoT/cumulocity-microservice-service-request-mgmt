@@ -24,6 +24,7 @@ public class AlarmMapper {
 		super();
 		this.alarm = new AlarmRepresentation();
 		this.alarm.setId(GId.asGId(alarmId));
+		this.alarm.setStatus("acknowledged");
 	}
 	
 	public String getServiceRequestEventId() {
