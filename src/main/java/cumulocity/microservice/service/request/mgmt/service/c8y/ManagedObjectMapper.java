@@ -5,8 +5,8 @@ import java.util.Map;
 
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 
+import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
-import lombok.extern.slf4j.Slf4j;
 
 public class ManagedObjectMapper {
 	
@@ -14,8 +14,8 @@ public class ManagedObjectMapper {
 	
 	private ManagedObjectRepresentation managedObjectRepresentation;
 	
-	public static ManagedObjectMapper map2(ManagedObjectRepresentation managedObjectRepresentation, ServiceRequest serviceRequest) {
-		if(managedObjectRepresentation == null || serviceRequest == null|| serviceRequest.getPriority() == null) {
+	public static ManagedObjectMapper map2(ManagedObjectRepresentation managedObjectRepresentation) {
+		if(managedObjectRepresentation == null) {
 			return null;
 		}
 		
@@ -37,44 +37,16 @@ public class ManagedObjectMapper {
 		return (Map<String, Long>) managedObjectRepresentation.get(SR_ACTIVE_STATUS);
 	}
 	
-	public void addServiceRequestPriorityCounter(String priorityName) {
-		if(priorityName == null) {
-			return;
-		}
-		Object object = managedObjectRepresentation.get(SR_ACTIVE_STATUS);
-		
-		if(object == null) {
-			Map<String, Long> priorityCounterMap = new HashMap();
-			priorityCounterMap.put(priorityName, 1L);
-			managedObjectRepresentation.set(priorityCounterMap, SR_ACTIVE_STATUS);
-			return;
-		}
-		
-		Map<String, Long> priorityCounterMap = (Map<String, Long>) object;
-		Long count = priorityCounterMap.get(priorityName);
-		priorityCounterMap.put(priorityName, count != null ? count+1: 1);			
-		managedObjectRepresentation.set(priorityCounterMap, SR_ACTIVE_STATUS);
-	}
-	
-	public void removeServiceRequestPriorityCounter(String priorityName) {
-		if(priorityName == null) {
-			return;
-		}
-		Object object = managedObjectRepresentation.get(SR_ACTIVE_STATUS);
-		
-		if(object == null) {
-			Map<String, Long> priorityCounterMap = new HashMap();
-			priorityCounterMap.put(priorityName, 0L);
-			managedObjectRepresentation.set(priorityCounterMap, SR_ACTIVE_STATUS);
-			return;
-		}
-		
-		Map<String, Long> priorityCounterMap = (Map<String, Long>) object;
-		Long count = priorityCounterMap.get(priorityName);
-		priorityCounterMap.put(priorityName, count-1);
-		managedObjectRepresentation.set(priorityCounterMap, SR_ACTIVE_STATUS);
-	}
 
+	public void updateServiceRequestPriorityCounter(RequestList<ServiceRequest> serviceRequestList) {
+		Map<String, Long> priorityCounterMap = new HashMap<>();
+
+		for (ServiceRequest serviceRequest : serviceRequestList.getList()) {
+			priorityCounterMap.merge(serviceRequest.getPriority().getName(), 1L, Long::sum);
+		}
+		
+		managedObjectRepresentation.set(priorityCounterMap, SR_ACTIVE_STATUS);
+	}
 
 
 	public ManagedObjectRepresentation getManagedObjectRepresentation() {
