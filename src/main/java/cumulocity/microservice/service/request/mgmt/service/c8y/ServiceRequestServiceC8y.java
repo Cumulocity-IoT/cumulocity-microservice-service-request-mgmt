@@ -71,8 +71,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
 			alarmApi.update(alarmRepresentation);
 		}
-		
-		
+
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
@@ -226,7 +225,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		requestList.setTotalPages(pageStatistics.getTotalPages());
 		return requestList;
 	}
-	
+
 	private RequestList<ServiceRequest> getAllActiveEventsBySource(GId sourceId) {
 		EventFilter filter = new EventFilter();
 		filter.bySource(sourceId).byFragmentType(ServiceRequestEventMapper.SR_ACTIVE).byFragmentValue(Boolean.TRUE.toString());

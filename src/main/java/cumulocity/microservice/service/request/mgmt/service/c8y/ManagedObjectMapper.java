@@ -23,20 +23,15 @@ public class ManagedObjectMapper {
 		return mapper;
 	}
 	
-	
-	
 	public ManagedObjectMapper(ManagedObjectRepresentation managedObjectRepresentation) {
 		this.managedObjectRepresentation = new ManagedObjectRepresentation();
 		this.managedObjectRepresentation.setId(managedObjectRepresentation.getId());
 		this.managedObjectRepresentation.set(managedObjectRepresentation.get(SR_ACTIVE_STATUS), SR_ACTIVE_STATUS);
 	}
 
-
-
 	public Map<String, Long> getServiceRequestPriorityCounterMap() {
 		return (Map<String, Long>) managedObjectRepresentation.get(SR_ACTIVE_STATUS);
 	}
-	
 
 	public void updateServiceRequestPriorityCounter(RequestList<ServiceRequest> serviceRequestList) {
 		Map<String, Long> priorityCounterMap = new HashMap<>();
