@@ -62,7 +62,7 @@ public class ServiceRequestExternalController {
 	@PostMapping(path = "/{serviceRequestId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequestRef> syncServiceRequest(@PathVariable String serviceRequestId) {
 		ServiceRequestRef serviceRequestRef = new ServiceRequestRef();
-		return new ResponseEntity<ServiceRequestRef>(serviceRequestRef, HttpStatus.OK);
+		return new ResponseEntity<ServiceRequestRef>(serviceRequestRef, HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@Operation(summary = "UPDATE service request by external Id", description = "Updates specific service request.", tags = {})
@@ -73,7 +73,7 @@ public class ServiceRequestExternalController {
 	public ResponseEntity<ServiceRequest> updateServiceRequestByExternalId(
 			@PathVariable String serviceRequestId, @RequestBody ServiceRequestPatchRqBody serviceRequestRqBody) {
 		ServiceRequest dummy = new ServiceRequest();
-		return new ResponseEntity<ServiceRequest>(dummy, HttpStatus.OK);
+		return new ResponseEntity<ServiceRequest>(dummy, HttpStatus.NOT_IMPLEMENTED);
 	}
     
 	@Operation(summary = "GET service request by external Id", description = "", tags = {})
@@ -83,7 +83,7 @@ public class ServiceRequestExternalController {
 	@GetMapping(path = "/{serviceRequestExternalId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequest> getServiceRequestByExternalId(@PathVariable String serviceRequestExternalId) {
 		ServiceRequest dummy = new ServiceRequest();
-		return new ResponseEntity<ServiceRequest>(dummy, HttpStatus.OK);
+		return new ResponseEntity<ServiceRequest>(dummy, HttpStatus.NOT_IMPLEMENTED);
 	}
 
 

@@ -27,6 +27,7 @@ import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
 import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
+import com.google.common.base.Objects;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
@@ -73,8 +74,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
-		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source, newServiceRequest);
-		moMapper.addServiceRequestPriorityCounter(newServiceRequest.getPriority().getName());
+		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return newServiceRequest;
@@ -90,13 +91,10 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequest updatedServiceRequest = eventMapper.map2(updatedEvent);
 
 		// Update Managed Object
-		if (Boolean.TRUE.equals(originalServiceRequest.getIsActive())
-				&& Boolean.FALSE.equals(updatedServiceRequest.getIsActive())) {
-			ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(updatedServiceRequest.getSource().getId()));
-			ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source, updatedServiceRequest);
-			moMapper.removeServiceRequestPriorityCounter(updatedServiceRequest.getPriority().getName());
-			inventoryApi.update(moMapper.getManagedObjectRepresentation());
-		}
+		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(updatedServiceRequest.getSource().getId()));
+		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
+		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return updatedServiceRequest;
 	}
@@ -226,6 +224,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		requestList.setPageSize(pageStatistics.getPageSize());
 		requestList.setTotalPages(pageStatistics.getTotalPages());
 		return requestList;
+	}
+
+	private RequestList<ServiceRequest> getAllActiveEventsBySource(GId sourceId) {
+		EventFilter filter = new EventFilter();
+		filter.bySource(sourceId).byFragmentType(ServiceRequestEventMapper.SR_ACTIVE).byFragmentValue(Boolean.TRUE.toString());
+		return getServiceRequestByFilter(filter, 2000, null, null);
 	}
 
 	private RequestList<ServiceRequest> getServiceRequestByFilterAndInternalFilter(EventFilter filter,
