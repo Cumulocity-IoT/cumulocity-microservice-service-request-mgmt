@@ -32,6 +32,7 @@ public class ServiceRequestEventMapper {
 	public static final String SR_DESCRIPTION = "sr_Description";
 	public static final String SR_ALARM_REF = "sr_AlarmRef";
 	public static final String SR_ACTIVE = "sr_Active";
+	public static final String SR_EXTERNAL_ID = "sr_ExternalId";
 	public static final String C8Y_IS_BINARY = "c8y_IsBinary";
 	
 	private final EventRepresentation event;
@@ -66,6 +67,7 @@ public class ServiceRequestEventMapper {
 		mapper.setStatus(serviceRequest.getStatus());
 		mapper.setTitle(serviceRequest.getTitle());
 		mapper.setIsActive(serviceRequest.getIsActive());
+		mapper.setExternalId(serviceRequest.getExternalId());
 		return mapper;
 		
 	}
@@ -94,6 +96,7 @@ public class ServiceRequestEventMapper {
 		serviceRequest.setType(mapper.getServiceRequestType());
 		serviceRequest.setIsActive(mapper.getIsActive());
 		serviceRequest.setAttachment(mapper.getAttachment());
+		serviceRequest.setExternalId(mapper.getExternalId());
 		return serviceRequest;
 	}
 	
@@ -226,9 +229,14 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public void setExternalId(String externalId) {
-		ExternalIDRepresentation externalIdRepresentation = new ExternalIDRepresentation();
-		externalIdRepresentation.setExternalId(externalId);
-		event.setExternalSource(externalIdRepresentation);
+		if(externalId == null) {
+			return;
+		}
+		event.set(externalId, SR_EXTERNAL_ID);
+	}
+	
+	public String getExternalId() {
+		return (String)event.get(SR_EXTERNAL_ID);
 	}
 	
 	public DateTime getCreationDateTime() {
@@ -255,21 +263,15 @@ public class ServiceRequestEventMapper {
 	}
 	
 	public Boolean getIsActive() {
-		Object obj = event.get(SR_ACTIVE);
-		return obj != null;
+		String active = (String) event.get(SR_ACTIVE);
+		return Boolean.valueOf(active);
 	}
 	
 	public void setIsActive(Boolean isActive) {
 		if(isActive == null) {
 			return;
 		}
-		
-		if(isActive) {
-			event.set(new Object(), SR_ACTIVE);
-		}else {
-			event.set(null, SR_ACTIVE);
-		}
-
+		event.set(isActive.toString(), SR_ACTIVE);
 	}
 	
 	public ServiceRequestAttachment getAttachment() {
