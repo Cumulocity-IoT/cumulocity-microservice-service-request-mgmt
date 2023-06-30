@@ -8,12 +8,17 @@ import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPat
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.service.c8y.EventAttachment;
 
 public interface ServiceRequestService {
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequest, String owner);
 	
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest);
+	
+	public ServiceRequest updateServiceRequestStatus(String id, ServiceRequestStatus status);
+	
+	public ServiceRequest updateServiceRequestActive(String id, Boolean isActive);
 	
 	public ServiceRequest getServiceRequestById(String id);
 	

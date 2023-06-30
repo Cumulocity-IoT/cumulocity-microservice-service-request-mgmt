@@ -37,7 +37,7 @@ public class ManagedObjectMapper {
 		Map<String, Long> priorityCounterMap = new HashMap<>();
 
 		for (ServiceRequest serviceRequest : serviceRequestList.getList()) {
-			priorityCounterMap.merge(serviceRequest.getPriority().getName(), 1L, Long::sum);
+			priorityCounterMap.merge(serviceRequest.getPriority().getName().replace(" ", "_"), 1L, Long::sum);
 		}
 		
 		managedObjectRepresentation.set(priorityCounterMap, SR_ACTIVE_STATUS);

@@ -22,10 +22,9 @@ All URIs are relative to *http://localhost:8080*
 *ServiceRequestControllerApi* | [**getServiceRequestList**](Apis/ServiceRequestControllerApi.md#getservicerequestlist) | **GET** /api/service/request | GET service request list |
 *ServiceRequestControllerApi* | [**updateServiceRequestById**](Apis/ServiceRequestControllerApi.md#updateservicerequestbyid) | **PUT** /api/service/request/{serviceRequestId} | PUT service request by Id |
 *ServiceRequestControllerApi* | [**uploadServiceRequestAttachment**](Apis/ServiceRequestControllerApi.md#uploadservicerequestattachment) | **POST** /api/service/request/{serviceRequestId}/attachment | UPLOAD attachment for specific service request |
-| *ServiceRequestExternalControllerApi* | [**getServiceRequestByExternalId**](Apis/ServiceRequestExternalControllerApi.md#getservicerequestbyexternalid) | **GET** /api/adapter/service/request/{serviceRequestExternalId} | GET service request by external Id |
-*ServiceRequestExternalControllerApi* | [**getServiceRequestList1**](Apis/ServiceRequestExternalControllerApi.md#getservicerequestlist1) | **GET** /api/adapter/service/request | GET service request list |
-*ServiceRequestExternalControllerApi* | [**syncServiceRequest**](Apis/ServiceRequestExternalControllerApi.md#syncservicerequest) | **POST** /api/adapter/service/request/{serviceRequestId} | SYNC service request into external object |
-*ServiceRequestExternalControllerApi* | [**updateServiceRequestByExternalId**](Apis/ServiceRequestExternalControllerApi.md#updateservicerequestbyexternalid) | **PUT** /api/adapter/service/request/{serviceRequestId} | UPDATE service request by external Id |
+| *ServiceRequestExternalControllerApi* | [**getServiceRequestList1**](Apis/ServiceRequestExternalControllerApi.md#getservicerequestlist1) | **GET** /api/adapter/service/request | GET service request list |
+*ServiceRequestExternalControllerApi* | [**updateServiceRequestIsActiveById**](Apis/ServiceRequestExternalControllerApi.md#updateservicerequestisactivebyid) | **PUT** /api/adapter/service/request/{serviceRequestId}/active | UPDATE service request active status by Id |
+*ServiceRequestExternalControllerApi* | [**updateServiceRequestStatusById**](Apis/ServiceRequestExternalControllerApi.md#updateservicerequeststatusbyid) | **PUT** /api/adapter/service/request/{serviceRequestId}/status | UPDATE service request status by Id |
 | *ServiceRequestPriorityControllerApi* | [**createServiceRequestPriorityList**](Apis/ServiceRequestPriorityControllerApi.md#createservicerequestprioritylist) | **POST** /api/service/request/priority | CREATE or UPDATE complete priority list |
 *ServiceRequestPriorityControllerApi* | [**deleteServiceRequestpriorityById**](Apis/ServiceRequestPriorityControllerApi.md#deleteservicerequestprioritybyid) | **DELETE** /api/service/request/priority/{priorityOrdinal} | DELETE service request priority |
 *ServiceRequestPriorityControllerApi* | [**getServiceRequestPriorityList**](Apis/ServiceRequestPriorityControllerApi.md#getservicerequestprioritylist) | **GET** /api/service/request/priority | GET service request priority list |
@@ -50,7 +49,6 @@ All URIs are relative to *http://localhost:8080*
  - [ServiceRequestPatchRqBody](./Models/ServiceRequestPatchRqBody.md)
  - [ServiceRequestPostRqBody](./Models/ServiceRequestPostRqBody.md)
  - [ServiceRequestPriority](./Models/ServiceRequestPriority.md)
- - [ServiceRequestRef](./Models/ServiceRequestRef.md)
  - [ServiceRequestSource](./Models/ServiceRequestSource.md)
  - [ServiceRequestStatus](./Models/ServiceRequestStatus.md)
 
