@@ -33,6 +33,7 @@ import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPat
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -316,5 +317,22 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		log.info("Attachment info: Service request {}", serviceRequestId);
 		return eventAttachmentApi.downloadEventAttachment(serviceRequestId);
 	}
+	
+	@Override
+	public ServiceRequest updateServiceRequestStatus(String id, ServiceRequestStatus status) {
+		log.info("Change status of service request to id={}, name={}", status.getId(), status.getName());
+		
+		ServiceRequestPatchRqBody serviceRequestPatch = new ServiceRequestPatchRqBody();
+		serviceRequestPatch.setStatus(status);
+		return updateServiceRequest(id, serviceRequestPatch);
+	}
 
+	@Override
+	public ServiceRequest updateServiceRequestActive(String id, Boolean isActive) {
+		log.info("Change active status of service request to isActive={}", isActive);
+		
+		ServiceRequestPatchRqBody serviceRequestPatch = new ServiceRequestPatchRqBody();
+		serviceRequestPatch.setIsActive(isActive);
+		return updateServiceRequest(id, serviceRequestPatch);
+	}
 }
