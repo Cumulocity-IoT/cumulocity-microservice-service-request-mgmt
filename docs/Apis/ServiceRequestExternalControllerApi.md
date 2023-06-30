@@ -4,36 +4,10 @@ All URIs are relative to *http://localhost:8080*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**getServiceRequestByExternalId**](ServiceRequestExternalControllerApi.md#getServiceRequestByExternalId) | **GET** /api/adapter/service/request/{serviceRequestExternalId} | GET service request by external Id |
 | [**getServiceRequestList1**](ServiceRequestExternalControllerApi.md#getServiceRequestList1) | **GET** /api/adapter/service/request | GET service request list |
-| [**syncServiceRequest**](ServiceRequestExternalControllerApi.md#syncServiceRequest) | **POST** /api/adapter/service/request/{serviceRequestId} | SYNC service request into external object |
-| [**updateServiceRequestByExternalId**](ServiceRequestExternalControllerApi.md#updateServiceRequestByExternalId) | **PUT** /api/adapter/service/request/{serviceRequestId} | UPDATE service request by external Id |
+| [**updateServiceRequestIsActiveById**](ServiceRequestExternalControllerApi.md#updateServiceRequestIsActiveById) | **PUT** /api/adapter/service/request/{serviceRequestId}/active | UPDATE service request active status by Id |
+| [**updateServiceRequestStatusById**](ServiceRequestExternalControllerApi.md#updateServiceRequestStatusById) | **PUT** /api/adapter/service/request/{serviceRequestId}/status | UPDATE service request status by Id |
 
-
-<a name="getServiceRequestByExternalId"></a>
-# **getServiceRequestByExternalId**
-> ServiceRequest getServiceRequestByExternalId(serviceRequestExternalId)
-
-GET service request by external Id
-
-### Parameters
-
-|Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **serviceRequestExternalId** | **String**|  | [default to null] |
-
-### Return type
-
-[**ServiceRequest**](../Models/ServiceRequest.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
 
 <a name="getServiceRequestList1"></a>
 # **getServiceRequestList1**
@@ -62,23 +36,24 @@ No authorization required
 - **Content-Type**: Not defined
 - **Accept**: application/json
 
-<a name="syncServiceRequest"></a>
-# **syncServiceRequest**
-> ServiceRequestRef syncServiceRequest(serviceRequestId)
+<a name="updateServiceRequestIsActiveById"></a>
+# **updateServiceRequestIsActiveById**
+> ServiceRequest updateServiceRequestIsActiveById(serviceRequestId, body)
 
-SYNC service request into external object
+UPDATE service request active status by Id
 
-    Triggers the adapter to update or create new external object at external system. If ServiceRequestRef contains already an externalId it is most likely an update. If the request body contains only internalId a new object must be created.
+    Updates specific service status request.
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **serviceRequestId** | **String**|  | [default to null] |
+| **body** | **Boolean**|  | |
 
 ### Return type
 
-[**ServiceRequestRef**](../Models/ServiceRequestRef.md)
+[**ServiceRequest**](../Models/ServiceRequest.md)
 
 ### Authorization
 
@@ -86,23 +61,23 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: application/json
 - **Accept**: application/json
 
-<a name="updateServiceRequestByExternalId"></a>
-# **updateServiceRequestByExternalId**
-> ServiceRequest updateServiceRequestByExternalId(serviceRequestId, ServiceRequestPatchRqBody)
+<a name="updateServiceRequestStatusById"></a>
+# **updateServiceRequestStatusById**
+> ServiceRequest updateServiceRequestStatusById(serviceRequestId, ServiceRequestStatus)
 
-UPDATE service request by external Id
+UPDATE service request status by Id
 
-    Updates specific service request.
+    Updates specific service status request.
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **serviceRequestId** | **String**|  | [default to null] |
-| **ServiceRequestPatchRqBody** | [**ServiceRequestPatchRqBody**](../Models/ServiceRequestPatchRqBody.md)|  | |
+| **ServiceRequestStatus** | [**ServiceRequestStatus**](../Models/ServiceRequestStatus.md)|  | |
 
 ### Return type
 
