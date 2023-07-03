@@ -1,6 +1,7 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
@@ -33,11 +34,14 @@ public class ManagedObjectMapper {
 		return (Map<String, Long>) managedObjectRepresentation.get(SR_ACTIVE_STATUS);
 	}
 
-	public void updateServiceRequestPriorityCounter(RequestList<ServiceRequest> serviceRequestList) {
+	public void updateServiceRequestPriorityCounter(RequestList<ServiceRequest> serviceRequestList, String... excludeStatusList ) {
 		Map<String, Long> priorityCounterMap = new HashMap<>();
-
+		List<String> excludeList = List.of(excludeStatusList);
+		
 		for (ServiceRequest serviceRequest : serviceRequestList.getList()) {
-			priorityCounterMap.merge(serviceRequest.getPriority().getName().replace(" ", "_"), 1L, Long::sum);
+			if(excludeList.contains(serviceRequest.getStatus().getName()) == false) {
+				priorityCounterMap.merge(serviceRequest.getPriority().getName().replace(" ", "_"), 1L, Long::sum);
+			}
 		}
 		
 		managedObjectRepresentation.set(priorityCounterMap, SR_ACTIVE_STATUS);

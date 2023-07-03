@@ -1,5 +1,6 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
+import com.cumulocity.model.event.CumulocityAlarmStatuses;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 
@@ -24,7 +25,7 @@ public class AlarmMapper {
 		super();
 		this.alarm = new AlarmRepresentation();
 		this.alarm.setId(GId.asGId(alarmId));
-		this.alarm.setStatus("acknowledged");
+		this.alarm.setStatus(CumulocityAlarmStatuses.ACKNOWLEDGED.toString());
 	}
 	
 	public String getServiceRequestEventId() {
