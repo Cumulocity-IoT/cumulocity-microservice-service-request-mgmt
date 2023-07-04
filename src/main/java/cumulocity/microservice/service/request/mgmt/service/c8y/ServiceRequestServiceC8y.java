@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import com.cumulocity.model.event.CumulocityAlarmStatuses;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
@@ -67,7 +68,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequest newServiceRequest = ServiceRequestEventMapper.map2(createdEvent);
 
 		// Update Alarm
-		AlarmMapper alarmMapper = AlarmMapper.map2(newServiceRequest);
+		//TODO Default is set to CLEARED, next version the calling system should define which status should be set or even if alarm should be updated!
+		CumulocityAlarmStatuses alarmStatus = CumulocityAlarmStatuses.CLEARED;
+		AlarmMapper alarmMapper = AlarmMapper.map2(newServiceRequest, alarmStatus);
 		if (alarmMapper != null) {
 			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
 			alarmApi.update(alarmRepresentation);
