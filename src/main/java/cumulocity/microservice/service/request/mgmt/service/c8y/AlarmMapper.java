@@ -11,21 +11,21 @@ public class AlarmMapper {
 
 	private AlarmRepresentation alarm;
 	
-	public static AlarmMapper map2(ServiceRequest serviceRequest) {
+	public static AlarmMapper map2(ServiceRequest serviceRequest, CumulocityAlarmStatuses status) {
 		if(serviceRequest == null || serviceRequest.getId() == null || serviceRequest.getAlarmRef() == null) {
 			return null;
 		}
 		
-		AlarmMapper mapper = new AlarmMapper(serviceRequest.getAlarmRef().getId());
+		AlarmMapper mapper = new AlarmMapper(serviceRequest.getAlarmRef().getId(), status);
 		mapper.setServiceRequestEventId(serviceRequest.getId());
 		return mapper;	
 	}
 
-	public AlarmMapper(String alarmId) {
+	public AlarmMapper(String alarmId, CumulocityAlarmStatuses status) {
 		super();
 		this.alarm = new AlarmRepresentation();
 		this.alarm.setId(GId.asGId(alarmId));
-		this.alarm.setStatus(CumulocityAlarmStatuses.ACKNOWLEDGED.toString());
+		this.alarm.setStatus(status.toString());
 	}
 	
 	public String getServiceRequestEventId() {
