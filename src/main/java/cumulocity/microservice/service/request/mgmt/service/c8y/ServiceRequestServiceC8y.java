@@ -76,7 +76,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), "closed");
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return newServiceRequest;
@@ -94,7 +94,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(updatedServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), "closed");
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return updatedServiceRequest;

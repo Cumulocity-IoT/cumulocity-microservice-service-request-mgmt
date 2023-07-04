@@ -1,22 +1,17 @@
 ## cumulocity-microservice-service-request-mgmt
 
-## Purpose
-
-This microservice i one component which will extend Cumulocity for customers which have an additional service offering for the equipment (devices). This services can be heterogeneous like help desk support, maintenance support and/or availability contracts, production guarantee etc. Also onboarding (installation) and offboarding (deinstallation) of equipment on the field can be included. However, all this services usually need additional people (service technicians) and software tools like Issue-Tracking-System (ITS), Field Service Management (FSM).
-
-![Asset Management & ITS & FSM ](./docs/ITS_FSM_AssetManagement.jpg)
-
-The microservice provides an API and a domain model to handle and integrate ITS and FSM. The concrete integration to a system like Zendesk or ServiceNow is not part of this component, it only provides a suitable abstract API for it.
+This microservice provides a domain specific API & Model for Field Service Managment (FSM) and Issue-Tracking-System (ITS).
 
 [Open API Specification](./docs/README.md)
 
-The overall solution contains following components:
+The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) uses only this API to manage and create service requests in Cumulocity.
 
-- Extended UI application
-- Microservice (Service-Request-Mgmt)
-- System X Adapter
+The microservice also contains a [default service implementation](src/main/java/cumulocity/microservice/service/request/mgmt/service/c8y)
 
-![Component diagram](./docs/service-request-component-diagram.png)
+This default classes provide a basic FMS implementation in Cumulocity which is working without connecting to any external system. The internal created objects (Events) can be used to implement an asynchronous integration mechanism. 
+If a synchronous (direct) integration to a system FSM/ITS is needed following service interfaces must be implemented:
+
+[Service Interfaces](src/main/java/cumulocity/microservice/service/request/mgmt/service)
 
 ## Prerequisites
 
