@@ -21,7 +21,7 @@ GET service request list
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **assigned** | **Boolean**| filter, \&quot;true\&quot; returns all service request with external Id assigned, \&quot;false\&quot; returns service requests which doesn&#39;t have external Id assigned. | [default to null] |
+| **assigned** | **Boolean**| filter, \&quot;true\&quot; returns all service request with external Id assigned, \&quot;false\&quot; returns service requests which doesn&#39;t have external Id assigned. | [optional] [default to null] |
 
 ### Return type
 

@@ -190,13 +190,18 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		List<ServiceRequest> serviceRequestList = new ArrayList<>();
 		for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {
 			EventRepresentation eventRepresentation = iterator.next();
-			Object externalId = eventRepresentation.get(ServiceRequestEventMapper.SR_EXTERNAL_ID);
-			if (assigned && externalId != null) {
+			if(assigned == null) {
 				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
 				serviceRequestList.add(sr);
-			} else if (!assigned && externalId == null) {
-				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
-				serviceRequestList.add(sr);
+			}else {
+				Object externalId = eventRepresentation.get(ServiceRequestEventMapper.SR_EXTERNAL_ID);
+				if (assigned && externalId != null) {
+					ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
+					serviceRequestList.add(sr);
+				} else if (!assigned && externalId == null) {
+					ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
+					serviceRequestList.add(sr);
+				}
 			}
 		}
 		return serviceRequestList;
