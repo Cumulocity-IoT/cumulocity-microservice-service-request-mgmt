@@ -55,7 +55,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Value("${alarm.status.after.closing:CLEARED}")
 	private String alarmStatusAfterClosing;
 	
-	private static String SR_STATUS_CLOSED = "closed";
+	@Value("${service.request.status.closed:Closed}")
+	private String srStatusClosed;
 			
 	@Autowired
 	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
@@ -79,7 +80,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), SR_STATUS_CLOSED);
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusClosed);
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return newServiceRequest;
@@ -94,14 +95,14 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		ServiceRequest updatedServiceRequest = eventMapper.map2(updatedEvent);
 
-		if(!SR_STATUS_CLOSED.equalsIgnoreCase(originalServiceRequest.getStatus().getName()) && SR_STATUS_CLOSED.equalsIgnoreCase(updatedServiceRequest.getStatus().getName())) {
+		if(!srStatusClosed.equalsIgnoreCase(originalServiceRequest.getStatus().getName()) && srStatusClosed.equalsIgnoreCase(updatedServiceRequest.getStatus().getName())) {
 			updateAlarm(updatedServiceRequest, CumulocityAlarmStatuses.valueOf(alarmStatusAfterClosing));
 		}
 		
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(updatedServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), SR_STATUS_CLOSED);
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusClosed);
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return updatedServiceRequest;
@@ -333,7 +334,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		serviceRequestPatch.setStatus(status);
 		ServiceRequest updatedServiceRequest = updateServiceRequest(id, serviceRequestPatch);
 		
-		if(SR_STATUS_CLOSED.equalsIgnoreCase(status.getName())) {
+		if(srStatusClosed.equalsIgnoreCase(status.getName())) {
 			updateAlarm(updatedServiceRequest, CumulocityAlarmStatuses.valueOf(alarmStatusAfterClosing));
 		}
 		
