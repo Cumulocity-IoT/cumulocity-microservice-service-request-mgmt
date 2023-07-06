@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -48,9 +49,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	private InventoryApi inventoryApi;
 	
-	private static CumulocityAlarmStatuses ALARM_STATUS_AFTER_SR_CREATION = CumulocityAlarmStatuses.ACKNOWLEDGED;
+	@Value("${alarm.status.after.creation:ACKNOWLEDGED}")
+	private String alarmStatusAfterCreation;
 	
-	private static CumulocityAlarmStatuses ALARM_STATUS_AFTER_SR_CLOSED = CumulocityAlarmStatuses.CLEARED;
+	@Value("${alarm.status.after.closing:CLEARED}")
+	private String alarmStatusAfterClosing;
 	
 	private static String SR_STATUS_CLOSED = "closed";
 			
@@ -71,7 +74,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		EventRepresentation createdEvent = eventApi.create(eventMapper.getEvent());
 		ServiceRequest newServiceRequest = ServiceRequestEventMapper.map2(createdEvent);
 
-		updateAlarm(newServiceRequest, ALARM_STATUS_AFTER_SR_CREATION);
+		updateAlarm(newServiceRequest, CumulocityAlarmStatuses.valueOf(alarmStatusAfterCreation));
 		
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
@@ -91,8 +94,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		ServiceRequest updatedServiceRequest = eventMapper.map2(updatedEvent);
 
-		if(!SR_STATUS_CLOSED.equals(originalServiceRequest.getStatus().getName()) && SR_STATUS_CLOSED.equals(updatedServiceRequest.getStatus().getName())) {
-			updateAlarm(updatedServiceRequest, ALARM_STATUS_AFTER_SR_CLOSED);
+		if(!SR_STATUS_CLOSED.equalsIgnoreCase(originalServiceRequest.getStatus().getName()) && SR_STATUS_CLOSED.equalsIgnoreCase(updatedServiceRequest.getStatus().getName())) {
+			updateAlarm(updatedServiceRequest, CumulocityAlarmStatuses.valueOf(alarmStatusAfterClosing));
 		}
 		
 		// Update Managed Object
@@ -330,8 +333,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		serviceRequestPatch.setStatus(status);
 		ServiceRequest updatedServiceRequest = updateServiceRequest(id, serviceRequestPatch);
 		
-		if(SR_STATUS_CLOSED.equals(status.getName())) {
-			updateAlarm(updatedServiceRequest, ALARM_STATUS_AFTER_SR_CLOSED);
+		if(SR_STATUS_CLOSED.equalsIgnoreCase(status.getName())) {
+			updateAlarm(updatedServiceRequest, CumulocityAlarmStatuses.valueOf(alarmStatusAfterClosing));
 		}
 		
 		return updatedServiceRequest;
