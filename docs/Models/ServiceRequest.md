@@ -17,6 +17,7 @@
 | **lastUpdated** | **Date** | Update date time | [default to null] |
 | **owner** | **String** | Creator / owner | [default to null] |
 | **isActive** | **Boolean** | Service request active flag, shows if the service request is active! | [optional] [default to null] |
+| **isClosed** | [**Object**](.md) | Service request closed flag, shows if the service request is closed! This fragment is basicaly used for retention rules. | [optional] [default to null] |
 | **externalId** | **String** | Service request external ID, contains the service request object ID of the external system. | [optional] [default to null] |
 | **attachment** | [**ServiceRequestAttachment**](ServiceRequestAttachment.md) |  | [optional] [default to null] |
 | **customProperties** | **Map** | Custom specific properties | [optional] [default to null] |
