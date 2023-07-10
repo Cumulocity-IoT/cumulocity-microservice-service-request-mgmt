@@ -46,18 +46,31 @@ public class ServiceRequestStatusServiceC8y implements ServiceRequestStatusServi
 	}
 
 	@Override
-	public ServiceRequestStatus getStatus(String statusId) {
+	public Optional<ServiceRequestStatus> getStatus(String statusId) {
 		ManagedObjectRepresentation managedObject = getManagedObjectRepresentation();
 		if(managedObject == null) {
-			return null;
+			return Optional.empty();
 		}
 		List<ServiceRequestStatus> serviceRequestStatus = ServiceRequestStatusObjectMapper.map2(managedObject);
 
 		Optional<ServiceRequestStatus> matchingObject = serviceRequestStatus.stream()
 				.filter(sr -> sr.getId().equals(statusId)).findFirst();
-		return matchingObject.isEmpty() ? null: matchingObject.get();
+		return matchingObject;
 	}
 
+	@Override
+	public Optional<ServiceRequestStatus> getStatusByName(String statusName) {
+		ManagedObjectRepresentation managedObject = getManagedObjectRepresentation();
+		if(managedObject == null) {
+			return Optional.empty();
+		}
+		List<ServiceRequestStatus> serviceRequestStatus = ServiceRequestStatusObjectMapper.map2(managedObject);
+
+		Optional<ServiceRequestStatus> matchingObject = serviceRequestStatus.stream()
+				.filter(sr -> sr.getName().equals(statusName)).findFirst();
+		return matchingObject;
+	}
+	
 	@Override
 	public void deleteStatus(String statusId) {
 		ManagedObjectRepresentation managedObject = getManagedObjectRepresentation();

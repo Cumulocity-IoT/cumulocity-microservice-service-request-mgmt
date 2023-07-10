@@ -1,6 +1,7 @@
 package cumulocity.microservice.service.request.mgmt.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,11 +61,11 @@ public class ServiceRequestStatusController {
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@GetMapping(path = "/{statusId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequestStatus> getServiceRequestStatusById(@PathVariable String statusId) {
-		ServiceRequestStatus status = statusService.getStatus(statusId);
-		if (status == null) {
+		Optional<ServiceRequestStatus> status = statusService.getStatus(statusId);
+		if (status.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<ServiceRequestStatus>(status, HttpStatus.OK);
+		return new ResponseEntity<ServiceRequestStatus>(status.get(), HttpStatus.OK);
 	}
 
 	@Operation(summary = "DELETE service request status by Id", description = "", tags = {})
@@ -72,8 +73,8 @@ public class ServiceRequestStatusController {
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@DeleteMapping(path = "/{statusId}")
 	public ResponseEntity<Void> deleteServiceRequestStatusById(@PathVariable String statusId) {
-		ServiceRequestStatus status = statusService.getStatus(statusId);
-		if (status == null) {
+		Optional<ServiceRequestStatus> status = statusService.getStatus(statusId);
+		if (status.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);
 		}
 		statusService.deleteStatus(statusId);

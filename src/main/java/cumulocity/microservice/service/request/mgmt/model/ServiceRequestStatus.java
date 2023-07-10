@@ -25,4 +25,10 @@ public class ServiceRequestStatus {
 	@NotNull
 	@NonNull
 	private String name;
+	
+	@Schema(required = false, description = "Set Alarm status when this status of Service Request status is set. (Transition)", example = "ACKNOWLEDGED")
+	private String alarmStatusTransition;
+	
+	@Schema(required = false, description = "Closed Service Request when this status of Service Request is set. (Transition)", example = "true")	
+	private Boolean isClosedTransition;
 }
