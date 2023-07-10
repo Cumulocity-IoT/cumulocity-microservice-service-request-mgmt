@@ -63,6 +63,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
 		this.inventoryApi = inventoryApi;
+		this.serviceRequestStatusService = serviceRequestStatusService;
 	}
 
 	@Override
@@ -102,9 +103,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
 		
 		//Closing transition
-		if(srStatus.get().getIsClosedTransition() || Boolean.FALSE.equals(serviceRequest.getIsActive())) {
+		if(srStatus.get().getIsClosedTransition() != null || Boolean.FALSE.equals(serviceRequest.getIsActive())) {
 			eventMapper.setIsActive(Boolean.FALSE);
-			eventMapper.setIsClosed();
+			eventMapper.setIsClosed(Boolean.TRUE);
 		}
 		
 		EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
