@@ -12,7 +12,5 @@ public interface ServiceRequestStatusService {
 
 	public Optional<ServiceRequestStatus> getStatus(String statusId);
 	
-	public Optional<ServiceRequestStatus> getStatusByName(String statusName);
-
 	public void deleteStatus(String statusId);
 }
