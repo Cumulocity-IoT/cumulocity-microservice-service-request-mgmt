@@ -9,6 +9,17 @@ The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/
 The microservice also contains a [default service implementation](src/main/java/cumulocity/microservice/service/request/mgmt/service/c8y)
 
 This default classes provide a basic FMS implementation in Cumulocity which is working without connecting to any external system. The internal created objects (Events) can be used to implement an asynchronous integration mechanism. 
+
+Features:
+
+- Declarative configuration of status list. This allows you to introduce your own status list and behavior with additional informations like alarm status transition, close transition, icon etc..
+- Service requests are stored as event
+- Specific Retention rule can be configured for EVENT with fragment type sr_Closed and Type c8y_ServiceReqeust
+- Event attachment features is used for Service Request attachments
+- Service request comments also stored as separate events
+- Service request counter at device managed object
+- Bidirectional reference between alarm and service request
+
 If a synchronous (direct) integration to a system FSM/ITS is needed following service interfaces must be implemented:
 
 [Service Interfaces](src/main/java/cumulocity/microservice/service/request/mgmt/service)
