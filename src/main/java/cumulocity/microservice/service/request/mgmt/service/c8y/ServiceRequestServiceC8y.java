@@ -52,9 +52,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	private InventoryApi inventoryApi;
 	
 	private ServiceRequestStatusService serviceRequestStatusService;
-	
-	@Value("${service.request.status.closed:Closed}")
-	private String srStatusClosed;
 			
 	@Autowired
 	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
@@ -69,9 +66,14 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
 		Optional<ServiceRequestStatus> srStatus = serviceRequestStatusService.getStatus(serviceRequestRqBody.getStatus().getId());
+		String srStatusIdExclude = null;
 		if(srStatus.isEmpty()) {
 			log.warn("Status {} is not part of the configured status list!");
+		}else {
+			srStatusIdExclude = srStatus.get().getExcludeForCounter() ? srStatus.get().getId(): null;
 		}
+		
+		
 		
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequestRqBody);
 		eventMapper.setOwner(owner);
@@ -85,7 +87,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusClosed);
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return newServiceRequest;
@@ -94,8 +96,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest) {
 		Optional<ServiceRequestStatus> srStatus = serviceRequestStatusService.getStatus(serviceRequest.getStatus().getId());
+		String srStatusIdExclude = null;
 		if(srStatus.isEmpty()) {
 			log.warn("Status {} is not part of the configured status list!");
+		}else {
+			srStatusIdExclude = srStatus.get().getExcludeForCounter() ? srStatus.get().getId(): null;
 		}
 		
 		ServiceRequest originalServiceRequest = getServiceRequestById(id);
@@ -120,7 +125,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(updatedServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusClosed);
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return updatedServiceRequest;
