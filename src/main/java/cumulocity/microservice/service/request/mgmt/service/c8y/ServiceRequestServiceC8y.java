@@ -70,7 +70,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		if(srStatus.isEmpty()) {
 			log.warn("Status {} is not part of the configured status list!");
 		}else {
-			srStatusIdExclude = srStatus.get().getExcludeForCounter() ? srStatus.get().getId(): null;
+			srStatusIdExclude = srStatus.get().getExcludeForCounter() != null ? srStatus.get().getId(): null;
 		}
 		
 		
@@ -87,7 +87,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
+		if(srStatusIdExclude == null) {
+			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
+		}else {
+			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
+		}
+
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return newServiceRequest;
@@ -100,7 +105,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		if(srStatus.isEmpty()) {
 			log.warn("Status {} is not part of the configured status list!");
 		}else {
-			srStatusIdExclude = srStatus.get().getExcludeForCounter() ? srStatus.get().getId(): null;
+			srStatusIdExclude = srStatus.get().getExcludeForCounter() != null ? srStatus.get().getId(): null;
 		}
 		
 		ServiceRequest originalServiceRequest = getServiceRequestById(id);
@@ -125,7 +130,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(updatedServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
+		if(srStatusIdExclude == null) {
+			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
+		}else {
+			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
+		}
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return updatedServiceRequest;
