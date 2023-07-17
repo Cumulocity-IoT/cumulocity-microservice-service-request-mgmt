@@ -32,6 +32,7 @@ public class ServiceRequestEventMapper {
 	public static final String SR_DESCRIPTION = "sr_Description";
 	public static final String SR_ALARM_REF = "sr_AlarmRef";
 	public static final String SR_ACTIVE = "sr_Active";
+	public static final String SR_CLOSED = "sr_Closed";
 	public static final String SR_EXTERNAL_ID = "sr_ExternalId";
 	public static final String C8Y_IS_BINARY = "c8y_IsBinary";
 	
@@ -97,6 +98,7 @@ public class ServiceRequestEventMapper {
 		serviceRequest.setIsActive(mapper.getIsActive());
 		serviceRequest.setAttachment(mapper.getAttachment());
 		serviceRequest.setExternalId(mapper.getExternalId());
+		serviceRequest.setIsClosed(mapper.getIsClosed());
 		return serviceRequest;
 	}
 	
@@ -272,6 +274,18 @@ public class ServiceRequestEventMapper {
 			return;
 		}
 		event.set(isActive.toString(), SR_ACTIVE);
+	}
+	
+	public Boolean getIsClosed() {
+		String isClosed = (String) event.get(SR_CLOSED);
+		return Boolean.valueOf(isClosed);
+	}
+	
+	public void setIsClosed(Boolean isClosed) {
+		if(isClosed == null) {
+			return;
+		}
+		event.set(isClosed.toString(), SR_CLOSED);
 	}
 	
 	public ServiceRequestAttachment getAttachment() {

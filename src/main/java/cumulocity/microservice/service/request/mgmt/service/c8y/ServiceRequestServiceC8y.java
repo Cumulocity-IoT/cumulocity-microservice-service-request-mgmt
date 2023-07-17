@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,7 @@ import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -49,38 +51,49 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	private InventoryApi inventoryApi;
 	
-	@Value("${alarm.status.after.creation:ACKNOWLEDGED}")
-	private String alarmStatusAfterCreation;
-	
-	@Value("${alarm.status.after.closing:CLEARED}")
-	private String alarmStatusAfterClosing;
-	
-	@Value("${service.request.status.closed:Closed}")
-	private String srStatusClosed;
+	private ServiceRequestStatusService serviceRequestStatusService;
 			
 	@Autowired
 	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
-			InventoryApi inventoryApi) {
+			InventoryApi inventoryApi, ServiceRequestStatusService serviceRequestStatusService) {
 		this.eventApi = eventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
 		this.inventoryApi = inventoryApi;
+		this.serviceRequestStatusService = serviceRequestStatusService;
 	}
 
 	@Override
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
+		Optional<ServiceRequestStatus> srStatus = serviceRequestStatusService.getStatus(serviceRequestRqBody.getStatus().getId());
+		String srStatusIdExclude = null;
+		if(srStatus.isEmpty()) {
+			log.warn("Status {} is not part of the configured status list!");
+		}else {
+			srStatusIdExclude = srStatus.get().getExcludeForCounter() != null ? srStatus.get().getId(): null;
+		}
+		
+		
+		
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequestRqBody);
 		eventMapper.setOwner(owner);
 		eventMapper.setIsActive(Boolean.TRUE);
 		EventRepresentation createdEvent = eventApi.create(eventMapper.getEvent());
 		ServiceRequest newServiceRequest = ServiceRequestEventMapper.map2(createdEvent);
 
-		updateAlarm(newServiceRequest, CumulocityAlarmStatuses.valueOf(alarmStatusAfterCreation));
+		// Alarm status transition
+		updateAlarm(newServiceRequest, srStatus.get());
 		
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusClosed);
+
+		if(srStatusIdExclude == null) {
+			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
+		}else {
+			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
+		}
+
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return newServiceRequest;
@@ -88,21 +101,41 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest) {
+		Optional<ServiceRequestStatus> srStatus = serviceRequestStatusService.getStatus(serviceRequest.getStatus().getId());
+		String srStatusIdExclude = null;
+		if(srStatus.isEmpty()) {
+			log.warn("Status {} is not part of the configured status list!");
+		}else {
+			srStatusIdExclude = srStatus.get().getExcludeForCounter() != null ? srStatus.get().getId(): null;
+		}
+		
 		ServiceRequest originalServiceRequest = getServiceRequestById(id);
 
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
+		
+		//Closing transition
+		if(srStatus.get().getIsClosedTransition() != null || Boolean.FALSE.equals(serviceRequest.getIsActive())) {
+			eventMapper.setIsActive(Boolean.FALSE);
+			eventMapper.setIsClosed(Boolean.TRUE);
+		}
+		
 		EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
 
 		ServiceRequest updatedServiceRequest = eventMapper.map2(updatedEvent);
 
-		if(!srStatusClosed.equalsIgnoreCase(originalServiceRequest.getStatus().getName()) && srStatusClosed.equalsIgnoreCase(updatedServiceRequest.getStatus().getName())) {
-			updateAlarm(updatedServiceRequest, CumulocityAlarmStatuses.valueOf(alarmStatusAfterClosing));
+		// Alarm status transition
+		if(!originalServiceRequest.getStatus().getId().equals(updatedServiceRequest.getStatus().getId())) {
+			updateAlarm(updatedServiceRequest, srStatus.get());
 		}
 		
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(updatedServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusClosed);
+		if(srStatusIdExclude == null) {
+			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
+		}else {
+			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
+		}
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return updatedServiceRequest;
@@ -190,13 +223,18 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		List<ServiceRequest> serviceRequestList = new ArrayList<>();
 		for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {
 			EventRepresentation eventRepresentation = iterator.next();
-			Object externalId = eventRepresentation.get(ServiceRequestEventMapper.SR_EXTERNAL_ID);
-			if (assigned && externalId != null) {
+			if(assigned == null) {
 				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
 				serviceRequestList.add(sr);
-			} else if (!assigned && externalId == null) {
-				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
-				serviceRequestList.add(sr);
+			}else {
+				Object externalId = eventRepresentation.get(ServiceRequestEventMapper.SR_EXTERNAL_ID);
+				if (assigned && externalId != null) {
+					ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
+					serviceRequestList.add(sr);
+				} else if (!assigned && externalId == null) {
+					ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
+					serviceRequestList.add(sr);
+				}
 			}
 		}
 		return serviceRequestList;
@@ -333,11 +371,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequestPatchRqBody serviceRequestPatch = new ServiceRequestPatchRqBody();
 		serviceRequestPatch.setStatus(status);
 		ServiceRequest updatedServiceRequest = updateServiceRequest(id, serviceRequestPatch);
-		
-		if(srStatusClosed.equalsIgnoreCase(status.getName())) {
-			updateAlarm(updatedServiceRequest, CumulocityAlarmStatuses.valueOf(alarmStatusAfterClosing));
-		}
-		
 		return updatedServiceRequest;
 	}
 
@@ -350,7 +383,13 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		return updateServiceRequest(id, serviceRequestPatch);
 	}
 	
-	private void updateAlarm(ServiceRequest serviceRequest, CumulocityAlarmStatuses alarmStatus) {
+	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestStatus srStatus) {
+		if(serviceRequest == null) {
+			return;
+		}
+		
+		CumulocityAlarmStatuses alarmStatus = srStatus.getAlarmStatusTransition() != null ? CumulocityAlarmStatuses.valueOf(srStatus.getAlarmStatusTransition()): null;
+
 		if(alarmStatus == null) {
 			return;
 		}
