@@ -87,6 +87,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
+
 		if(srStatusIdExclude == null) {
 			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
 		}else {
@@ -388,6 +389,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 		
 		CumulocityAlarmStatuses alarmStatus = srStatus.getAlarmStatusTransition() != null ? CumulocityAlarmStatuses.valueOf(srStatus.getAlarmStatusTransition()): null;
+
 		if(alarmStatus == null) {
 			return;
 		}
@@ -398,5 +400,4 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			alarmApi.update(alarmRepresentation);
 		}
 	}
-	
 }
