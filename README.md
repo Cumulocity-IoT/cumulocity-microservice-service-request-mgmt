@@ -1,14 +1,71 @@
-## cumulocity-microservice-service-request-mgmt
+# cumulocity-microservice-service-request-mgmt
 
-This microservice provides a domain specific API & Model for Field Service Managment (FSM) and Issue-Tracking-System (ITS).
+This microservice provides a domain specific API & Model for Field Service Managment (FSM) or Issue-Tracking-System (ITS).
 
-[Open API Specification](./docs/README.md)
+Following class diagram shows the model which is implemented by this Microservice:
 
-The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) uses only this API to manage and create service requests in Cumulocity.
+```mermaid
+classDiagram
+    ServiceRequest "1" -- "1" ServiceRequestStatus
+    ServiceRequest "1" -- "1" ServiceRequestPriority
+    ServiceRequest "1" -- "1" ServiceRequestAttachment
+    ServiceRequest "1" -- "1" ServiceRequestSource
+    ServiceRequest "1" -- "*" ServiceRequestComment
+     
+    class ServiceRequest{
+        +String id
+    }
+    class ServiceRequestStatus{
+        +String id
+    }
+    class ServiceRequestPriority{
+        +String id
+    }
+    class ServiceRequestAttachment{
+        +String id
+    }
+    class ServiceRequestSource{
+        +String id
+    }
+    class ServiceRequestComment{
+        +String id
+    }
+    class ServiceRequestDataRef{
+        +String id
+    }
+```
+
+Detailed information you can finde, [Open API Specification](./docs/README.md)
+
+The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) uses this REST API to manage and create service requests in Cumulocity.
 
 The microservice also contains a [default service implementation](src/main/java/cumulocity/microservice/service/request/mgmt/service/c8y)
 
-This default classes provide a basic FMS implementation in Cumulocity which is working without connecting to any external system. The internal created objects (Events) can be used to implement an asynchronous integration mechanism. 
+This default classes provide a basic FMS implementation in Cumulocity which is working without connecting to any external system. The internal created objects (Events) can be used to implement an asynchronous integration mechanism.
+
+## FSM or ITS integration options 
+
+### Proxy Object Implementation
+
+All objects like Service Request, Comments, etc are stored at Cumulocity IoT. The synchronisation of this data to FSM/ITS data must be implemented in an additional adapter.
+
+Pro:
+- Aynchronouse, the API calls of FSM/ITS can be managed
+- The processes are not blocked if connection problems to FSM/ITS occur
+
+Cons:
+- User doesn't get direct feedback if object is created at FSM/ITS.	
+
+### Proxy API Implementation
+
+Call direcly (forwareding) other API of FSM or ITS system without storing or creating objects at Cumulocity.
+
+Pro:
+-
+
+
+Con:
+-
 
 Features:
 
