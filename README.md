@@ -11,27 +11,64 @@ classDiagram
     ServiceRequest "1" -- "1" ServiceRequestAttachment
     ServiceRequest "1" -- "1" ServiceRequestSource
     ServiceRequest "1" -- "*" ServiceRequestComment
+    ServiceRequestComment "1" -- "1" ServiceRequestSource
+    ServiceRequestComment "1" -- "1" ServiceRequestAttachment
      
     class ServiceRequest{
         +String id
+        +String type
+        +ServiceRequestStatus status
+        +ServiceRequestPriority priority
+        +String title
+        +String description
+        +ServiceRequestSource source
+        +ServiceRequestDataRef alarmRef
+        +ServiceRequestDataRef eventRef
+        +ServiceRequestDataRef seriesRef
+        +Date creationTime
+        +Date lastUpdated
+        +String owner
+        +Boolean isActive
+        +Boolean isClosed
+        +String externalId
+        +ServiceRequestAttachment attachment
+        
     }
     class ServiceRequestStatus{
         +String id
+        +String name
+        +String icon
+        +String alarmStatusTransition
+        +Boolean isClosedTransition
+        +Boolean excludeForCounter
     }
     class ServiceRequestPriority{
-        +String id
+        +String name
+        +Long ordinal
     }
     class ServiceRequestAttachment{
-        +String id
+        +String name
+        +Long length
+        +String type
     }
     class ServiceRequestSource{
         +String id
+        +String self
     }
     class ServiceRequestComment{
         +String id
+        +String owner
+        +ServiceRequestSource source
+        +Date creationTime
+        +Date lastUpdated
+        +String text
+        +String type
+        +String serviceRequestId
+        +ServiceRequestAttachment attachment
     }
     class ServiceRequestDataRef{
         +String id
+        +String uri
     }
 ```
 
