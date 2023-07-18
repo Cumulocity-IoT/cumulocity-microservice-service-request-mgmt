@@ -6,13 +6,14 @@ Following class diagram shows the model which is implemented by this Microservic
 
 ```mermaid
 classDiagram
-    ServiceRequest "1" -- "1" ServiceRequestStatus
-    ServiceRequest "1" -- "1" ServiceRequestPriority
-    ServiceRequest "1" -- "1" ServiceRequestAttachment
-    ServiceRequest "1" -- "1" ServiceRequestSource
-    ServiceRequest "1" -- "*" ServiceRequestComment
-    ServiceRequestComment "1" -- "1" ServiceRequestSource
-    ServiceRequestComment "1" -- "1" ServiceRequestAttachment
+    ServiceRequest o-- ServiceRequestStatus
+    ServiceRequest o-- ServiceRequestPriority
+    ServiceRequest *-- ServiceRequestAttachment
+    ServiceRequest o-- ServiceRequestSource
+    ServiceRequest "1" *-- "*" ServiceRequestComment
+    ServiceRequest o-- ServiceRequestDataRef
+    ServiceRequestComment o-- ServiceRequestSource
+    ServiceRequestComment *-- ServiceRequestAttachment
      
     class ServiceRequest{
         +String id
