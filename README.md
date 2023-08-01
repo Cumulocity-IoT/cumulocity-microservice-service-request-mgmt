@@ -2,7 +2,7 @@
 
 This microservice provides a domain specific API & Model for Field Service Managment (FSM) or Issue-Tracking-System (ITS).
 
-Following class diagram shows the data model which is implemented by this Microservice. These classes and the identifiers are inspired by FSM but can also be used for a ITS in that case handle "Ticket" as ServiceRequest.
+Following class diagram shows the data model which is implemented by this Microservice. These classes and the identifiers are inspired by FSM but can also be used for a ITS in that case handle ServiceRequest as "Ticket".
 
 ```mermaid
 classDiagram
@@ -98,7 +98,7 @@ Pro:
 Cons:
 - User doesn't get direct feedback if object is created at FSM/ITS. (decoupled)
 - Unnecessary calls if polling is used, particular if not much service requests get created
-- Boundaries by using the user context
+- Boundaries by using user context
 
 Features of implementation:
 
