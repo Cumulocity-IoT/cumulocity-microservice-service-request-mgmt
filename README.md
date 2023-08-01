@@ -79,13 +79,13 @@ The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/
 
 The microservice also contains a [default service implementation](src/main/java/cumulocity/microservice/service/request/mgmt/service/c8y)
 
-This default classes provide a basic FMS implementation in Cumulocity which is working without connecting to any external system. The internal created objects (Events) can be used to implement an asynchronous integration mechanism.
+This default classes provide a basic FMS implementation in Cumulocity which is working without connecting to any external system. The internal created objects (Events) can be used to implement an asynchronous integration mechanism, see next integration option 1.
 
 ## FSM or ITS integration options 
 
-### Option 1, Proxy Object Implementation
+### Option 1, Proxy Object Implementation (asynchronous)
 
-As mentioned above, all objects like Service Request, Comments, etc are stored at Cumulocity IoT. Synchronisation of this data to FSM/ITS data must be implemented in an additional adapter. This can be done in a frequent running job (polling) or event based using Cumulocity notification API. All IoT data which is needed for FSM/ITS systems are requested by Cumulocity standard API. Which IoT Data is need is highly dependent on the use-case. If the FSM/ITS provides also an event base mechanism, this should be used for updating Service-Request status etc..
+As mentioned above, all objects like Service Request, Comments, etc are stored at Cumulocity IoT. Synchronisation of this data to FSM/ITS data must be implemented in an additional adapter. This can be done in a frequent running job (polling) or event based using Cumulocity notification API. All IoT data which is needed for FSM/ITS systems are requested by Cumulocity standard API. Which IoT Data is need is highly dependent on the use-case and must be implemented in the Adapter. If the FSM/ITS provides also an event base mechanism, this should be used for updating Service-Request status etc..
 
 ![Service Request Component Diagram](./docs/service-request-component-diagram.png)
 
@@ -100,7 +100,7 @@ Cons:
 - Unnecessary calls if polling is used, particular if not much service requests get created
 - Boundaries by using user context
 
-Features of implementation:
+Features of standard implementation:
 
 - Declarative configuration of status list. This allows you to introduce your own status list and behavior with additional informations like alarm status transition, close transition, icon etc..
 - Service requests are stored as event
@@ -111,7 +111,7 @@ Features of implementation:
 - Bidirectional reference between alarm and service request
 
 
-### Option 2, Proxy API Implementation
+### Option 2, Proxy API Implementation (synchronous)
 
 Call direct (forwarding) other API of FSM or ITS system without storing or creating objects at Cumulocity.
 
