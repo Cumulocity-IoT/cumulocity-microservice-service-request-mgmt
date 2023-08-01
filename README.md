@@ -75,7 +75,7 @@ classDiagram
 
 Detailed information about the REST API you can find, [Open API Specification](./docs/README.md)
 
-The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) uses this REST API to manage and create service requests in Cumulocity.
+The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) uses this REST API to perform typical CRUD operations.
 
 The microservice also contains a [default service implementation](src/main/java/cumulocity/microservice/service/request/mgmt/service/c8y)
 
@@ -91,6 +91,7 @@ As mentioned above, all objects like Service Request, Comments, etc are stored a
 
 Pro:
 - Asynchronous and decoupled, the API calls of FSM/ITS can configured and better managed, like polling rates etc.
+- Service Request management functions are already implemented and can be used
 - The processes are not blocked if connection problems to FSM/ITS occur
 - Feature can also be used without FSM/ITS integration 
 
@@ -124,7 +125,8 @@ Pro:
 
 Con:
 - Service Request / Ticket can only be created if FSM/ITS is available and reachable
-- High implementation effort
+- Additional implementation effort
+- If FSM/ITS system response slow, the complete solution will be slow, highly dependent on connectivity
 
 Following service interfaces must be implemented:
 

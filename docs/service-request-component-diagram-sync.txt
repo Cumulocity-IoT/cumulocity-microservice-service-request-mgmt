@@ -7,8 +7,6 @@ actor "on-site service tehcnician" as onsite
 
 [ITS/FSM] <-- onsite
 
-[ITS/FSM-Adapter]
-
 
 node "Cumulocity" {
 
