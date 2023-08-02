@@ -2,18 +2,18 @@
 
 This microservice provides a domain specific API & Model for Field Service Managment (FSM) or Issue-Tracking-System (ITS).
 
-Following class diagram shows the data model which is implemented by this Microservice. These classes and the identifiers are inspired by FSM but can also be used for a ITS in that case handle ServiceRequest as "Ticket".
+Following class diagram shows the data model which is implemented by this Microservice. These classes and the identifiers are inspired by FSM but can also be used for an ITS, in that case handle ServiceRequest as "Ticket".
 
 ```mermaid
 classDiagram
-    ServiceRequest o-- ServiceRequestStatus
-    ServiceRequest o-- ServiceRequestPriority
-    ServiceRequest *-- ServiceRequestAttachment
-    ServiceRequest o-- ServiceRequestSource
-    ServiceRequest "1" *-- "*" ServiceRequestComment
-    ServiceRequest o-- ServiceRequestDataRef
-    ServiceRequestComment o-- ServiceRequestSource
-    ServiceRequestComment *-- ServiceRequestAttachment
+    ServiceRequest "*" -- "1" ServiceRequestStatus
+    ServiceRequest "*" -- "1" ServiceRequestPriority
+    ServiceRequest "1" -- "1" ServiceRequestAttachment
+    ServiceRequest "*" -- "1" ServiceRequestSource
+    ServiceRequest "1" -- "*" ServiceRequestComment
+    ServiceRequest -- ServiceRequestDataRef
+    ServiceRequestComment "*" -- "1" ServiceRequestSource
+    ServiceRequestComment "1" -- "1" ServiceRequestAttachment
      
     class ServiceRequest{
         +String id
@@ -85,13 +85,13 @@ This default classes provide a basic FMS implementation in Cumulocity which is w
 
 ### Option 1, Proxy Object Implementation (asynchronous)
 
-As mentioned above, all objects like Service Request, Comments, etc are stored at Cumulocity IoT. Synchronisation of this data to FSM/ITS data must be implemented in an additional adapter. This can be done in a frequent running job (polling) or event based using Cumulocity notification API. All IoT data which is needed for FSM/ITS systems are requested by Cumulocity standard API. Which IoT Data is need is highly dependent on the use-case and must be implemented in the Adapter. If the FSM/ITS provides also an event base mechanism, this should be used for updating Service-Request status etc..
+As mentioned above, all objects like Service Request, Comments, etc are stored and managed at Cumulocity IoT. Synchronisation of this data to FSM/ITS data must be implemented in an additional component. This can be done in a frequent running job (polling) or event based using Cumulocity notification API. All IoT data which is needed for FSM/ITS systems are requested by Cumulocity standard API. Which IoT Data is need is highly dependent on the use-case and must be implemented in the Adapter. If the FSM/ITS provides also an event base mechanism, this should be used for updating Service-Request status etc..
 
 ![Service Request Component Diagram](./docs/service-request-component-diagram.png)
 
 Pro:
 - Asynchronous and decoupled, the API calls of FSM/ITS can configured and better managed, like polling rates etc.
-- Service Request management functions are already implemented and can be used
+- Service Request management functions are already implemented see features list below
 - The processes are not blocked if connection problems to FSM/ITS occur
 - Feature can also be used without FSM/ITS integration 
 
@@ -118,10 +118,9 @@ Call direct (forwarding) other API of FSM or ITS system without storing or creat
 ![Service Request Component Diagram](./docs/service-request-component-diagram-sync.png)
 
 Pro:
-- Direct an instant communication, user UI gets direct feedback if FSM/ITS object couldn't be created.
+- Direct an instant communication, UI gets direct feedback if FSM/ITS object couldn't be created.
 - No delay between UI feedback and FSM/ITS object creation.
 - No additional data stored at Cumulocity (no Inbound data transfer)
-
 
 Con:
 - Service Request / Ticket can only be created if FSM/ITS is available and reachable
