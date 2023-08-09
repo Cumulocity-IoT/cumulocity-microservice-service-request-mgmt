@@ -75,7 +75,7 @@ classDiagram
 
 Detailed information about the REST API you can find, [Open API Specification](./docs/README.md)
 
-The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) uses this REST API to perform typical CRUD operations.
+The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) uses this REST API to perform typical CRUD operations and makes this feature available for the users.
 
 The microservice also contains a [default service implementation](src/main/java/cumulocity/microservice/service/request/mgmt/service/c8y)
 
@@ -113,7 +113,7 @@ Features of standard implementation:
 
 ### Option 2, Proxy API Implementation (synchronous)
 
-Call direct (forwarding) other API of FSM or ITS system without storing or creating objects at Cumulocity.
+Call direct (forwarding) other API of FSM or ITS system without storing or creating objects at Cumulocity. The service implementation will contains the client for the external FSM/ITS and must also handle the connection details.
 
 ![Service Request Component Diagram](./docs/service-request-component-diagram-sync.png)
 
@@ -123,7 +123,7 @@ Pro:
 - No additional data stored at Cumulocity (no Inbound data transfer)
 
 Con:
-- Service Request / Ticket can only be created if FSM/ITS is available and reachable
+- Complete featuer can only be used if FSM/ITS is available and reachable
 - Additional implementation effort
 - If FSM/ITS system response slow, the complete solution will be slow, highly dependent on connectivity
 
