@@ -2,7 +2,7 @@
 
 This microservice provides a domain specific API & Model for Field Service Managment (FSM) or Issue-Tracking-System (ITS).
 
-Following class diagram shows the data model which is implemented by this Microservice. These classes and the identifiers are inspired by FSM but can also be used for an ITS, in that case handle ServiceRequest as "Ticket".
+Following class diagram shows the data model which is implemented by this Microservice. These classes and the identifiers are inspired by FSM but can also be used for an ITS, in that case handle ServiceRequest as Issue or Ticket.
 
 ```mermaid
 classDiagram
@@ -75,7 +75,7 @@ classDiagram
 
 Detailed information about the REST API you can find, [Open API Specification](./docs/README.md)
 
-The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) uses this REST API to perform typical CRUD operations and makes this feature available for the users.
+The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) uses this REST API to perform typical CRUD operations and makes this feature available for the cockpit application.
 
 The microservice also contains a [default service implementation](src/main/java/cumulocity/microservice/service/request/mgmt/service/c8y)
 
