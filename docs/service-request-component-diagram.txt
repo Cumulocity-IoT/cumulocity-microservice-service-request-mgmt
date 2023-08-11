@@ -1,0 +1,39 @@
+@startuml
+
+actor "in-house service technician" as inhouse
+actor "on-site service tehcnician" as onsite
+
+
+
+[ITS/FSM] <-- onsite
+
+[ITS/FSM-Adapter]
+
+
+node "Cumulocity" {
+
+	interface "Service_Request_REST_API" as SRAPI
+	interface "Cumulocity_REST_API" as C8yAPI
+
+
+		component "Service-Request-Mgmt-Microserivce" {
+			SRAPI --[service.request.mgmt.controller]
+			[service.request.mgmt.controller] --> [service.request.mgmt.service.c8y]
+			[service.request.mgmt.service.c8y] --> C8yAPI: CRUD Cumulocity Event
+			[ITS/FSM-Adapter] --> C8yAPI: collect all IoT data\n(Inventory, Events, Alarms and Measurements)\nby reference
+			[ITS/FSM-Adapter] --> [ITS/FSM]: create ITS/FSM object
+			[ITS/FSM] --> [ITS/FSM-Adapter]: change event from ITS/FSM object
+			[ITS/FSM-Adapter] --> [SRAPI]: get & update (sync) service request
+			
+		}
+
+	C8yAPI -- [Cumulocity Core]
+	
+	component "Cockpit" {
+		[cumulocity-service-request-plugin]  --> SRAPI
+		inhouse -> [cumulocity-service-request-plugin]
+	}
+}
+
+
+@enduml

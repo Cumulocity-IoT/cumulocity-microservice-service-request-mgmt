@@ -7,8 +7,6 @@ All URIs are relative to *http://localhost:8080*
 
 | Class | Method | HTTP request | Description |
 |------------ | ------------- | ------------- | -------------|
-| *ServiceObjectControllerApi* | [**createServiceObject**](Apis/ServiceObjectControllerApi.md#createserviceobject) | **POST** /api/service/object | Add new service object. |
-*ServiceObjectControllerApi* | [**getServiceObjecttById**](Apis/ServiceObjectControllerApi.md#getserviceobjecttbyid) | **GET** /api/service/object/{serviceObjectId} | GET service object by Id |
 | *ServiceRequestCommentControllerApi* | [**createServiceRequestComment**](Apis/ServiceRequestCommentControllerApi.md#createservicerequestcomment) | **POST** /api/service/request/{serviceRequestId}/comment | Add new service request comment to specific service request. |
 *ServiceRequestCommentControllerApi* | [**deleteServiceRequestCommentById**](Apis/ServiceRequestCommentControllerApi.md#deleteservicerequestcommentbyid) | **DELETE** /api/service/request/comment/{commentId} | DELETE service request comment by Id |
 *ServiceRequestCommentControllerApi* | [**downloadServiceRequestCommentAttachment**](Apis/ServiceRequestCommentControllerApi.md#downloadservicerequestcommentattachment) | **GET** /api/service/request/comment/{commentId}/attachment | DOWNLOAD attachment for specific comment |
@@ -40,7 +38,6 @@ All URIs are relative to *http://localhost:8080*
 
  - [RequestListServiceRequest](./Models/RequestListServiceRequest.md)
  - [RequestListServiceRequestComment](./Models/RequestListServiceRequestComment.md)
- - [ServiceObject](./Models/ServiceObject.md)
  - [ServiceRequest](./Models/ServiceRequest.md)
  - [ServiceRequestAttachment](./Models/ServiceRequestAttachment.md)
  - [ServiceRequestComment](./Models/ServiceRequestComment.md)
