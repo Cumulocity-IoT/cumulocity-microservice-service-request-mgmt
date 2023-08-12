@@ -75,7 +75,7 @@ public class ServiceRequestPriorityServiceC8y implements ServiceRequestPriorityS
 		inventoryApi.update(updateManagedObject);
 	}
 
-	private ManagedObjectRepresentation getManagedObjectRepresentation() {
+	protected ManagedObjectRepresentation getManagedObjectRepresentation() {
 		InventoryFilter filter = new InventoryFilter();
 		filter.byType(ServiceRequestPriorityObjectMapper.MANAGEDOBJECGT_TYPE);
 		ManagedObjectCollection managedObjectsByFilter = inventoryApi.getManagedObjectsByFilter(filter);

@@ -16,6 +16,7 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<junit.version>4.13.1</junit.version>
+		<mockito.version>5.4.0</mockito.version>
 		<spring-boot-dependencies.version>2.5.4</spring-boot-dependencies.version>
 		<c8y.version>1017.73.0</c8y.version>
 		<microservice.name>service-request-mgmt</microservice.name>
@@ -84,6 +85,12 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
