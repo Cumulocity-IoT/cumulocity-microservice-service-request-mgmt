@@ -131,6 +131,19 @@ Following service interfaces must be implemented:
 
 [Service Interfaces](src/main/java/cumulocity/microservice/service/request/mgmt/service)
 
+## Priority & Status
+
+Priority and status can be configured and managed during runtime. There isn't a predefined priority or status state machine. This design decision helps to integrated with any FSM/ITS. Even this systems have a configurable priority and status table. It would also be possible, if needed, a automatic synchronization.
+
+Use following API to configure your [Priorities](./docs/Apis/ServiceRequestPriorityControllerApi.md)
+Priorities are rather simple and reflect the priorities which exist in the system.
+
+Use following API to configure your [Status](./docs/Apis/ServiceRequestStatusControllerApi.md)
+Status definition are more complexe and can have specific configuration which influence alarm status transitions.
+
+
+
+
 ## Prerequisites
 
 - Java installed >= 11
