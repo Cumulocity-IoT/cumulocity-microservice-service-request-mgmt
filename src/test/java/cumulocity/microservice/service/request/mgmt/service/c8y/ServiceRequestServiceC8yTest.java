@@ -1,9 +1,17 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import com.cumulocity.sdk.client.alarm.AlarmApi;
+import com.cumulocity.sdk.client.event.EventApi;
+import com.cumulocity.sdk.client.inventory.InventoryApi;
+
+import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusService;
 
 class ServiceRequestServiceC8yTest {
 
@@ -13,7 +21,17 @@ class ServiceRequestServiceC8yTest {
 
 	@Test
 	void testCreateServiceRequest() {
-		fail("Not yet implemented");
+		InventoryApi inventoryApi = mock(InventoryApi.class);
+		EventApi eventApi = mock(EventApi.class);
+		EventAttachmentApi eventAttachmentApi = mock(EventAttachmentApi.class);
+		AlarmApi alarmApi = mock(AlarmApi.class);
+		ServiceRequestStatusService serviceRequestStatusService = mock(ServiceRequestStatusService.class);
+		
+		ServiceRequestServiceC8y serviceRequestService = new ServiceRequestServiceC8y(eventApi, eventAttachmentApi, alarmApi, inventoryApi, serviceRequestStatusService);
+		
+		
+		ServiceRequestPostRqBody serviceRequestRqBody = new ServiceRequestPostRqBody();
+		serviceRequestService.createServiceRequest(serviceRequestRqBody, "me@test.com");
 	}
 
 	@Test
