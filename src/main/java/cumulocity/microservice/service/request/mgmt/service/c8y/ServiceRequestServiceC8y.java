@@ -122,8 +122,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 		boolean isStatusFilter = ArrayUtils.isNotEmpty(statusList);
 		boolean isPriorityFilter = ArrayUtils.isNotEmpty(priorityList);
+		boolean isOrderBy = ArrayUtils.isNotEmpty(orderBy);
 		
-		if(isStatusFilter || isPriorityFilter) {
+		if(isStatusFilter || isPriorityFilter || isOrderBy) {
 			Predicate<ServiceRequest> filterPredicate = sr -> sr.getStatus() != null && sr.getPriority() != null;
 			
 			if(isStatusFilter) {
