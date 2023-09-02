@@ -3,6 +3,7 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -149,7 +150,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String sourceId, Integer pageSize,
-			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList) {
+			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy) {
 		log.info("find all service requests!");
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
@@ -159,8 +160,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 		boolean isStatusFilter = ArrayUtils.isNotEmpty(statusList);
 		boolean isPriorityFilter = ArrayUtils.isNotEmpty(priorityList);
+		boolean isOrderBy = ArrayUtils.isNotEmpty(orderBy);
 		
-		if(isStatusFilter || isPriorityFilter) {
+		if(isStatusFilter || isPriorityFilter || isOrderBy) {
 			Predicate<ServiceRequest> filterPredicate = sr -> sr.getStatus() != null && sr.getPriority() != null;
 			
 			if(isStatusFilter) {
@@ -171,7 +173,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				filterPredicate.and(sr -> ArrayUtils.contains(priorityList, sr.getPriority().getOrdinal()));
 			}
 						
-			return getServiceRequestByFilterAndInternalFilter(filter, filterPredicate, pageSize, pageNumber, withTotalPages);
+			return getServiceRequestByFilterAndInternalFilter(filter, filterPredicate, pageSize, pageNumber, withTotalPages, orderBy);
 		}
 		
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
@@ -179,7 +181,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String sourceId, Integer pageSize,
-			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList) {
+			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy) {
 		log.info("find all active service requests!");
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
@@ -203,7 +205,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				filterPredicate = filterPredicate.and(sr -> ArrayUtils.contains(priorityList, sr.getPriority().getOrdinal()));
 			}
 						
-			return getServiceRequestByFilterAndInternalFilter(filter, filterPredicate, pageSize, pageNumber, withTotalPages);
+			return getServiceRequestByFilterAndInternalFilter(filter, filterPredicate, pageSize, pageNumber, withTotalPages, orderBy);
 		}
 		
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
@@ -281,7 +283,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	private RequestList<ServiceRequest> getServiceRequestByFilterAndInternalFilter(EventFilter filter,
 			Predicate<ServiceRequest> serviceRequestFilter, Integer pageSize, Integer pageNumber,
-			Boolean withTotalPages) {
+			Boolean withTotalPages, final String[] orderBy) {
 		
 		pageNumber = pageNumber != null ? pageNumber : 0;
 		pageSize = pageSize != null ? pageSize : 5;
@@ -295,6 +297,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			if (serviceRequestFilter.test(sr)) {
 				serviceRequestList.add(sr);
 			}
+		}
+		
+		if(orderBy != null && orderBy.length > 0) {
+			ServiceRequestComparator srComparator = new ServiceRequestComparator(orderBy);
+			serviceRequestList.sort(srComparator);
 		}
 
 		List<List<ServiceRequest>> pages = getPages(serviceRequestList, pageSize);
