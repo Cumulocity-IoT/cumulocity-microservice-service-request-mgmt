@@ -25,4 +25,16 @@ public class ServiceRequestStatus {
 	@NotNull
 	@NonNull
 	private String name;
+	
+	@Schema(required = false, description = "Set Alarm status when this status of Service Request status is set. (Transition)", example = "ACKNOWLEDGED")
+	private String alarmStatusTransition;
+	
+	@Schema(required = false, description = "Closed Service Request when this status of Service Request is set. (Transition)", example = "true")	
+	private Boolean isClosedTransition;
+	
+	@Schema(required = false, description = "All active (not closed) Service Requests are counted on device manage object. However, with with parameter the status can be excluded and will not be counted!", example = "false")	
+	private Boolean excludeForCounter;
+	
+	@Schema(required = false, description = "Icon name of the status which should be shown at the UI", example = "warning")		
+	private String icon;
 }
