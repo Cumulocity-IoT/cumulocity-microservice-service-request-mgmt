@@ -85,9 +85,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequest newServiceRequest = ServiceRequestEventMapper.map2(createdEvent);
 
 		//track status changes as system comment
-		ServiceRequestCommentRqBody comment = new ServiceRequestCommentRqBody();
-		comment.setText("Initial Status: Id: " + newServiceRequest.getStatus().getId() + ", Name: " + newServiceRequest.getStatus().getName());
-		comment.setType(ServiceRequestCommentType.SYSTEM);
+		createCommentForStatusChange("Initial Status", newServiceRequest);
 		
 		// Alarm status transition
 		updateAlarm(newServiceRequest, srStatus.get());
@@ -132,11 +130,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequest updatedServiceRequest = eventMapper.map2(updatedEvent);
 
 		//track status changes as system comment
-		ServiceRequestCommentRqBody comment = new ServiceRequestCommentRqBody();
-		comment.setText("Status changed to: Id: " + updatedServiceRequest.getStatus().getId() + ", Name: " + updatedServiceRequest.getStatus().getName());
-		comment.setType(ServiceRequestCommentType.SYSTEM);
-		
-		serviceRequestCommentService.createComment(updatedServiceRequest.getSource().getId(), updatedServiceRequest.getId(), null, updatedServiceRequest.getOwner());
+		createCommentForStatusChange("Updated Status", updatedServiceRequest);
 
 		// Alarm status transition
 		if(!originalServiceRequest.getStatus().getId().equals(updatedServiceRequest.getStatus().getId())) {
@@ -420,5 +414,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
 			alarmApi.update(alarmRepresentation);
 		}
+	}
+	
+	private void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest) {
+		ServiceRequestCommentRqBody comment = new ServiceRequestCommentRqBody();
+		comment.setText(prefix + ", Id: " + serviceRequest.getStatus().getId() + ", Name: " + serviceRequest.getStatus().getName());
+		comment.setType(ServiceRequestCommentType.SYSTEM);
+		serviceRequestCommentService.createComment(serviceRequest.getSource().getId(), serviceRequest.getId(), comment, null);
 	}
 }
