@@ -3,7 +3,6 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +11,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -31,11 +29,14 @@ import com.cumulocity.sdk.client.event.EventFilter;
 import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
 
+import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestCommentType;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusService;
 import lombok.extern.slf4j.Slf4j;
@@ -53,15 +54,18 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	private InventoryApi inventoryApi;
 	
 	private ServiceRequestStatusService serviceRequestStatusService;
+	
+	private ServiceRequestCommentService serviceRequestCommentService;
 			
 	@Autowired
 	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
-			InventoryApi inventoryApi, ServiceRequestStatusService serviceRequestStatusService) {
+			InventoryApi inventoryApi, ServiceRequestStatusService serviceRequestStatusService, ServiceRequestCommentService serviceRequestCommentService) {
 		this.eventApi = eventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
 		this.inventoryApi = inventoryApi;
 		this.serviceRequestStatusService = serviceRequestStatusService;
+		this.serviceRequestCommentService = serviceRequestCommentService;
 	}
 
 	@Override
@@ -74,14 +78,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			srStatusIdExclude = srStatus.get().getExcludeForCounter() != null ? srStatus.get().getId(): null;
 		}
 		
-		
-		
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequestRqBody);
 		eventMapper.setOwner(owner);
 		eventMapper.setIsActive(Boolean.TRUE);
 		EventRepresentation createdEvent = eventApi.create(eventMapper.getEvent());
 		ServiceRequest newServiceRequest = ServiceRequestEventMapper.map2(createdEvent);
 
+		//track status changes as system comment
+		createCommentForStatusChange("Initial Status", newServiceRequest);
+		
 		// Alarm status transition
 		updateAlarm(newServiceRequest, srStatus.get());
 		
@@ -123,6 +128,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
 
 		ServiceRequest updatedServiceRequest = eventMapper.map2(updatedEvent);
+
+		//track status changes as system comment
+		createCommentForStatusChange("Updated Status", updatedServiceRequest);
 
 		// Alarm status transition
 		if(!originalServiceRequest.getStatus().getId().equals(updatedServiceRequest.getStatus().getId())) {
@@ -406,5 +414,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
 			alarmApi.update(alarmRepresentation);
 		}
+	}
+	
+	private void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest) {
+		ServiceRequestCommentRqBody comment = new ServiceRequestCommentRqBody();
+		comment.setText(prefix + ", Id: " + serviceRequest.getStatus().getId() + ", Name: " + serviceRequest.getStatus().getName());
+		comment.setType(ServiceRequestCommentType.SYSTEM);
+		serviceRequestCommentService.createComment(serviceRequest.getSource().getId(), serviceRequest.getId(), comment, null);
 	}
 }
