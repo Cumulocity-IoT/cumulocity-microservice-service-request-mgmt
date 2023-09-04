@@ -2,16 +2,26 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
+import com.cumulocity.model.idtype.GId;
+import com.cumulocity.rest.representation.event.EventRepresentation;
+import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.cumulocity.sdk.client.alarm.AlarmApi;
 import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusService;
+import lombok.NonNull;
 
 class ServiceRequestServiceC8yTest {
 
@@ -22,7 +32,17 @@ class ServiceRequestServiceC8yTest {
 	@Test
 	void testCreateServiceRequest() {
 		InventoryApi inventoryApi = mock(InventoryApi.class);
+		
+		ManagedObjectRepresentation mo = new ManagedObjectRepresentation();
+		mo.setId(GId.asGId(123L));
+		when(inventoryApi.get(Mockito.any(GId.class))).thenReturn(mo);
+		
 		EventApi eventApi = mock(EventApi.class);
+		EventRepresentation srEvent = new EventRepresentation();
+		srEvent.setId(GId.asGId(123L));
+		srEvent.setSource(mo);
+		when(eventApi.create(Mockito.any(EventRepresentation.class))).thenReturn(srEvent);
+		
 		EventAttachmentApi eventAttachmentApi = mock(EventAttachmentApi.class);
 		AlarmApi alarmApi = mock(AlarmApi.class);
 		ServiceRequestStatusService serviceRequestStatusService = mock(ServiceRequestStatusService.class);
@@ -31,6 +51,22 @@ class ServiceRequestServiceC8yTest {
 		
 		
 		ServiceRequestPostRqBody serviceRequestRqBody = new ServiceRequestPostRqBody();
+		serviceRequestRqBody.setDescription("Description");
+		
+		ServiceRequestPriority prio = new ServiceRequestPriority();
+		prio.setName("high");
+		prio.setOrdinal(1L);
+		serviceRequestRqBody.setPriority(prio);
+		
+		ServiceRequestSource source = new ServiceRequestSource("123");
+		serviceRequestRqBody.setSource(source);
+		
+		ServiceRequestStatus status = new ServiceRequestStatus();
+		status.setName("new");
+		status.setId("1");
+		serviceRequestRqBody.setStatus(status);
+		serviceRequestRqBody.setTitle("title");
+		serviceRequestRqBody.setType(ServiceRequestType.ALARM);
 		serviceRequestService.createServiceRequest(serviceRequestRqBody, "me@test.com");
 	}
 

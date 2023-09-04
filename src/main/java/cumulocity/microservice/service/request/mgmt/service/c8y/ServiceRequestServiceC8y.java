@@ -68,7 +68,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		Optional<ServiceRequestStatus> srStatus = serviceRequestStatusService.getStatus(serviceRequestRqBody.getStatus().getId());
 		String srStatusIdExclude = null;
 		if(srStatus.isEmpty()) {
-			log.warn("Status {} is not part of the configured status list!");
+			log.warn("Status {} is not part of the configured status list!", serviceRequestRqBody.getStatus().toString());
 		}else {
 			srStatusIdExclude = srStatus.get().getExcludeForCounter() != null ? srStatus.get().getId(): null;
 		}
@@ -80,8 +80,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequest newServiceRequest = ServiceRequestEventMapper.map2(createdEvent);
 
 		// Alarm status transition
-		updateAlarm(newServiceRequest, srStatus.get());
-		
+		if(srStatus.isPresent() && newServiceRequest.getAlarmRef() != null) {
+			updateAlarm(newServiceRequest, srStatus.get());
+		}
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);

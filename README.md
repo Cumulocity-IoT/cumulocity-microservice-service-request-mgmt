@@ -1,4 +1,12 @@
-# cumulocity-microservice-service-request-mgmt
+# What is this microservice about and why do we need it
+
+Smart Field Services need Field Service Management (FSM) Systems and/or Issue Tracking Systems (ITS). These systems are the integral part of perform and provide Smart Field Services. The next step of evolution is to combine FSM and IoT data, in order to increase the efficiency of field services and provide a even better customer experience.
+
+![Service Request Slide](./docs/service-request-slide.png)
+
+This microservice and the UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) can be seen as adapter for FSM or ITS. 
+
+# API and Domain Model
 
 This microservice provides a domain specific API & Model for Field Service Managment (FSM) or Issue-Tracking-System (ITS).
 

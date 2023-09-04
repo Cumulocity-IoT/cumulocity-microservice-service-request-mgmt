@@ -123,7 +123,7 @@ No authorization required
 
 <a name="getServiceRequestList"></a>
 # **getServiceRequestList**
-> RequestListServiceRequest getServiceRequestList(sourceId, statusList, priorityList, all, pageSize, currentPage, withTotalPages)
+> RequestListServiceRequest getServiceRequestList(sourceId, statusList, priorityList, all, pageSize, currentPage, orderBy, withTotalPages)
 
 GET service request list
 
@@ -139,6 +139,7 @@ GET service request list
 | **all** | **Boolean**| filter, \&quot;true\&quot; returns all service request, \&quot;false\&quot; (default) returns only active service requests. | [optional] [default to null] |
 | **pageSize** | **Integer**| Indicates how many entries of the collection shall be returned. The upper limit for one page is 2,000 objects. | [optional] [default to null] |
 | **currentPage** | **Integer**| The current page of the paginated results. | [optional] [default to null] |
+| **orderBy** | [**List**](../Models/String.md)| OrderBy, orders list by status and/or priority and/or timestamp. | [optional] [default to null] |
 | **withTotalPages** | **Boolean**| When set to true, the returned result will contain in the statistics object the total number of pages. Only applicable on range queries. | [optional] [default to null] |
 
 ### Return type
