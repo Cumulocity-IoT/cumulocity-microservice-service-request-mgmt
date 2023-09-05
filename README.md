@@ -156,7 +156,7 @@ The property `alarmStatusTransition` defines the alarm status which will be set 
 
 The property `isClosedTransition` defines the service request as closed in general and set the `sr_Active` to false and `sr_Closed`. This allows retention rules to be configured.
 
-![Retention Rules](./docs/retention-rules.png)
+![Retention Rules](./docs/retention-rules.PNG)
 
 
 # FSM or ITS integration options 
