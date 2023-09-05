@@ -89,6 +89,76 @@ The microservice also contains a [default service implementation](src/main/java/
 
 This default classes provide a basic FMS implementation in Cumulocity which is working without connecting to any external system. The internal created objects (Events) can be used to implement an asynchronous integration mechanism, see next integration option 1.
 
+## Priority & Status Configuration
+
+Priority and status can be configured and managed during runtime. There isn't a predefined priority or status set. This flexible design decision helps to integrated with any FSM/ITS. Even this systems have a configurable priority and status set. It would be even possible to implement an automatic synchronization.
+
+Use following API to configure:
+[Priorities](./docs/Apis/ServiceRequestPriorityControllerApi.md) are rather simple and reflect the priority set which exist in the system.
+
+Example:
+
+````
+[
+    {
+        "name": "high",
+        "ordinal": 3
+    },
+    {
+        "name": "medium",
+        "ordinal": 2
+    },
+    {
+        "name": "low",
+        "ordinal": 1
+    }
+]
+```
+
+[Status](./docs/Apis/ServiceRequestStatusControllerApi.md) definition are a bit more complex and can have specific configuration for alarm status transition.
+
+Example:
+
+```
+[
+    {
+        "id": "0",
+        "name": "Created",
+        "alarmStatusTransition": "ACKNOWLEDGED"
+    },
+    {
+        "id": "1",
+        "name": "Released"
+    },
+    {
+        "id": "2",
+        "name": "InProgress"
+    },
+    {
+        "id": "3",
+        "name": "IsWorkDone",
+        "alarmStatusTransition": "CLEARED"
+    },
+    {
+        "id": "4",
+        "name": "Rejected"
+    },
+    {
+        "id": "5",
+        "name": "Closed",
+        "alarmStatusTransition": "CLEARED",
+        "isClosedTransition": true
+    }
+]
+```
+
+The property `alarmStatusTransition` defines the alarm status which will be set if this service request changes to this status.
+
+The property `isClosedTransition` defines the service request as closed in general and set the `sr_Active` to false and `sr_Closed`. This allows retention rules to be configured.
+
+![Retention Rules](./docs/retention-rules.png)
+
+
 ## FSM or ITS integration options 
 
 ### Option 1, Proxy Object Implementation (asynchronous)
@@ -138,15 +208,6 @@ Con:
 Following service interfaces must be implemented:
 
 [Service Interfaces](src/main/java/cumulocity/microservice/service/request/mgmt/service)
-
-## Priority & Status
-
-Priority and status can be configured and managed during runtime. There isn't a predefined priority or status set. This flexible design decision helps to integrated with any FSM/ITS. Even this systems have a configurable priority and status set. It would be even possible to implement an automatic synchronization.
-
-Use following API to configure:
-[Priorities](./docs/Apis/ServiceRequestPriorityControllerApi.md) are rather simple and reflect the priority set which exist in the system.
-
-[Status](./docs/Apis/ServiceRequestStatusControllerApi.md) definition are a bit more complex and can have specific configuration for alarm status transition.
 
 
 ## Prerequisites
