@@ -1,6 +1,14 @@
-# cumulocity-microservice-service-request-mgmt
+# What is this microservice about and why do we need it?
 
-This microservice provides a domain specific API & Model for Field Service Managment (FSM) or Issue-Tracking-System (ITS).
+Smart Field Services need Field Service Management (FSM) Systems and/or Issue Tracking Systems (ITS). These systems are the integral part of performing and provide Smart Field Services. The next step of evolution is to combine FSM and IoT data, in order to increase the efficiency of field services and provide a even better customer experience.
+
+![Service Request Slide](./docs/service-request-slide.png)
+
+This microservice and the UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) can be seen as adapter for FSM or ITS. The service request object is the glue or bridge for both systems.
+
+# API and Domain Model
+
+This microservice provides a domain specific API & Model for service request.
 
 Following class diagram shows the data model which is implemented by this Microservice. These classes and the identifiers are inspired by FSM but can also be used for an ITS, in that case handle ServiceRequest as Issue or Ticket.
 
@@ -81,9 +89,79 @@ The microservice also contains a [default service implementation](src/main/java/
 
 This default classes provide a basic FMS implementation in Cumulocity which is working without connecting to any external system. The internal created objects (Events) can be used to implement an asynchronous integration mechanism, see next integration option 1.
 
-## FSM or ITS integration options 
+# Priority & Status Configuration
 
-### Option 1, Proxy Object Implementation (asynchronous)
+Priority and status can be configured and managed during runtime. There isn't a predefined priority or status set. This flexible design decision helps to integrated with any FSM/ITS. Even this systems have a configurable priority and status set. It is also possible to implement an automatic synchronization of status and priority list.
+
+Use following API to configure:
+[Priorities](./docs/Apis/ServiceRequestPriorityControllerApi.md) are rather simple and reflect the priority set which exist in the system.
+
+Example:
+
+```
+[
+    {
+        "name": "high",
+        "ordinal": 3
+    },
+    {
+        "name": "medium",
+        "ordinal": 2
+    },
+    {
+        "name": "low",
+        "ordinal": 1
+    }
+]
+```
+
+[Status](./docs/Apis/ServiceRequestStatusControllerApi.md) definition are a bit more complex and can have specific configuration for alarm status transition.
+
+Example:
+
+```
+[
+    {
+        "id": "0",
+        "name": "Created",
+        "alarmStatusTransition": "ACKNOWLEDGED"
+    },
+    {
+        "id": "1",
+        "name": "Released"
+    },
+    {
+        "id": "2",
+        "name": "InProgress"
+    },
+    {
+        "id": "3",
+        "name": "IsWorkDone",
+        "alarmStatusTransition": "CLEARED"
+    },
+    {
+        "id": "4",
+        "name": "Rejected"
+    },
+    {
+        "id": "5",
+        "name": "Closed",
+        "alarmStatusTransition": "CLEARED",
+        "isClosedTransition": true
+    }
+]
+```
+
+The property `alarmStatusTransition` defines the alarm status which will be set if this service request changes to this status.
+
+The property `isClosedTransition` defines the service request as closed in general and set the `sr_Active` to false and `sr_Closed`. This allows retention rules to be configured.
+
+![Retention Rules](./docs/retention-rules.PNG)
+
+
+# FSM or ITS integration options 
+
+## Option 1, Proxy Object Implementation (asynchronous)
 
 As mentioned above, all objects like Service Request, Comments, etc are stored and managed at Cumulocity IoT. Synchronisation of this data to FSM/ITS data must be implemented in an additional component. This can be done in a frequent running job (polling) or event based using Cumulocity notification API. All IoT data which is needed for FSM/ITS systems are requested by Cumulocity standard API. Which IoT Data is need is highly dependent on the use-case and must be implemented in the Adapter. If the FSM/ITS provides also an event base mechanism, this should be used for updating Service-Request status etc..
 
@@ -111,7 +189,7 @@ Features of standard implementation:
 - Bidirectional reference between alarm and service request
 
 
-### Option 2, Proxy API Implementation (synchronous)
+## Option 2, Proxy API Implementation (synchronous)
 
 Call direct (forwarding) other API of FSM or ITS system without storing or creating objects at Cumulocity. The service implementation will contains the client for the external FSM/ITS and must also handle the connection details.
 
@@ -131,7 +209,8 @@ Following service interfaces must be implemented:
 
 [Service Interfaces](src/main/java/cumulocity/microservice/service/request/mgmt/service)
 
-## Prerequisites
+
+# Prerequisites
 
 - Java installed >= 11
 - Maven installed >= 3.6
@@ -139,7 +218,7 @@ Following service interfaces must be implemented:
 - Cumulocity IoT User Credentials (Base64 encoded)
 
 
-## Run
+# Run
 
 Cloning this repository into you local GIT repository
 
@@ -154,15 +233,15 @@ mvn install
 ```
 
 
-## Authors 
+# Authors 
 
 [Alexander Pester](mailto:alexander.pester@softwareag.com)
 
-## Disclaimer
+# Disclaimer
 
 These tools are provided as-is and without warranty or support. They do not constitute part of the Software AG product suite. Users are free to use, fork and modify them, subject to the license agreement. While Software AG welcomes contributions, we cannot guarantee to include every contribution in the master project.
 
-## Contact
+# Contact
 
 For more information you can Ask a Question in the [TECHcommunity Forums](http://tech.forums.softwareag.com/techjforum/forums/list.page?product=cumulocity).
 

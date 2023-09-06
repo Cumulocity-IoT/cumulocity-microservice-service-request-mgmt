@@ -7,7 +7,7 @@
 
 	<groupId>cumulocity.microservice</groupId>
 	<artifactId>cumulocity-microservice-service-request-mgmt</artifactId>
-	<version>1.0.9-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,7 +15,6 @@
 		<java.version>11</java.version>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
-		<junit.version>4.13.1</junit.version>
 		<spring-boot-dependencies.version>2.5.4</spring-boot-dependencies.version>
 		<c8y.version>1017.73.0</c8y.version>
 		<microservice.name>service-request-mgmt</microservice.name>
@@ -81,12 +80,6 @@
 			<version>${springdoc-openapi.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -132,6 +125,18 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M7</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.junit.jupiter</groupId>
+						<artifactId>junit-jupiter-engine</artifactId>
+						<version>5.8.2</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>com.nsn.cumulocity.clients-java</groupId>
