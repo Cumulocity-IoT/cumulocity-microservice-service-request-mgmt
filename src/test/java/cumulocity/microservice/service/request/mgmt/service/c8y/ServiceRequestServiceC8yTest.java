@@ -50,7 +50,6 @@ class ServiceRequestServiceC8yTest {
 		AlarmApi alarmApi = mock(AlarmApi.class);
 		ServiceRequestStatusService serviceRequestStatusService = mock(ServiceRequestStatusService.class);
 		
-		//ServiceRequestServiceC8y serviceRequestService = new ServiceRequestServiceC8y(eventApi, eventAttachmentApi, alarmApi, inventoryApi, serviceRequestStatusService);
 		ServiceRequestServiceC8y serviceRequestService = mock(ServiceRequestServiceC8y.class, withSettings().useConstructor(eventApi, eventAttachmentApi, alarmApi, inventoryApi, serviceRequestStatusService));
 		
 		RequestList<ServiceRequest> requestList = new RequestList<>();
@@ -75,8 +74,6 @@ class ServiceRequestServiceC8yTest {
 		serviceRequestRqBody.setStatus(status);
 		serviceRequestRqBody.setTitle("title");
 		serviceRequestRqBody.setType(ServiceRequestType.ALARM);
-		
-		
 		
 		serviceRequestService.createServiceRequest(serviceRequestRqBody, "me@test.com");
 	}
