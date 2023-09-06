@@ -1,14 +1,14 @@
 # What is this microservice about and why do we need it?
 
-Smart Field Services need Field Service Management (FSM) Systems and/or Issue Tracking Systems (ITS). These systems are the integral part of perform and provide Smart Field Services. The next step of evolution is to combine FSM and IoT data, in order to increase the efficiency of field services and provide a even better customer experience.
+Smart Field Services need Field Service Management (FSM) Systems and/or Issue Tracking Systems (ITS). These systems are the integral part of performing and provide Smart Field Services. The next step of evolution is to combine FSM and IoT data, in order to increase the efficiency of field services and provide a even better customer experience.
 
 ![Service Request Slide](./docs/service-request-slide.png)
 
-This microservice and the UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) can be seen as adapter for FSM or ITS. 
+This microservice and the UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) can be seen as adapter for FSM or ITS. The service request object is the glue or bridge for both systems.
 
 # API and Domain Model
 
-This microservice provides a domain specific API & Model for Field Service Managment (FSM) or Issue-Tracking-System (ITS).
+This microservice provides a domain specific API & Model for service request.
 
 Following class diagram shows the data model which is implemented by this Microservice. These classes and the identifiers are inspired by FSM but can also be used for an ITS, in that case handle ServiceRequest as Issue or Ticket.
 
@@ -91,7 +91,7 @@ This default classes provide a basic FMS implementation in Cumulocity which is w
 
 # Priority & Status Configuration
 
-Priority and status can be configured and managed during runtime. There isn't a predefined priority or status set. This flexible design decision helps to integrated with any FSM/ITS. Even this systems have a configurable priority and status set. It would be even possible to implement an automatic synchronization.
+Priority and status can be configured and managed during runtime. There isn't a predefined priority or status set. This flexible design decision helps to integrated with any FSM/ITS. Even this systems have a configurable priority and status set. It is also possible to implement an automatic synchronization of status and priority list.
 
 Use following API to configure:
 [Priorities](./docs/Apis/ServiceRequestPriorityControllerApi.md) are rather simple and reflect the priority set which exist in the system.

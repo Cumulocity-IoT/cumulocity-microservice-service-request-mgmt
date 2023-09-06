@@ -3,6 +3,7 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,12 +17,13 @@ import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
+import cumulocity.microservice.service.request.mgmt.model.RequestList;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusService;
-import lombok.NonNull;
 
 class ServiceRequestServiceC8yTest {
 
@@ -47,8 +49,13 @@ class ServiceRequestServiceC8yTest {
 		AlarmApi alarmApi = mock(AlarmApi.class);
 		ServiceRequestStatusService serviceRequestStatusService = mock(ServiceRequestStatusService.class);
 		
-		ServiceRequestServiceC8y serviceRequestService = new ServiceRequestServiceC8y(eventApi, eventAttachmentApi, alarmApi, inventoryApi, serviceRequestStatusService);
+		//ServiceRequestServiceC8y serviceRequestService = new ServiceRequestServiceC8y(eventApi, eventAttachmentApi, alarmApi, inventoryApi, serviceRequestStatusService);
+		ServiceRequestServiceC8y serviceRequestService = mock(ServiceRequestServiceC8y.class, withSettings().useConstructor(eventApi).useConstructor(eventAttachmentApi).useConstructor(alarmApi).useConstructor(inventoryApi).useConstructor(serviceRequestStatusService));
 		
+		RequestList<ServiceRequest> requestList = new RequestList<>();
+		
+		when(serviceRequestService.getAllActiveEventsBySource(Mockito.any())).thenReturn(requestList);
+		when(serviceRequestService.createServiceRequest(Mockito.any(), Mockito.anyString())).thenCallRealMethod();
 		
 		ServiceRequestPostRqBody serviceRequestRqBody = new ServiceRequestPostRqBody();
 		serviceRequestRqBody.setDescription("Description");
@@ -67,6 +74,9 @@ class ServiceRequestServiceC8yTest {
 		serviceRequestRqBody.setStatus(status);
 		serviceRequestRqBody.setTitle("title");
 		serviceRequestRqBody.setType(ServiceRequestType.ALARM);
+		
+		
+		
 		serviceRequestService.createServiceRequest(serviceRequestRqBody, "me@test.com");
 	}
 
