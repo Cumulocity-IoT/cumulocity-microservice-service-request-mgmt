@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -50,7 +51,7 @@ class ServiceRequestServiceC8yTest {
 		ServiceRequestStatusService serviceRequestStatusService = mock(ServiceRequestStatusService.class);
 		
 		//ServiceRequestServiceC8y serviceRequestService = new ServiceRequestServiceC8y(eventApi, eventAttachmentApi, alarmApi, inventoryApi, serviceRequestStatusService);
-		ServiceRequestServiceC8y serviceRequestService = mock(ServiceRequestServiceC8y.class, withSettings().useConstructor(eventApi).useConstructor(eventAttachmentApi).useConstructor(alarmApi).useConstructor(inventoryApi).useConstructor(serviceRequestStatusService));
+		ServiceRequestServiceC8y serviceRequestService = mock(ServiceRequestServiceC8y.class, withSettings().useConstructor(eventApi, eventAttachmentApi, alarmApi, inventoryApi, serviceRequestStatusService));
 		
 		RequestList<ServiceRequest> requestList = new RequestList<>();
 		
@@ -80,51 +81,61 @@ class ServiceRequestServiceC8yTest {
 		serviceRequestService.createServiceRequest(serviceRequestRqBody, "me@test.com");
 	}
 
+	@Disabled("Disabled until implementation is done!")
 	@Test
 	void testUpdateServiceRequest() {
 		fail("Not yet implemented");
 	}
 
+	@Disabled("Disabled until implementation is done!")
 	@Test
 	void testGetServiceRequestById() {
 		fail("Not yet implemented");
 	}
 
+	@Disabled("Disabled until implementation is done!")
 	@Test
 	void testGetAllServiceRequestByFilter() {
 		fail("Not yet implemented");
 	}
 
+	@Disabled("Disabled until implementation is done!")
 	@Test
 	void testGetActiveServiceRequestByFilter() {
 		fail("Not yet implemented");
 	}
 
+	@Disabled("Disabled until implementation is done!")
 	@Test
 	void testGetCompleteActiveServiceRequestByFilter() {
 		fail("Not yet implemented");
 	}
 
+	@Disabled("Disabled until implementation is done!")
 	@Test
 	void testDeleteServiceRequest() {
 		fail("Not yet implemented");
 	}
 
+	@Disabled("Disabled until implementation is done!")
 	@Test
 	void testUploadAttachment() {
 		fail("Not yet implemented");
 	}
 
+	@Disabled("Disabled until implementation is done!")
 	@Test
 	void testDownloadAttachment() {
 		fail("Not yet implemented");
 	}
 
+	@Disabled("Disabled until implementation is done!")
 	@Test
 	void testUpdateServiceRequestStatus() {
 		fail("Not yet implemented");
 	}
 
+	@Disabled("Disabled until implementation is done!")
 	@Test
 	void testUpdateServiceRequestActive() {
 		fail("Not yet implemented");

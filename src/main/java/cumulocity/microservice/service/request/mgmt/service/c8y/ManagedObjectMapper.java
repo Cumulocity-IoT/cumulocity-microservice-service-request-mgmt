@@ -35,6 +35,10 @@ public class ManagedObjectMapper {
 	}
 
 	public void updateServiceRequestPriorityCounter(RequestList<ServiceRequest> serviceRequestList, String... excludeStatusIdList ) {
+		if(serviceRequestList == null || serviceRequestList.getList() == null) {
+			return;
+		}
+		
 		Map<String, Long> priorityCounterMap = new HashMap<>();
 		List<String> excludeList = List.of(excludeStatusIdList);
 		
