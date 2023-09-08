@@ -6,12 +6,12 @@ Smart Field Services need Field Service Management (FSM) Systems and/or Issue Tr
 
 This microservice and the UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) can be seen as adapter for FSM or ITS. The service request object is the glue or bridge for both systems.
 
-Which device IoT data is need for the smart field service use case is differs a lot and must be implemented in the FSM connector. Some device IoT data will play an important part:
+Which device IoT data is need for the smart field service use case differs a lot and must be implemented in the FSM connector. Some device IoT data will play an important part:
 
 1. Current Device location (geo location and address) -> Important for FSM: service object, route planning etc.
 2. Alarm data (current alarms) -> Important for FSM: service request, dispatching and scheduling based on severity etc.
 3. Device master data -> Important for FSM: What firmware or software is currently running on the device, legacy devices have often not the option to be updated remotely. If a service activity is planned additional actions can be combined like software/firmware updates.
-4. Measurement data -> Important for FSM: Last measurements give the service technician last status of device before service request was created. To get more detailed information before the service activity is starting.
+4. Measurement and event data -> Important for FSM: Last measurements and events give the service technician last status of device before service request was created (Snapshot). To get more detailed information before the service activity is starting.
 
 # API and Domain Model
 
