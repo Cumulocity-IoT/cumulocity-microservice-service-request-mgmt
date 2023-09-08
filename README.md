@@ -6,6 +6,13 @@ Smart Field Services need Field Service Management (FSM) Systems and/or Issue Tr
 
 This microservice and the UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) can be seen as adapter for FSM or ITS. The service request object is the glue or bridge for both systems.
 
+Which device IoT data is need for the smart field service use case is differs a lot and must be implemented in the FSM connector. Some device IoT data will play an important part:
+
+1. Current Device location (geo location and address) -> Important for FSM: service object, route planning etc.
+2. Alarm data (current alarms) -> Important for FSM: service request, dispatching and scheduling based on severity etc.
+3. Device master data -> Important for FSM: What firmware or software is currently running on the device, legacy devices have often not the option to be updated remotely. If a service activity is planned additional actions can be combined like software/firmware updates.
+4. Measurement data -> Important for FSM: Last measurements give the service technician last status of device before service request was created. To get more detailed information before the service activity is starting.
+
 # API and Domain Model
 
 This microservice provides a domain specific API & Model for service request.
@@ -87,11 +94,11 @@ The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/
 
 The microservice also contains a [default service implementation](src/main/java/cumulocity/microservice/service/request/mgmt/service/c8y)
 
-This default classes provide a basic FMS implementation in Cumulocity which is working without connecting to any external system. The internal created objects (Events) can be used to implement an asynchronous integration mechanism, see next integration option 1.
+This default classes provide a basic FSM implementation in Cumulocity which is working without connecting to any external system. The internal created objects (Events) can be used to implement an asynchronous integration mechanism, see integration option 1.
 
 # Priority & Status Configuration
 
-Priority and status can be configured and managed during runtime. There isn't a predefined priority or status set. This flexible design decision helps to integrated with any FSM/ITS. Even this systems have a configurable priority and status set. It is also possible to implement an automatic synchronization of status and priority list.
+Priorities and status can be configured and managed during runtime. There isn't a predefined priority or status set implemented. This flexible design decision helps to integrated with any FSM/ITS. Even this systems have a configurable priority and status set. It is also possible to implement an automatic synchronization of status and priority list between both systems.
 
 Use following API to configure:
 [Priorities](./docs/Apis/ServiceRequestPriorityControllerApi.md) are rather simple and reflect the priority set which exist in the system.

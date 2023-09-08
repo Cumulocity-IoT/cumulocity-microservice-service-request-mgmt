@@ -51,6 +51,9 @@ public class ServiceRequestComment {
 	@NotNull
 	private String serviceRequestId;
 	
+	@Schema(description = "Service request comment external ID, contains the service request comment object ID of the external system.", example = "123456789")
+	private String externalId;
+	
 	@Schema(description = "File attachment of Service Request")
 	private ServiceRequestAttachment attachment;
 
