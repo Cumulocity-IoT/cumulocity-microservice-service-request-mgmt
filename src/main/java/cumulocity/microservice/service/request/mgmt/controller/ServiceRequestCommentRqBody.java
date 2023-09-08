@@ -20,6 +20,9 @@ public class ServiceRequestCommentRqBody {
 	@Schema(description = "comment text", example = "This is my comment ...")
 	@NotNull
 	private String text;
+	
+	@Schema(description = "Service request comment external ID, contains the service request comment object ID of the external system.", example = "123456789")
+	private String externalId;
 
 	@Schema(description = "comment type enumeration (USER, SYSTEM)")
 	@NotNull
