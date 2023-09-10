@@ -4,10 +4,38 @@ All URIs are relative to *http://localhost:8080*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
+| [**getServiceRequestCommentList1**](ServiceRequestExternalControllerApi.md#getServiceRequestCommentList1) | **GET** /api/adapter/service/request/{serviceRequestId}/comment | Returns all user comments of specific service request by internal Id. |
 | [**getServiceRequestList1**](ServiceRequestExternalControllerApi.md#getServiceRequestList1) | **GET** /api/adapter/service/request | GET service request list |
 | [**updateServiceRequestIsActiveById**](ServiceRequestExternalControllerApi.md#updateServiceRequestIsActiveById) | **PUT** /api/adapter/service/request/{serviceRequestId}/active | UPDATE service request active status by Id |
 | [**updateServiceRequestStatusById**](ServiceRequestExternalControllerApi.md#updateServiceRequestStatusById) | **PUT** /api/adapter/service/request/{serviceRequestId}/status | UPDATE service request status by Id |
 
+
+<a name="getServiceRequestCommentList1"></a>
+# **getServiceRequestCommentList1**
+> List getServiceRequestCommentList1(serviceRequestId)
+
+Returns all user comments of specific service request by internal Id.
+
+    Each service request can have n comments. This endpoint returns the complete list of user comments of a specific service request.
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **serviceRequestId** | **String**|  | [default to null] |
+
+### Return type
+
+[**List**](../Models/ServiceRequestComment.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 <a name="getServiceRequestList1"></a>
 # **getServiceRequestList1**
