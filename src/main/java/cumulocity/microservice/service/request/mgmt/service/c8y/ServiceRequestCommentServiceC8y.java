@@ -1,6 +1,9 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestCommentType;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +66,18 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 		return getServiceRequestByFilter(filter, pageSize, pageNumber, withTotalPages);
 	}
 
+	@Override
+	public List<ServiceRequestComment> getCompleteUserCommentListByFilter(String serviceRequestId) {
+		EventFilter filter = new EventFilter();
+		filter.byType(ServiceRequestCommentEventMapper.EVENT_TYPE);
+		filter.byFragmentType(ServiceRequestCommentEventMapper.SR_ID);
+		filter.byFragmentValue(serviceRequestId);
+		
+		Predicate<ServiceRequestComment> filterPredicate = srcomment -> srcomment.getType().equals(ServiceRequestCommentType.USER);
+		
+		return getServiceRequestCommentByFilterAndInternalFilter(filter, filterPredicate);
+	}
+	
 	@Override
 	public ServiceRequestComment getCommentById(String id) {
 		EventRepresentation event = eventApi.getEvent(GId.asGId(id));
@@ -125,6 +141,23 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 		
 		PagedEventCollectionRepresentation pagedEvent = eventList.get();
 		return pagedEvent;
+	}
+	
+	private List<ServiceRequestComment> getServiceRequestCommentByFilterAndInternalFilter(EventFilter filter,
+			Predicate<ServiceRequestComment> serviceRequestFilter) {
+		EventCollection eventList = eventApi.getEventsByFilter(filter);
+
+		Iterable<EventRepresentation> allPages = eventList.get(2000).allPages();
+		List<ServiceRequestComment> serviceRequestCommentList = new ArrayList<>();
+		for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {
+			EventRepresentation eventRepresentation = iterator.next();
+			ServiceRequestComment srComment = ServiceRequestCommentEventMapper.map2(eventRepresentation);
+			if (serviceRequestFilter.test(srComment)) {
+				serviceRequestCommentList.add(srComment);
+			}
+		}
+
+		return serviceRequestCommentList;
 	}
 
 	@Override

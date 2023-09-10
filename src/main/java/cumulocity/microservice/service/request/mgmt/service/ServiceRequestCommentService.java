@@ -1,5 +1,7 @@
 package cumulocity.microservice.service.request.mgmt.service;
 
+import java.util.List;
+
 import org.springframework.core.io.Resource;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
@@ -11,6 +13,8 @@ public interface ServiceRequestCommentService {
 	public ServiceRequestComment createComment(String deviceId, String serviceRequestId, ServiceRequestCommentRqBody serviceRequestComment, String owner);
 	
 	public RequestList<ServiceRequestComment> getCommentListByFilter(String serviceRequestId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);
+	
+	public List<ServiceRequestComment> getCompleteUserCommentListByFilter(String serviceRequestId);	
 	
 	public ServiceRequestComment getCommentById(String commentId);
 	
