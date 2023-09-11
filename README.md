@@ -4,7 +4,7 @@ Smart Field Services need Field Service Management (FSM) Systems and/or Issue Tr
 
 ![Service Request Slide](./docs/service-request-slide.png)
 
-This microservice and the UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) can be seen as adapter for FSM or ITS. The service request object is the glue or bridge for both systems.
+This microservice and the UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) can be seen as adapter for FSM or ITS. The service request object is the glue or bridge between Cumulocity IoT and FSM system.
 
 Which device IoT data is need for the smart field service use case differs a lot and must be implemented in the FSM connector. Some device IoT data will play an important part:
 
