@@ -88,7 +88,12 @@ classDiagram
     }
 ```
 
-Detailed information about the REST API you can find, [Open API Specification](./docs/README.md)
+Detailed information about the REST API you can find:
+
+[Open API Specification as mark down](./docs/README.md)
+
+[Open API Specification](./docs/openapi.json)
+
 
 The UI plugin [cumulocity-service-request-plugin](https://github.com/SoftwareAG/cumulocity-service-request-plugin) uses this REST API to perform typical CRUD operations and makes this feature available for the cockpit application.
 
