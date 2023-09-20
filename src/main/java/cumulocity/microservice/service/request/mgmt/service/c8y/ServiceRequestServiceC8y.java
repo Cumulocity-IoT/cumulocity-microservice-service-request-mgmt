@@ -44,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class ServiceRequestServiceC8y implements ServiceRequestService {
-
+	
 	private EventApi eventApi;
 
 	private AlarmApi alarmApi;
@@ -108,36 +108,46 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest) {
-		Optional<ServiceRequestStatus> srStatus = serviceRequestStatusService.getStatus(serviceRequest.getStatus().getId());
-		String srStatusIdExclude = null;
-		if(srStatus.isEmpty()) {
-			log.warn("Status {} is not part of the configured status list!");
-		}else {
-			srStatusIdExclude = srStatus.get().getExcludeForCounter() != null ? srStatus.get().getId(): null;
-		}
-		
-		ServiceRequest originalServiceRequest = getServiceRequestById(id);
-
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
+		ServiceRequest updatedServiceRequest = null;
+		String srStatusIdExclude = null;
 		
-		//Closing transition
-		if(srStatus.get().getIsClosedTransition() != null) {
-			eventMapper.setIsClosed(Boolean.TRUE);
+		if(serviceRequest.getStatus() == null) {
+			log.debug("Service Request update without status changes!");
+			EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
+			updatedServiceRequest = eventMapper.map2(updatedEvent);
+		}else {
+			log.debug("Service Request update with status changes!");
+			Optional<ServiceRequestStatus> srStatus = serviceRequestStatusService.getStatus(serviceRequest.getStatus().getId());
+
+			if(srStatus.isEmpty()) {
+				log.warn("Status {} is not part of the configured status list!");
+			}else {
+				srStatusIdExclude = srStatus.get().getExcludeForCounter() != null ? srStatus.get().getId(): null;
+			}
+			
+			ServiceRequest originalServiceRequest = getServiceRequestById(id);
+
+			
+			//Closing transition
+			if(srStatus.get().getIsClosedTransition() != null) {
+				eventMapper.setIsClosed(Boolean.TRUE);
+			}
+			
+			EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
+
+			updatedServiceRequest = eventMapper.map2(updatedEvent);
+
+			//track status changes as system comment
+			createCommentForStatusChange("Updated Status", updatedServiceRequest);
+
+			// Alarm status transition
+			if(!originalServiceRequest.getStatus().getId().equals(updatedServiceRequest.getStatus().getId())) {
+				updateAlarm(updatedServiceRequest, srStatus.get());
+			}			
 		}
 		
-		EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
-
-		ServiceRequest updatedServiceRequest = eventMapper.map2(updatedEvent);
-
-		//track status changes as system comment
-		createCommentForStatusChange("Updated Status", updatedServiceRequest);
-
-		// Alarm status transition
-		if(!originalServiceRequest.getStatus().getId().equals(updatedServiceRequest.getStatus().getId())) {
-			updateAlarm(updatedServiceRequest, srStatus.get());
-		}
-		
-		// Update Managed Object
+		log.debug("Update Managed Object"); 
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(updatedServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
 		if(srStatusIdExclude == null) {
@@ -146,7 +156,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
 		}
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
-
 		return updatedServiceRequest;
 	}
 
