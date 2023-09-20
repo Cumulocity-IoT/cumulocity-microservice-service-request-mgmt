@@ -121,8 +121,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
 		
 		//Closing transition
-		if(srStatus.get().getIsClosedTransition() != null || Boolean.FALSE.equals(serviceRequest.getIsActive())) {
-			eventMapper.setIsActive(Boolean.FALSE);
+		if(srStatus.get().getIsClosedTransition() != null) {
 			eventMapper.setIsClosed(Boolean.TRUE);
 		}
 		
