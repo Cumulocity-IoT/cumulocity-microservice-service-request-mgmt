@@ -138,11 +138,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 			updatedServiceRequest = eventMapper.map2(updatedEvent);
 
-			//track status changes as system comment
-			createCommentForStatusChange("Updated Status", updatedServiceRequest);
-
-			// Alarm status transition
 			if(!originalServiceRequest.getStatus().getId().equals(updatedServiceRequest.getStatus().getId())) {
+				//track status changes as system comment
+				createCommentForStatusChange("Updated Status", updatedServiceRequest);
+
+				// Alarm status transition
 				updateAlarm(updatedServiceRequest, srStatus.get());
 			}			
 		}
