@@ -144,7 +144,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 				// Alarm status transition
 				updateAlarm(updatedServiceRequest, srStatus.get());
-			}			
+			}
+			if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(updatedServiceRequest.getIsActive())) {
+				createSystemComment("Service Request Deactivated", updatedServiceRequest);
+				eventMapper.setIsClosed(Boolean.TRUE);				
+			}
 		}
 		
 		log.debug("Update Managed Object"); 
@@ -426,8 +430,21 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 	
 	private void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest) {
+		if(serviceRequest == null) {
+			log.warn("Couldn't add system comment, service request is null!");
+			return;
+		}
+		String text = prefix + ", Id: " + serviceRequest.getStatus().getId() + ", Name: " + serviceRequest.getStatus().getName();
+		createSystemComment(text, serviceRequest);
+	}
+	
+	private void createSystemComment(String text, ServiceRequest serviceRequest) {
+		if(serviceRequest == null) {
+			log.warn("Couldn't add system comment, service request is null!");
+			return;
+		}
 		ServiceRequestCommentRqBody comment = new ServiceRequestCommentRqBody();
-		comment.setText(prefix + ", Id: " + serviceRequest.getStatus().getId() + ", Name: " + serviceRequest.getStatus().getName());
+		comment.setText(text);
 		comment.setType(ServiceRequestCommentType.SYSTEM);
 		serviceRequestCommentService.createComment(serviceRequest.getSource().getId(), serviceRequest.getId(), comment, null);
 	}
