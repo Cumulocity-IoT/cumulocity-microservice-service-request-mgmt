@@ -68,6 +68,7 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 
 	@Override
 	public List<ServiceRequestComment> getCompleteUserCommentListByFilter(String serviceRequestId) {
+		log.info("fetch comments for service request {}", serviceRequestId);
 		EventFilter filter = new EventFilter();
 		filter.byType(ServiceRequestCommentEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestCommentEventMapper.SR_ID);
@@ -75,7 +76,9 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 		
 		Predicate<ServiceRequestComment> filterPredicate = srcomment -> srcomment.getType().equals(ServiceRequestCommentType.USER);
 		
-		return getServiceRequestCommentByFilterAndInternalFilter(filter, filterPredicate);
+		List<ServiceRequestComment> serviceRequestCommentByFilterAndInternalFilter = getServiceRequestCommentByFilterAndInternalFilter(filter, filterPredicate);
+		log.info("return list of comments, size {}", serviceRequestCommentByFilterAndInternalFilter.size());
+		return serviceRequestCommentByFilterAndInternalFilter;
 	}
 	
 	@Override

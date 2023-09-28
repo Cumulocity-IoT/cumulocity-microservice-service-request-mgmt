@@ -234,7 +234,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public List<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned) {
-		log.info("find all active service requests!");
+		log.info("fetch all active service requests which are assigned: {}!, assigned");
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
@@ -260,6 +260,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				}
 			}
 		}
+		log.info("return service request list. size {}", serviceRequestList.size());
 		return serviceRequestList;
 	}
 
