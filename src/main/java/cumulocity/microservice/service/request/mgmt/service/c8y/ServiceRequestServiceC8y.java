@@ -109,6 +109,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest) {
+		log.debug("Update Service Request: Id {}, Updat {}", id, serviceRequest.toString());
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
 		ServiceRequest updatedServiceRequest = null;
 		String srStatusIdExclude = null;
@@ -135,7 +136,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				eventMapper.setIsClosed(Boolean.TRUE);
 			}
 
-			if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(updatedServiceRequest.getIsActive())) {
+			if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(serviceRequest.getIsActive())) {
 				createSystemComment("Service Request Deactivated", updatedServiceRequest);
 				eventMapper.setIsClosed(Boolean.TRUE);				
 			}
