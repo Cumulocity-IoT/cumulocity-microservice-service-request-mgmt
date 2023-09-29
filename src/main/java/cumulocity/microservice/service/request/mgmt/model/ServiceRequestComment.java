@@ -54,6 +54,9 @@ public class ServiceRequestComment {
 	@Schema(description = "Service request comment external ID, contains the service request comment object ID of the external system.", example = "123456789")
 	private String externalId;
 	
+	@Schema(description = "Service request closed flag, shows if the service request comment is closed! This fragment is basicaly used for retention rules.")
+	private Boolean isClosed;
+	
 	@Schema(description = "File attachment of Service Request")
 	private ServiceRequestAttachment attachment;
 

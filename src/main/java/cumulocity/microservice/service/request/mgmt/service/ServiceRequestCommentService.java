@@ -14,7 +14,9 @@ public interface ServiceRequestCommentService {
 	
 	public RequestList<ServiceRequestComment> getCommentListByFilter(String serviceRequestId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);
 	
-	public List<ServiceRequestComment> getCompleteUserCommentListByFilter(String serviceRequestId);	
+	public List<ServiceRequestComment> getCompleteUserCommentListByServiceRequest(String serviceRequestId);	
+	
+	public List<ServiceRequestComment> getCompleteCommentListByServiceRequest(String serviceRequestId);	
 	
 	public ServiceRequestComment getCommentById(String commentId);
 	

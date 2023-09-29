@@ -34,6 +34,7 @@ import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPat
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestCommentType;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
@@ -133,6 +134,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			if(srStatus.get().getIsClosedTransition() != null) {
 				eventMapper.setIsClosed(Boolean.TRUE);
 			}
+
+			if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(updatedServiceRequest.getIsActive())) {
+				createSystemComment("Service Request Deactivated", updatedServiceRequest);
+				eventMapper.setIsClosed(Boolean.TRUE);				
+			}
 			
 			EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
 
@@ -145,10 +151,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				// Alarm status transition
 				updateAlarm(updatedServiceRequest, srStatus.get());
 			}
-			if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(updatedServiceRequest.getIsActive())) {
-				createSystemComment("Service Request Deactivated", updatedServiceRequest);
-				eventMapper.setIsClosed(Boolean.TRUE);				
+			
+			//if service request is closed all comments must also be set to closed
+			if(updatedServiceRequest.getIsClosed()) {
+				updateAllCommentsToClosed(updatedServiceRequest);
 			}
+
 		}
 		
 		log.debug("Update Managed Object"); 
@@ -234,7 +242,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public List<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned) {
-		log.info("fetch all active service requests which are assigned: {}!, assigned");
+		log.info("fetch all active service requests which are assigned: {}", assigned);
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
@@ -448,5 +456,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		comment.setText(text);
 		comment.setType(ServiceRequestCommentType.SYSTEM);
 		serviceRequestCommentService.createComment(serviceRequest.getSource().getId(), serviceRequest.getId(), comment, null);
+	}
+	
+	private void updateAllCommentsToClosed(ServiceRequest serviceRequest) {
+		List<ServiceRequestComment> commentList = serviceRequestCommentService.getCompleteCommentListByServiceRequest(serviceRequest.getId());
+		
+		for(ServiceRequestComment comment: commentList) {
+			ServiceRequestCommentRqBody commentUpdate = new ServiceRequestCommentRqBody();
+			commentUpdate.setIsClosed(Boolean.TRUE);
+			serviceRequestCommentService.updateComment(comment.getId(), commentUpdate);			
+		}
 	}
 }

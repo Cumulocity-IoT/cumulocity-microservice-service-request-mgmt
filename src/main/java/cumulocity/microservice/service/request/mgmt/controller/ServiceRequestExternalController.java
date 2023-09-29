@@ -67,7 +67,7 @@ public class ServiceRequestExternalController {
 			@ApiResponse(responseCode = "404", description = "Not found")})
 	@GetMapping(path = "/{serviceRequestId}/comment", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ServiceRequestComment>> getServiceRequestCommentList(@PathVariable String serviceRequestId) {
-		List<ServiceRequestComment> commentListByFilter = serviceRequestCommentService.getCompleteUserCommentListByFilter(serviceRequestId);
+		List<ServiceRequestComment> commentListByFilter = serviceRequestCommentService.getCompleteUserCommentListByServiceRequest(serviceRequestId);
 		return new ResponseEntity<List<ServiceRequestComment>>(commentListByFilter, HttpStatus.OK);
 	}
 
