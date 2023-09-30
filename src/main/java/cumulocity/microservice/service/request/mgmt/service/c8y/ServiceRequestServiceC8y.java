@@ -37,9 +37,10 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestCommentType;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
-import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusService;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusConfigService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -54,24 +55,24 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	private InventoryApi inventoryApi;
 	
-	private ServiceRequestStatusService serviceRequestStatusService;
+	private ServiceRequestStatusConfigService serviceRequestStatusConfigService;
 	
 	private ServiceRequestCommentService serviceRequestCommentService;
 			
 	@Autowired
 	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
-			InventoryApi inventoryApi, ServiceRequestStatusService serviceRequestStatusService, ServiceRequestCommentService serviceRequestCommentService) {
+			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService) {
 		this.eventApi = eventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
 		this.inventoryApi = inventoryApi;
-		this.serviceRequestStatusService = serviceRequestStatusService;
+		this.serviceRequestStatusConfigService = serviceRequestStatusConfigService;
 		this.serviceRequestCommentService = serviceRequestCommentService;
 	}
 
 	@Override
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
-		Optional<ServiceRequestStatus> srStatus = serviceRequestStatusService.getStatus(serviceRequestRqBody.getStatus().getId());
+		Optional<ServiceRequestStatusConfig> srStatus = serviceRequestStatusConfigService.getStatus(serviceRequestRqBody.getStatus().getId());
 		String srStatusIdExclude = null;
 		if(srStatus.isEmpty()) {
 			log.warn("Status {} is not part of the configured status list!", serviceRequestRqBody.getStatus().toString());
@@ -120,7 +121,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			updatedServiceRequest = eventMapper.map2(updatedEvent);
 		}else {
 			log.debug("Service Request update with status changes!");
-			Optional<ServiceRequestStatus> srStatus = serviceRequestStatusService.getStatus(serviceRequest.getStatus().getId());
+			Optional<ServiceRequestStatusConfig> srStatus = serviceRequestStatusConfigService.getStatus(serviceRequest.getStatus().getId());
 
 			if(srStatus.isEmpty()) {
 				log.warn("Status {} is not part of the configured status list!");
@@ -421,7 +422,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		return updateServiceRequest(id, serviceRequestPatch);
 	}
 	
-	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestStatus srStatus) {
+	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestStatusConfig srStatus) {
 		if(serviceRequest == null) {
 			return;
 		}

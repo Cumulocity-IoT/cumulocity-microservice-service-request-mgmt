@@ -20,10 +20,9 @@ import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
 
-import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
-import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
 
-class ServiceRequestStatusServiceC8yTest {
+class ServiceRequestStatusConfigServiceC8yTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -35,18 +34,18 @@ class ServiceRequestStatusServiceC8yTest {
 		ManagedObjectRepresentation updatedStatusMo = createMo("5", "6");
 		when(inventoryApi.update(Mockito.any())).thenReturn(updatedStatusMo);	
 		
-		ServiceRequestStatusServiceC8y statusService = mock(ServiceRequestStatusServiceC8y.class, withSettings().useConstructor(inventoryApi));
+		ServiceRequestStatusConfigServiceC8y statusService = mock(ServiceRequestStatusConfigServiceC8y.class, withSettings().useConstructor(inventoryApi));
 		ManagedObjectRepresentation statusMo = createMo("1", "2", "3");
 		
 		when(statusService.getManagedObjectRepresentation()).thenReturn(statusMo);
 		when(statusService.createOrUpdateStatusList(Mockito.anyList())).thenCallRealMethod();
 		
 		
-		List<ServiceRequestStatus> newStatusList = new ArrayList<>();
-		newStatusList.add(new ServiceRequestStatus("5", "Status5"));
-		newStatusList.add(new ServiceRequestStatus("6", "Status6"));
+		List<ServiceRequestStatusConfig> newStatusList = new ArrayList<>();
+		newStatusList.add(new ServiceRequestStatusConfig("5", "Status5"));
+		newStatusList.add(new ServiceRequestStatusConfig("6", "Status6"));
 		
-		List<ServiceRequestStatus> createOrUpdateStatusList = statusService.createOrUpdateStatusList(newStatusList);
+		List<ServiceRequestStatusConfig> createOrUpdateStatusList = statusService.createOrUpdateStatusList(newStatusList);
 		
 		assertNotNull(createOrUpdateStatusList);
 		assertEquals(2, createOrUpdateStatusList.size());
@@ -54,7 +53,7 @@ class ServiceRequestStatusServiceC8yTest {
 
 	@Test
 	void testGetStatusList() {
-		ServiceRequestStatusServiceC8y statusService = mock(ServiceRequestStatusServiceC8y.class);
+		ServiceRequestStatusConfigServiceC8y statusService = mock(ServiceRequestStatusConfigServiceC8y.class);
 		ManagedObjectRepresentation statusMo = createMo("1", "2", "3");
 		
 		when(statusService.getManagedObjectRepresentation()).thenReturn(statusMo);
@@ -63,18 +62,18 @@ class ServiceRequestStatusServiceC8yTest {
 
 	@Test
 	void testGetStatus() {
-		ServiceRequestStatusServiceC8y statusService = mock(ServiceRequestStatusServiceC8y.class);
+		ServiceRequestStatusConfigServiceC8y statusService = mock(ServiceRequestStatusConfigServiceC8y.class);
 		ManagedObjectRepresentation statusListMo = createMo("1", "2", "3");
 
 		when(statusService.getManagedObjectRepresentation()).thenReturn(statusListMo);
 		when(statusService.getStatus(Mockito.anyString())).thenCallRealMethod();
 
-		Optional<ServiceRequestStatus> status = statusService.getStatus("2");
+		Optional<ServiceRequestStatusConfig> status = statusService.getStatus("2");
 		assertNotNull(status);
 		assertEquals("2", status.get().getId());
 		assertEquals("Status2", status.get().getName());
 
-		Optional<ServiceRequestStatus> statusEmpty = statusService.getStatus("4");
+		Optional<ServiceRequestStatusConfig> statusEmpty = statusService.getStatus("4");
 		assertEquals(true, statusEmpty.isEmpty());
 	}
 
@@ -84,7 +83,7 @@ class ServiceRequestStatusServiceC8yTest {
 		ManagedObjectRepresentation updatedStatusMo = createMo("1", "2");
 		when(inventoryApi.update(Mockito.any())).thenReturn(updatedStatusMo);
 
-		ServiceRequestStatusServiceC8y statusService = mock(ServiceRequestStatusServiceC8y.class,
+		ServiceRequestStatusConfigServiceC8y statusService = mock(ServiceRequestStatusConfigServiceC8y.class,
 				withSettings().useConstructor(inventoryApi));
 		ManagedObjectRepresentation statusMo = createMo("1", "2", "3");
 
@@ -100,10 +99,12 @@ class ServiceRequestStatusServiceC8yTest {
 		
 		for(String status: statusList) {
 			HashMap<String, Object> statusObj = new HashMap<>();
-			statusObj.put(ServiceRequestStatusObjectMapper.SR_STATUS_ID, status);
-			statusObj.put(ServiceRequestStatusObjectMapper.SR_STATUS_NAME, "Status"+status);
-			statusObj.put(ServiceRequestStatusObjectMapper.SR_ALARM_STATUS_TRANSITION, "CLEARED");
-			statusObj.put(ServiceRequestStatusObjectMapper.SR_IS_CLOSED_TRANSITION, Boolean.TRUE);
+			statusObj.put(ServiceRequestStatusConfigObjectMapper.SR_STATUS_ID, status);
+			statusObj.put(ServiceRequestStatusConfigObjectMapper.SR_STATUS_NAME, "Status"+status);
+			statusObj.put(ServiceRequestStatusConfigObjectMapper.SR_ALARM_STATUS_TRANSITION, "CLEARED");
+			statusObj.put(ServiceRequestStatusConfigObjectMapper.SR_IS_CLOSED_TRANSITION, Boolean.TRUE);
+			statusObj.put(ServiceRequestStatusConfigObjectMapper.SR_IS_DEACTIVATE_TRANSITON, Boolean.TRUE);
+			statusObj.put(ServiceRequestStatusConfigObjectMapper.SR_IS_EXCLUDE_FOR_COUNTER, Boolean.TRUE);
 			hashMapList.add(statusObj);
 		}
 		

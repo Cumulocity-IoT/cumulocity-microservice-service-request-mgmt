@@ -28,10 +28,10 @@ All URIs are relative to *http://localhost:8080*
 *ServiceRequestPriorityControllerApi* | [**deleteServiceRequestpriorityById**](Apis/ServiceRequestPriorityControllerApi.md#deleteservicerequestprioritybyid) | **DELETE** /api/service/request/priority/{priorityOrdinal} | DELETE service request priority |
 *ServiceRequestPriorityControllerApi* | [**getServiceRequestPriorityList**](Apis/ServiceRequestPriorityControllerApi.md#getservicerequestprioritylist) | **GET** /api/service/request/priority | GET service request priority list |
 *ServiceRequestPriorityControllerApi* | [**getServiceRequestpriorityById**](Apis/ServiceRequestPriorityControllerApi.md#getservicerequestprioritybyid) | **GET** /api/service/request/priority/{priorityOrdinal} | GET service request priority by ordinal |
-| *ServiceRequestStatusControllerApi* | [**createServiceRequestStatusList**](Apis/ServiceRequestStatusControllerApi.md#createservicerequeststatuslist) | **POST** /api/service/request/status | CREATE or UPDATE service request status list |
-*ServiceRequestStatusControllerApi* | [**deleteServiceRequestStatusById**](Apis/ServiceRequestStatusControllerApi.md#deleteservicerequeststatusbyid) | **DELETE** /api/service/request/status/{statusId} | DELETE service request status by Id |
-*ServiceRequestStatusControllerApi* | [**getServiceRequestStatusById**](Apis/ServiceRequestStatusControllerApi.md#getservicerequeststatusbyid) | **GET** /api/service/request/status/{statusId} | GET service request status by Id |
-*ServiceRequestStatusControllerApi* | [**getServiceRequestStatusList**](Apis/ServiceRequestStatusControllerApi.md#getservicerequeststatuslist) | **GET** /api/service/request/status | GET service request status list |
+| *ServiceRequestStatusConfigControllerApi* | [**createServiceRequestStatusConfigList**](Apis/ServiceRequestStatusConfigControllerApi.md#createservicerequeststatusconfiglist) | **POST** /api/service/request/status | CREATE or UPDATE service request status list |
+*ServiceRequestStatusConfigControllerApi* | [**deleteServiceRequestStatusConfigById**](Apis/ServiceRequestStatusConfigControllerApi.md#deleteservicerequeststatusconfigbyid) | **DELETE** /api/service/request/status/{statusId} | DELETE service request status by Id |
+*ServiceRequestStatusConfigControllerApi* | [**getServiceRequestStatusConfigById**](Apis/ServiceRequestStatusConfigControllerApi.md#getservicerequeststatusconfigbyid) | **GET** /api/service/request/status/{statusId} | GET service request status by Id |
+*ServiceRequestStatusConfigControllerApi* | [**getServiceRequestStatusConfigList**](Apis/ServiceRequestStatusConfigControllerApi.md#getservicerequeststatusconfiglist) | **GET** /api/service/request/status | GET service request status list |
 
 
 <a name="documentation-for-models"></a>
@@ -49,6 +49,7 @@ All URIs are relative to *http://localhost:8080*
  - [ServiceRequestPriority](./Models/ServiceRequestPriority.md)
  - [ServiceRequestSource](./Models/ServiceRequestSource.md)
  - [ServiceRequestStatus](./Models/ServiceRequestStatus.md)
+ - [ServiceRequestStatusConfig](./Models/ServiceRequestStatusConfig.md)
 
 
 <a name="documentation-for-authorization"></a>

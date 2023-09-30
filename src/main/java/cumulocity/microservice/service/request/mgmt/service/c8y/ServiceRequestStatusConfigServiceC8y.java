@@ -10,50 +10,50 @@ import com.cumulocity.sdk.client.inventory.InventoryApi;
 import com.cumulocity.sdk.client.inventory.InventoryFilter;
 import com.cumulocity.sdk.client.inventory.ManagedObjectCollection;
 
-import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
-import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusService;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusConfigService;
 
 @Service
-public class ServiceRequestStatusServiceC8y implements ServiceRequestStatusService {
+public class ServiceRequestStatusConfigServiceC8y implements ServiceRequestStatusConfigService {
 
 	private InventoryApi inventoryApi;
 	
-	public ServiceRequestStatusServiceC8y(InventoryApi inventoryApi) {
+	public ServiceRequestStatusConfigServiceC8y(InventoryApi inventoryApi) {
 		this.inventoryApi = inventoryApi;
 	}
 
 	@Override
-	public List<ServiceRequestStatus> createOrUpdateStatusList(List<ServiceRequestStatus> statusList) {
+	public List<ServiceRequestStatusConfig> createOrUpdateStatusList(List<ServiceRequestStatusConfig> statusList) {
 		ManagedObjectRepresentation managedObject = getManagedObjectRepresentation();
 		if (managedObject == null) {
 			/* CREATE */
 			ManagedObjectRepresentation newManagedObject = inventoryApi
-					.create(ServiceRequestStatusObjectMapper.map2(statusList).getManageObject());
-			return ServiceRequestStatusObjectMapper.map2(newManagedObject);
+					.create(ServiceRequestStatusConfigObjectMapper.map2(statusList).getManageObject());
+			return ServiceRequestStatusConfigObjectMapper.map2(newManagedObject);
 		}
 		/* UPDATE */
-		ManagedObjectRepresentation updateManagedObject = ServiceRequestStatusObjectMapper
+		ManagedObjectRepresentation updateManagedObject = ServiceRequestStatusConfigObjectMapper
 				.map2(managedObject.getId().getValue(), statusList).getManageObject();
 		ManagedObjectRepresentation newManagedObject = inventoryApi.update(updateManagedObject);
-		return ServiceRequestStatusObjectMapper.map2(newManagedObject);
+		return ServiceRequestStatusConfigObjectMapper.map2(newManagedObject);
 	}
 
 	@Override
-	public List<ServiceRequestStatus> getStatusList() {
+	public List<ServiceRequestStatusConfig> getStatusList() {
 		ManagedObjectRepresentation managedObject = getManagedObjectRepresentation();
-		return ServiceRequestStatusObjectMapper.map2(managedObject);
+		return ServiceRequestStatusConfigObjectMapper.map2(managedObject);
 	}
 
 	@Override
-	public Optional<ServiceRequestStatus> getStatus(String statusId) {
+	public Optional<ServiceRequestStatusConfig> getStatus(String statusId) {
 		ManagedObjectRepresentation managedObject = getManagedObjectRepresentation();
 		if(managedObject == null) {
 			return Optional.empty();
 		}
-		List<ServiceRequestStatus> serviceRequestStatus = ServiceRequestStatusObjectMapper.map2(managedObject);
+		List<ServiceRequestStatusConfig> serviceRequestStatus = ServiceRequestStatusConfigObjectMapper.map2(managedObject);
 
-		Optional<ServiceRequestStatus> matchingObject = serviceRequestStatus.stream()
+		Optional<ServiceRequestStatusConfig> matchingObject = serviceRequestStatus.stream()
 				.filter(sr -> sr.getId().equals(statusId)).findFirst();
 		return matchingObject;
 	}

@@ -17,8 +17,6 @@ public class ServiceRequestStatusObjectMapper {
 	public static final String SR_STATUS_LIST = "sr_StatusList";
 	public static final String SR_STATUS_NAME = "name";
 	public static final String SR_STATUS_ID = "id";
-	public static final String SR_ALARM_STATUS_TRANSITION = "alarmStatusTransition";
-	public static final String SR_IS_CLOSED_TRANSITION = "isClosedTransition";
 	
 	private final ManagedObjectRepresentation managedObject;
 
@@ -95,8 +93,6 @@ public class ServiceRequestStatusObjectMapper {
 		ServiceRequestStatus status = new ServiceRequestStatus();
 		status.setId((String)map.get(SR_STATUS_ID));
 		status.setName((String)map.get(SR_STATUS_NAME));
-		status.setAlarmStatusTransition((String)map.get(SR_ALARM_STATUS_TRANSITION));
-		status.setIsClosedTransition((Boolean)map.get(SR_IS_CLOSED_TRANSITION));
 		return status;
 	}
 	
