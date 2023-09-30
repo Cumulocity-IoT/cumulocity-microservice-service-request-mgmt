@@ -136,6 +136,10 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			if(srStatus.get().getIsClosedTransition() != null) {
 				eventMapper.setIsClosed(Boolean.TRUE);
 			}
+			
+			if(srStatus.get().getIsDeactivateTransition() != null) {
+				eventMapper.setIsActive(Boolean.FALSE);
+			}
 
 			if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(serviceRequest.getIsActive())) {
 				createSystemComment("Service Request Deactivated", updatedServiceRequest);
