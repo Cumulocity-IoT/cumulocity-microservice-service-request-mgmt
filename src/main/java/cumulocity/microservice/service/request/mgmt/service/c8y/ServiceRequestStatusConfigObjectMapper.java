@@ -101,7 +101,7 @@ public class ServiceRequestStatusConfigObjectMapper {
 		status.setAlarmStatusTransition((String)map.get(SR_ALARM_STATUS_TRANSITION));
 		status.setIsClosedTransition((Boolean)map.get(SR_IS_CLOSED_TRANSITION));
 		status.setIsDeactivateTransition((Boolean)map.get(SR_IS_DEACTIVATE_TRANSITON));
-		status.setExcludeForCounter((Boolean)map.get(SR_IS_EXCLUDE_FOR_COUNTER));
+		status.setIsExcludeForCounter((Boolean)map.get(SR_IS_EXCLUDE_FOR_COUNTER));
 		return status;
 	}
 	

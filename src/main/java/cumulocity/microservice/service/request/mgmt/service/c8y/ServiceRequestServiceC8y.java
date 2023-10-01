@@ -77,7 +77,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		if(srStatus.isEmpty()) {
 			log.warn("Status {} is not part of the configured status list!", serviceRequestRqBody.getStatus().toString());
 		}else {
-			srStatusIdExclude = srStatus.get().getExcludeForCounter() != null ? srStatus.get().getId(): null;
+			srStatusIdExclude = srStatus.get().getIsExcludeForCounter() != null ? srStatus.get().getId(): null;
 		}
 		
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequestRqBody);
@@ -126,7 +126,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			if(srStatus.isEmpty()) {
 				log.warn("Status {} is not part of the configured status list!");
 			}else {
-				srStatusIdExclude = srStatus.get().getExcludeForCounter() != null ? srStatus.get().getId(): null;
+				srStatusIdExclude = srStatus.get().getIsExcludeForCounter() != null ? srStatus.get().getId(): null;
 			}
 			
 			ServiceRequest originalServiceRequest = getServiceRequestById(id);
@@ -141,7 +141,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				eventMapper.setIsActive(Boolean.FALSE);
 			}
 
-			if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(serviceRequest.getIsActive())) {
+			if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(eventMapper.getIsActive())) {
 				createSystemComment("Service Request Deactivated", updatedServiceRequest);
 				eventMapper.setIsClosed(Boolean.TRUE);				
 			}

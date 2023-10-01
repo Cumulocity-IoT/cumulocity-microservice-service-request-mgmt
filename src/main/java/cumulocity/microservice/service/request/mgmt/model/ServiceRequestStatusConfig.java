@@ -36,7 +36,7 @@ public class ServiceRequestStatusConfig {
 	private Boolean isDeactivateTransition;
 	
 	@Schema(required = false, description = "All active (not closed) Service Requests are counted on device manage object. However, with with parameter the status can be excluded and will not be counted!", example = "false")	
-	private Boolean excludeForCounter;
+	private Boolean isExcludeForCounter;
 	
 	@Schema(required = false, description = "Icon name of the status which should be shown at the UI", example = "warning")		
 	private String icon;
