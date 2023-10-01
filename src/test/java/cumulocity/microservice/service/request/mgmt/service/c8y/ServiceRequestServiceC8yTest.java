@@ -24,7 +24,7 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
-import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusService;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusConfigService;
 
 class ServiceRequestServiceC8yTest {
 
@@ -49,7 +49,7 @@ class ServiceRequestServiceC8yTest {
 		
 		EventAttachmentApi eventAttachmentApi = mock(EventAttachmentApi.class);
 		AlarmApi alarmApi = mock(AlarmApi.class);
-		ServiceRequestStatusService serviceRequestStatusService = mock(ServiceRequestStatusService.class);
+		ServiceRequestStatusConfigService serviceRequestStatusService = mock(ServiceRequestStatusConfigService.class);
 		
 		ServiceRequestServiceC8y serviceRequestService = mock(ServiceRequestServiceC8y.class, withSettings().useConstructor(eventApi, eventAttachmentApi, alarmApi, inventoryApi, serviceRequestStatusService));
 		

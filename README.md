@@ -149,24 +149,39 @@ Example:
     {
         "id": "3",
         "name": "IsWorkDone",
-        "alarmStatusTransition": "CLEARED"
+        "alarmStatusTransition": "CLEARED",
+        "isExcludeForCounter": true
     },
     {
         "id": "4",
-        "name": "Rejected"
+        "name": "Rejected",
+        "isClosedTransition": true
     },
     {
         "id": "5",
         "name": "Closed",
         "alarmStatusTransition": "CLEARED",
-        "isClosedTransition": true
+        "isClosedTransition": true,
+        "isDeactivateTransition": true
+    },
+    {
+        "id": "7",
+        "name": "Scheduled"
+    },
+    {
+        "id": "8",
+        "name": "ReadyForScheduling"
     }
 ]
 ```
 
 The property `alarmStatusTransition` defines the alarm status which will be set if this service request changes to this status.
 
-The property `isClosedTransition` defines the service request as closed in general and set the `sr_Active` to false and `sr_Closed`. This allows retention rules to be configured.
+The property `isClosedTransition` defines the service request as closed in general and set the `sr_Closed` fragment. This fragment should be used to configure retention rules for `c8y_ServiceRequest` and `c8y_ServiceRequestComment`. 
+
+The property `isDeactivateTransition` defines the service request as deactivated and set the `sr_Active` to false. This means the service request will filtered and not shown any more.
+
+The property `isExcludeForCounter` defines the service request status which shouldn't be counted. The counter is stored and maintained on the device managed object.
 
 ![Retention Rules](./docs/retention-rules.PNG)
 
