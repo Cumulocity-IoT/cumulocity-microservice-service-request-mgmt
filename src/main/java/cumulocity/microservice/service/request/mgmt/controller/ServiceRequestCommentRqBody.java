@@ -31,6 +31,10 @@ public class ServiceRequestCommentRqBody {
 	@NotNull
 	@Valid
 	private ServiceRequestCommentType type;
+	
+	@Schema(required = true, accessMode = Schema.AccessMode.READ_ONLY, description = "creator / owner ", example = "owner@example.com")
+	@NotNull
+	private String owner;
 
 	@Schema(description = "File attachment of Service Request")
 	private ServiceRequestAttachment attachment;

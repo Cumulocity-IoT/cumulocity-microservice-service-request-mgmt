@@ -37,6 +37,7 @@ public class ServiceRequestCommentEventMapper {
 		mapper.setServiceRequestType(serviceRequestComment.getType());
 		mapper.setExternalId(serviceRequestComment.getExternalId());
 		mapper.setIsClosed(serviceRequestComment.getIsClosed());
+		mapper.setOwner(serviceRequestComment.getOwner());
 		return mapper;
 	}
 
@@ -50,6 +51,7 @@ public class ServiceRequestCommentEventMapper {
 		mapper.setServiceRequestType(serviceRequestComment.getType());
 		mapper.setExternalId(serviceRequestComment.getExternalId());
 		mapper.setIsClosed(serviceRequestComment.getIsClosed());
+		mapper.setOwner(serviceRequestComment.getOwner());
 		return mapper;
 	}
 

@@ -10,7 +10,7 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 import cumulocity.microservice.service.request.mgmt.service.c8y.EventAttachment;
 
 public interface ServiceRequestCommentService {
-	public ServiceRequestComment createComment(String deviceId, String serviceRequestId, ServiceRequestCommentRqBody serviceRequestComment, String owner);
+	public ServiceRequestComment createComment(String deviceId, String serviceRequestId, ServiceRequestCommentRqBody serviceRequestComment, String username);
 	
 	public RequestList<ServiceRequestComment> getCommentListByFilter(String serviceRequestId, Integer pageSize, Integer pageNumber, Boolean withTotalPages);
 	

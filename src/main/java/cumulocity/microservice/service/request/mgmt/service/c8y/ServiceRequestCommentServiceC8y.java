@@ -45,9 +45,11 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 
 	@Override
 	public ServiceRequestComment createComment(String deviceId, String serviceRequestId,
-			ServiceRequestCommentRqBody serviceRequestComment, String owner) {
+			ServiceRequestCommentRqBody serviceRequestComment, String username) {
 		ServiceRequestCommentEventMapper eventMapper = ServiceRequestCommentEventMapper.map2(serviceRequestComment);
-		eventMapper.setOwner(owner);
+		if(eventMapper.getOwner() == null) {
+			eventMapper.setOwner(username);			
+		}
 		eventMapper.setServiceRequestId(serviceRequestId);
 		eventMapper.setSource(new ServiceRequestSource(deviceId));
 
