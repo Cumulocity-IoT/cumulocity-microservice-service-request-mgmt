@@ -77,6 +77,9 @@ public class ServiceRequest {
 	@Schema(description = "Service request active flag, shows if the service request is active!", example = "true")
 	private Boolean isActive;
 	
+	@Schema(description = "Service request closed flag, shows if the service request is closed! This fragment is basicaly used for retention rules.")
+	private Boolean isClosed;
+	
 	@Schema(description = "Service request external ID, contains the service request object ID of the external system.", example = "123456789")
 	private String externalId;
 

@@ -34,12 +34,16 @@ public class ManagedObjectMapper {
 		return (Map<String, Long>) managedObjectRepresentation.get(SR_ACTIVE_STATUS);
 	}
 
-	public void updateServiceRequestPriorityCounter(RequestList<ServiceRequest> serviceRequestList, String... excludeStatusList ) {
+	public void updateServiceRequestPriorityCounter(RequestList<ServiceRequest> serviceRequestList, String... excludeStatusIdList ) {
+		if(serviceRequestList == null || serviceRequestList.getList() == null) {
+			return;
+		}
+		
 		Map<String, Long> priorityCounterMap = new HashMap<>();
-		List<String> excludeList = List.of(excludeStatusList);
+		List<String> excludeList = List.of(excludeStatusIdList);
 		
 		for (ServiceRequest serviceRequest : serviceRequestList.getList()) {
-			if(excludeList.contains(serviceRequest.getStatus().getName()) == false) {
+			if(excludeList.contains(serviceRequest.getStatus().getId()) == false) {
 				priorityCounterMap.merge(serviceRequest.getPriority().getName().replace(" ", "_"), 1L, Long::sum);
 			}
 		}

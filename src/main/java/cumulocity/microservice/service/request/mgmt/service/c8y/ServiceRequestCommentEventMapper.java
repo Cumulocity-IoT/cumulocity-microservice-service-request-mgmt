@@ -6,7 +6,6 @@ import org.joda.time.DateTime;
 
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.event.EventRepresentation;
-import com.cumulocity.rest.representation.identity.ExternalIDRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,6 +22,8 @@ public class ServiceRequestCommentEventMapper {
 	public static final String SR_OWNER = "sr_Owner";
 	public static final String C8Y_IS_BINARY = "c8y_IsBinary";
 	public static final String SR_ID = "sr_Id";
+	public static final String SR_EXTERNAL_ID = "sr_ExternalId";
+	public static final String SR_CLOSED = "sr_Closed";
 
 	private final EventRepresentation event;
 
@@ -34,6 +35,9 @@ public class ServiceRequestCommentEventMapper {
 		ServiceRequestCommentEventMapper mapper = new ServiceRequestCommentEventMapper();
 		mapper.setText(serviceRequestComment.getText());
 		mapper.setServiceRequestType(serviceRequestComment.getType());
+		mapper.setExternalId(serviceRequestComment.getExternalId());
+		mapper.setIsClosed(serviceRequestComment.getIsClosed());
+		mapper.setOwner(serviceRequestComment.getOwner());
 		return mapper;
 	}
 
@@ -45,6 +49,9 @@ public class ServiceRequestCommentEventMapper {
 		ServiceRequestCommentEventMapper mapper = new ServiceRequestCommentEventMapper(id);
 		mapper.setText(serviceRequestComment.getText());
 		mapper.setServiceRequestType(serviceRequestComment.getType());
+		mapper.setExternalId(serviceRequestComment.getExternalId());
+		mapper.setIsClosed(serviceRequestComment.getIsClosed());
+		mapper.setOwner(serviceRequestComment.getOwner());
 		return mapper;
 	}
 
@@ -64,6 +71,8 @@ public class ServiceRequestCommentEventMapper {
 		serviceRequestComment.setText(mapper.getText());
 		serviceRequestComment.setType(mapper.getServiceRequestType());
 		serviceRequestComment.setAttachment(mapper.getAttachment());
+		serviceRequestComment.setExternalId(mapper.getExternalId());
+		serviceRequestComment.setIsClosed(mapper.getIsClosed());
 		return serviceRequestComment;
 	}
 
@@ -129,15 +138,6 @@ public class ServiceRequestCommentEventMapper {
 		event.setText(title);
 	}
 
-	public void setExternalId(String externalId) {
-		if (externalId == null) {
-			return;
-		}
-		ExternalIDRepresentation externalIdRepresentation = new ExternalIDRepresentation();
-		externalIdRepresentation.setExternalId(externalId);
-		event.setExternalSource(externalIdRepresentation);
-	}
-
 	public DateTime getCreationDateTime() {
 		return event.getCreationDateTime();
 	}
@@ -180,6 +180,29 @@ public class ServiceRequestCommentEventMapper {
 			return;
 		}
 		event.set(serviceRequestId, SR_ID);
+	}
+	
+	public void setExternalId(String externalId) {
+		if(externalId == null) {
+			return;
+		}
+		event.set(externalId, SR_EXTERNAL_ID);
+	}
+	
+	public String getExternalId() {
+		return (String)event.get(SR_EXTERNAL_ID);
+	}
+	
+	public Boolean getIsClosed() {
+		String isClosed = (String) event.get(SR_CLOSED);
+		return Boolean.valueOf(isClosed);
+	}
+	
+	public void setIsClosed(Boolean isClosed) {
+		if(isClosed == null) {
+			return;
+		}
+		event.set(isClosed.toString(), SR_CLOSED);
 	}
 
 	public EventRepresentation getEvent() {

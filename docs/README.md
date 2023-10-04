@@ -7,8 +7,6 @@ All URIs are relative to *http://localhost:8080*
 
 | Class | Method | HTTP request | Description |
 |------------ | ------------- | ------------- | -------------|
-| *ServiceObjectControllerApi* | [**createServiceObject**](Apis/ServiceObjectControllerApi.md#createserviceobject) | **POST** /api/service/object | Add new service object. |
-*ServiceObjectControllerApi* | [**getServiceObjecttById**](Apis/ServiceObjectControllerApi.md#getserviceobjecttbyid) | **GET** /api/service/object/{serviceObjectId} | GET service object by Id |
 | *ServiceRequestCommentControllerApi* | [**createServiceRequestComment**](Apis/ServiceRequestCommentControllerApi.md#createservicerequestcomment) | **POST** /api/service/request/{serviceRequestId}/comment | Add new service request comment to specific service request. |
 *ServiceRequestCommentControllerApi* | [**deleteServiceRequestCommentById**](Apis/ServiceRequestCommentControllerApi.md#deleteservicerequestcommentbyid) | **DELETE** /api/service/request/comment/{commentId} | DELETE service request comment by Id |
 *ServiceRequestCommentControllerApi* | [**downloadServiceRequestCommentAttachment**](Apis/ServiceRequestCommentControllerApi.md#downloadservicerequestcommentattachment) | **GET** /api/service/request/comment/{commentId}/attachment | DOWNLOAD attachment for specific comment |
@@ -22,17 +20,18 @@ All URIs are relative to *http://localhost:8080*
 *ServiceRequestControllerApi* | [**getServiceRequestList**](Apis/ServiceRequestControllerApi.md#getservicerequestlist) | **GET** /api/service/request | GET service request list |
 *ServiceRequestControllerApi* | [**updateServiceRequestById**](Apis/ServiceRequestControllerApi.md#updateservicerequestbyid) | **PUT** /api/service/request/{serviceRequestId} | PUT service request by Id |
 *ServiceRequestControllerApi* | [**uploadServiceRequestAttachment**](Apis/ServiceRequestControllerApi.md#uploadservicerequestattachment) | **POST** /api/service/request/{serviceRequestId}/attachment | UPLOAD attachment for specific service request |
-| *ServiceRequestExternalControllerApi* | [**getServiceRequestList1**](Apis/ServiceRequestExternalControllerApi.md#getservicerequestlist1) | **GET** /api/adapter/service/request | GET service request list |
+| *ServiceRequestExternalControllerApi* | [**getServiceRequestCommentList1**](Apis/ServiceRequestExternalControllerApi.md#getservicerequestcommentlist1) | **GET** /api/adapter/service/request/{serviceRequestId}/comment | Returns all user comments of specific service request by internal Id. |
+*ServiceRequestExternalControllerApi* | [**getServiceRequestList1**](Apis/ServiceRequestExternalControllerApi.md#getservicerequestlist1) | **GET** /api/adapter/service/request | GET service request list |
 *ServiceRequestExternalControllerApi* | [**updateServiceRequestIsActiveById**](Apis/ServiceRequestExternalControllerApi.md#updateservicerequestisactivebyid) | **PUT** /api/adapter/service/request/{serviceRequestId}/active | UPDATE service request active status by Id |
 *ServiceRequestExternalControllerApi* | [**updateServiceRequestStatusById**](Apis/ServiceRequestExternalControllerApi.md#updateservicerequeststatusbyid) | **PUT** /api/adapter/service/request/{serviceRequestId}/status | UPDATE service request status by Id |
 | *ServiceRequestPriorityControllerApi* | [**createServiceRequestPriorityList**](Apis/ServiceRequestPriorityControllerApi.md#createservicerequestprioritylist) | **POST** /api/service/request/priority | CREATE or UPDATE complete priority list |
 *ServiceRequestPriorityControllerApi* | [**deleteServiceRequestpriorityById**](Apis/ServiceRequestPriorityControllerApi.md#deleteservicerequestprioritybyid) | **DELETE** /api/service/request/priority/{priorityOrdinal} | DELETE service request priority |
 *ServiceRequestPriorityControllerApi* | [**getServiceRequestPriorityList**](Apis/ServiceRequestPriorityControllerApi.md#getservicerequestprioritylist) | **GET** /api/service/request/priority | GET service request priority list |
 *ServiceRequestPriorityControllerApi* | [**getServiceRequestpriorityById**](Apis/ServiceRequestPriorityControllerApi.md#getservicerequestprioritybyid) | **GET** /api/service/request/priority/{priorityOrdinal} | GET service request priority by ordinal |
-| *ServiceRequestStatusControllerApi* | [**createServiceRequestStatusList**](Apis/ServiceRequestStatusControllerApi.md#createservicerequeststatuslist) | **POST** /api/service/request/status | CREATE or UPDATE service request status list |
-*ServiceRequestStatusControllerApi* | [**deleteServiceRequestStatusById**](Apis/ServiceRequestStatusControllerApi.md#deleteservicerequeststatusbyid) | **DELETE** /api/service/request/status/{statusId} | DELETE service request status by Id |
-*ServiceRequestStatusControllerApi* | [**getServiceRequestStatusById**](Apis/ServiceRequestStatusControllerApi.md#getservicerequeststatusbyid) | **GET** /api/service/request/status/{statusId} | GET service request status by Id |
-*ServiceRequestStatusControllerApi* | [**getServiceRequestStatusList**](Apis/ServiceRequestStatusControllerApi.md#getservicerequeststatuslist) | **GET** /api/service/request/status | GET service request status list |
+| *ServiceRequestStatusConfigControllerApi* | [**createServiceRequestStatusConfigList**](Apis/ServiceRequestStatusConfigControllerApi.md#createservicerequeststatusconfiglist) | **POST** /api/service/request/status | CREATE or UPDATE service request status list |
+*ServiceRequestStatusConfigControllerApi* | [**deleteServiceRequestStatusConfigById**](Apis/ServiceRequestStatusConfigControllerApi.md#deleteservicerequeststatusconfigbyid) | **DELETE** /api/service/request/status/{statusId} | DELETE service request status by Id |
+*ServiceRequestStatusConfigControllerApi* | [**getServiceRequestStatusConfigById**](Apis/ServiceRequestStatusConfigControllerApi.md#getservicerequeststatusconfigbyid) | **GET** /api/service/request/status/{statusId} | GET service request status by Id |
+*ServiceRequestStatusConfigControllerApi* | [**getServiceRequestStatusConfigList**](Apis/ServiceRequestStatusConfigControllerApi.md#getservicerequeststatusconfiglist) | **GET** /api/service/request/status | GET service request status list |
 
 
 <a name="documentation-for-models"></a>
@@ -40,7 +39,6 @@ All URIs are relative to *http://localhost:8080*
 
  - [RequestListServiceRequest](./Models/RequestListServiceRequest.md)
  - [RequestListServiceRequestComment](./Models/RequestListServiceRequestComment.md)
- - [ServiceObject](./Models/ServiceObject.md)
  - [ServiceRequest](./Models/ServiceRequest.md)
  - [ServiceRequestAttachment](./Models/ServiceRequestAttachment.md)
  - [ServiceRequestComment](./Models/ServiceRequestComment.md)
@@ -51,6 +49,7 @@ All URIs are relative to *http://localhost:8080*
  - [ServiceRequestPriority](./Models/ServiceRequestPriority.md)
  - [ServiceRequestSource](./Models/ServiceRequestSource.md)
  - [ServiceRequestStatus](./Models/ServiceRequestStatus.md)
+ - [ServiceRequestStatusConfig](./Models/ServiceRequestStatusConfig.md)
 
 
 <a name="documentation-for-authorization"></a>

@@ -114,9 +114,6 @@ public class ServiceRequestCommentController {
 		if (comment == null) {
 			return new ResponseEntity(HttpStatus.NOT_FOUND);
 		}
-		if(!comment.getOwner().equals(contextService.getContext().getUsername())) {
-			return new ResponseEntity(HttpStatus.FORBIDDEN);
-		}
 		
 		ServiceRequestComment updatedComment = serviceRequestCommentService.updateComment(commentId, serviceRequestComment);
 		return new ResponseEntity(updatedComment, HttpStatus.OK);
