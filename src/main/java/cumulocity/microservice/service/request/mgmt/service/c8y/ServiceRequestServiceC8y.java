@@ -72,6 +72,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
+		log.info("createServiceRequest(serviceRequestRqBody {}, owner {})", serviceRequestRqBody.toString(), owner);
 		Optional<ServiceRequestStatusConfig> srStatus = serviceRequestStatusConfigService.getStatus(serviceRequestRqBody.getStatus().getId());
 		String srStatusIdExclude = null;
 		if(srStatus.isEmpty()) {
@@ -395,7 +396,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public void uploadAttachment(Resource resource, String contentType, byte[] bytes, String serviceRequestId) {
-		log.info("Attachment info: Filename: {}, ContentType: {}", resource.getFilename(), contentType);
+		log.info("uploadAttachment(filename: {}, ContentType: {})", resource.getFilename(), contentType);
 		BinaryInfo binaryInfo = new BinaryInfo();
 		binaryInfo.setName(resource.getFilename());
 		binaryInfo.setType(contentType);
@@ -404,13 +405,13 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public EventAttachment downloadAttachment(String serviceRequestId) {
-		log.info("Attachment info: Service request {}", serviceRequestId);
+		log.info("downloadAttachment(serviceRequestId: {})", serviceRequestId);
 		return eventAttachmentApi.downloadEventAttachment(serviceRequestId);
 	}
 	
 	@Override
 	public ServiceRequest updateServiceRequestStatus(String id, ServiceRequestStatus status) {
-		log.info("Change status of service request to id={}, name={}", status.getId(), status.getName());
+		log.debug("updateServiceRequestStatus(id: {}, name: {})", status.getId(), status.getName());
 		
 		ServiceRequestPatchRqBody serviceRequestPatch = new ServiceRequestPatchRqBody();
 		serviceRequestPatch.setStatus(status);
@@ -420,7 +421,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequest updateServiceRequestActive(String id, Boolean isActive) {
-		log.info("Change active status of service request to isActive={}", isActive);
+		log.debug("updateServiceRequestActive(id: {}, isActive: {})",id, isActive);
 		
 		ServiceRequestPatchRqBody serviceRequestPatch = new ServiceRequestPatchRqBody();
 		serviceRequestPatch.setIsActive(isActive);
