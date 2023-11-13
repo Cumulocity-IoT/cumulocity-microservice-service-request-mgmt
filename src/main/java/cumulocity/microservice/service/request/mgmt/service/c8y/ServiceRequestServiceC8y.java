@@ -3,7 +3,6 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -111,7 +110,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest) {
-		log.debug("Update Service Request: Id {}, Updat {}", id, serviceRequest.toString());
+		log.info("updateServiceRequest(id {}, serviceRequestBody {})", id, serviceRequest.toString());
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
 		ServiceRequest updatedServiceRequest = null;
 		String srStatusIdExclude = null;
@@ -134,16 +133,17 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 			
 			//Closing transition
-			if(srStatus.get().getIsClosedTransition() != null) {
+			if(srStatus.get().getIsClosedTransition() != null && Boolean.TRUE.equals(srStatus.get().getIsClosedTransition())) {
 				eventMapper.setIsClosed(Boolean.TRUE);
 			}
 			
-			if(srStatus.get().getIsDeactivateTransition() != null) {
+			//Deactivation transition
+			if(srStatus.get().getIsDeactivateTransition() != null && Boolean.TRUE.equals(srStatus.get().getIsDeactivateTransition())) {
 				eventMapper.setIsActive(Boolean.FALSE);
 			}
 
 			if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(eventMapper.getIsActive())) {
-				createSystemComment("Service Request Deactivated", updatedServiceRequest);
+				log.info("Active status was changed from true to false!");
 				eventMapper.setIsClosed(Boolean.TRUE);				
 			}
 			
@@ -187,7 +187,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String sourceId, Integer pageSize,
 			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy) {
-		log.info("find all service requests!");
+		log.info("getAllServiceRequestByFilter(sourceId: {}, pageSize: {}, pageNumber: {}, withTotalPages: {}, statusList: {}, priorityList: {}, orderBy: {})", sourceId, pageSize, pageNumber, withTotalPages, statusList, priorityList, orderBy);
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		if (sourceId != null) {
@@ -218,7 +218,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String sourceId, Integer pageSize,
 			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy) {
-		log.info("find all active service requests!");
+		log.info("getActiveServiceRequestByFilter(sourceId: {}, pageSize: {}, pageNumber: {}, withTotalPages: {}, statusList: {}, priorityList: {}, orderBy: {})", sourceId, pageSize, pageNumber, withTotalPages, statusList, priorityList, orderBy);
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
@@ -249,7 +249,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public List<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned) {
-		log.info("fetch all active service requests which are assigned: {}", assigned);
+		log.info("getCompleteActiveServiceRequestByFilter(assigned: {})", assigned);
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
@@ -275,7 +275,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				}
 			}
 		}
-		log.info("return service request list. size {}", serviceRequestList.size());
+		log.info("getCompleteActiveServiceRequestByFilter: return list.size {}", serviceRequestList.size());
 		return serviceRequestList;
 	}
 
