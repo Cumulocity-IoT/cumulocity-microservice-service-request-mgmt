@@ -65,7 +65,6 @@ public class ServiceRequestController {
         @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))) })
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequest> createServiceRequest(@Valid @RequestBody ServiceRequestPostRqBody serviceRequestRqBody) {
-		log.info("Service Request: {}", serviceRequestRqBody);
 		ServiceRequest createServiceRequest = serviceRequestService.createServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
 		return new ResponseEntity<ServiceRequest>(createServiceRequest, HttpStatus.CREATED);
 	}
@@ -149,8 +148,6 @@ public class ServiceRequestController {
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@GetMapping(path = "/{serviceRequestId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public ResponseEntity<byte[]> downloadServiceRequestAttachment(@PathVariable String serviceRequestId) {
-		
-		
 		try {
 			EventAttachment attachment = serviceRequestService.downloadAttachment(serviceRequestId);
 			HttpHeaders headers = new HttpHeaders();
