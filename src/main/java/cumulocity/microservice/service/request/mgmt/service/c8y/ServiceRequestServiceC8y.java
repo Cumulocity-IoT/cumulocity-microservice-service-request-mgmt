@@ -80,7 +80,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequestStatusConfig srStatus = null;
 
 		for(ServiceRequestStatusConfig srStatusConfig: statusList) {
-			if(srStatusConfig.getIsExcludeForCounter()) {
+			if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
 				excludeList.add(srStatusConfig.getId());
 			}
 			if(srStatusConfig.getId().equals(serviceRequestRqBody.getStatus().getId())) {
@@ -136,7 +136,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			ServiceRequestStatusConfig srStatus = null;
 
 			for(ServiceRequestStatusConfig srStatusConfig: statusList) {
-				if(srStatusConfig.getIsExcludeForCounter()) {
+				if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
 					excludeList.add(srStatusConfig.getId());
 				}
 				if(srStatusConfig.getId().equals(serviceRequest.getStatus().getId())) {
