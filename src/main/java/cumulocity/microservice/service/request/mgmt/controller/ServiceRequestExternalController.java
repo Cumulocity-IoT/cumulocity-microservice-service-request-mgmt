@@ -79,6 +79,9 @@ public class ServiceRequestExternalController {
 	public ResponseEntity<ServiceRequest> updateServiceRequestStatusById(
 			@PathVariable String serviceRequestId, @RequestBody ServiceRequestStatus serviceRequestStatus) {
 		ServiceRequest sr = serviceRequestService.updateServiceRequestStatus(serviceRequestId, serviceRequestStatus);
+		if(sr == null) {
+			return new ResponseEntity<ServiceRequest>(HttpStatus.BAD_REQUEST);
+		}
 		return new ResponseEntity<ServiceRequest>(sr, HttpStatus.OK);
 	}
 
@@ -90,6 +93,9 @@ public class ServiceRequestExternalController {
 	public ResponseEntity<ServiceRequest> updateServiceRequestIsActiveById(
 			@PathVariable String serviceRequestId, @RequestBody Boolean isActive) {
 		ServiceRequest sr = serviceRequestService.updateServiceRequestActive(serviceRequestId, isActive);
+		if(sr == null) {
+			return new ResponseEntity<ServiceRequest>(HttpStatus.BAD_REQUEST);
+		}
 		return new ResponseEntity<ServiceRequest>(sr, HttpStatus.OK);
 	}
 }

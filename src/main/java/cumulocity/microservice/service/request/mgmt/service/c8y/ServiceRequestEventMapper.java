@@ -266,6 +266,9 @@ public class ServiceRequestEventMapper {
 	
 	public Boolean getIsActive() {
 		String active = (String) event.get(SR_ACTIVE);
+		if(active == null) {
+			return null;
+		}
 		return Boolean.valueOf(active);
 	}
 	

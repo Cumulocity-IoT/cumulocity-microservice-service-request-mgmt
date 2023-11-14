@@ -14,7 +14,6 @@ Which device IoT data is need for the smart field service use case differs a lot
 4. Firmware and Software Version -> Important for FSM: What firmware or software is currently running on the device, legacy devices have often not the option to be updated remotely. If a service activity is planned additional actions can be combined like onsite software/firmware update.
 5. Measurement and event data -> Important for FSM: Last measurements and events give the service technician last status of device before service request was created (Device satus Snapshot). To get more detailed information before the service activity is starting.
 
-
 # API and Domain Model
 
 This microservice provides a domain specific API & Model for service request.
