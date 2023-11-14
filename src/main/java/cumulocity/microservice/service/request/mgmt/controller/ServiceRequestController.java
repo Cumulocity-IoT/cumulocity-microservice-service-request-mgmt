@@ -114,6 +114,9 @@ public class ServiceRequestController {
 	public ResponseEntity<ServiceRequest> updateServiceRequestById(@PathVariable String serviceRequestId,
 			@Valid @RequestBody ServiceRequestPatchRqBody serviceRequestRqBody) {
 		ServiceRequest serviceRequest = serviceRequestService.updateServiceRequest(serviceRequestId, serviceRequestRqBody);
+		if(serviceRequest == null) {
+			return new ResponseEntity<ServiceRequest>(HttpStatus.BAD_REQUEST);
+		}
 		return new ResponseEntity<ServiceRequest>(serviceRequest, HttpStatus.OK);
 	}
 

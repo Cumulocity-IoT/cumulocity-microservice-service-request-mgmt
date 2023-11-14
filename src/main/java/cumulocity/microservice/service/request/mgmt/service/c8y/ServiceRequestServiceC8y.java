@@ -73,12 +73,24 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
 		log.info("createServiceRequest(serviceRequestRqBody {}, owner {})", serviceRequestRqBody.toString(), owner);
-		Optional<ServiceRequestStatusConfig> srStatus = serviceRequestStatusConfigService.getStatus(serviceRequestRqBody.getStatus().getId());
-		String srStatusIdExclude = null;
-		if(srStatus.isEmpty()) {
-			log.warn("Status {} is not part of the configured status list!", serviceRequestRqBody.getStatus().toString());
-		}else {
-			srStatusIdExclude = srStatus.get().getIsExcludeForCounter() != null ? srStatus.get().getId(): null;
+
+		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
+		List<String> excludeList = new ArrayList<>();
+		
+		ServiceRequestStatusConfig srStatus = null;
+
+		for(ServiceRequestStatusConfig srStatusConfig: statusList) {
+			if(srStatusConfig.getIsExcludeForCounter()) {
+				excludeList.add(srStatusConfig.getId());
+			}
+			if(srStatusConfig.getId().equals(serviceRequestRqBody.getStatus().getId())) {
+				srStatus = srStatusConfig;
+			}
+		}
+		
+		if(srStatus == null) {
+			log.error("Status {} is not part of the configured status list! Service Reqeust can't be updated!!!", serviceRequestRqBody.getStatus().toString());
+			return null;
 		}
 		
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequestRqBody);
@@ -91,19 +103,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		createCommentForStatusChange("Initial Status", newServiceRequest);
 		
 		// Alarm status transition
-		if(srStatus.isPresent() && newServiceRequest.getAlarmRef() != null) {
-			updateAlarm(newServiceRequest, srStatus.get());
+		if(newServiceRequest.getAlarmRef() != null) {
+			updateAlarm(newServiceRequest, srStatus);
 		}
+		
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
 
-		if(srStatusIdExclude == null) {
-			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
-		}else {
-			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
-		}
-
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), excludeList);
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return newServiceRequest;
@@ -114,7 +122,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		log.info("updateServiceRequest(id {}, serviceRequestBody {})", id, serviceRequest.toString());
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
 		ServiceRequest updatedServiceRequest = null;
-		String srStatusIdExclude = null;
+		List<String> excludeList = new ArrayList<>();
 		
 		if(serviceRequest.getStatus() == null) {
 			log.debug("Service Request update without status changes!");
@@ -122,24 +130,35 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			updatedServiceRequest = eventMapper.map2(updatedEvent);
 		}else {
 			log.debug("Service Request update with status changes!");
-			Optional<ServiceRequestStatusConfig> srStatus = serviceRequestStatusConfigService.getStatus(serviceRequest.getStatus().getId());
+			//Optional<ServiceRequestStatusConfig> srStatus = serviceRequestStatusConfigService.getStatus(serviceRequest.getStatus().getId());
+			List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
+			
+			ServiceRequestStatusConfig srStatus = null;
 
-			if(srStatus.isEmpty()) {
-				log.warn("Status {} is not part of the configured status list!");
-			}else {
-				srStatusIdExclude = srStatus.get().getIsExcludeForCounter() != null ? srStatus.get().getId(): null;
+			for(ServiceRequestStatusConfig srStatusConfig: statusList) {
+				if(srStatusConfig.getIsExcludeForCounter()) {
+					excludeList.add(srStatusConfig.getId());
+				}
+				if(srStatusConfig.getId().equals(serviceRequest.getStatus().getId())) {
+					srStatus = srStatusConfig;
+				}
+			}
+			
+
+			if(srStatus == null) {
+				log.error("Status {} is not part of the configured status list! Service Reqeust can't be updated!!!", serviceRequest.getStatus().toString());
+				return null;
 			}
 			
 			ServiceRequest originalServiceRequest = getServiceRequestById(id);
-
 			
 			//Closing transition
-			if(srStatus.get().getIsClosedTransition() != null && Boolean.TRUE.equals(srStatus.get().getIsClosedTransition())) {
+			if(srStatus.getIsClosedTransition() != null && Boolean.TRUE.equals(srStatus.getIsClosedTransition())) {
 				eventMapper.setIsClosed(Boolean.TRUE);
 			}
 			
 			//Deactivation transition
-			if(srStatus.get().getIsDeactivateTransition() != null && Boolean.TRUE.equals(srStatus.get().getIsDeactivateTransition())) {
+			if(srStatus.getIsDeactivateTransition() != null && Boolean.TRUE.equals(srStatus.getIsDeactivateTransition())) {
 				eventMapper.setIsActive(Boolean.FALSE);
 			}
 
@@ -157,7 +176,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				createCommentForStatusChange("Updated Status", updatedServiceRequest);
 
 				// Alarm status transition
-				updateAlarm(updatedServiceRequest, srStatus.get());
+				updateAlarm(updatedServiceRequest, srStatus);
 			}
 			
 			//if service request is closed all comments must also be set to closed
@@ -170,11 +189,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		log.debug("Update Managed Object"); 
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(updatedServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		if(srStatusIdExclude == null) {
-			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
-		}else {
-			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
-		}
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), excludeList);
+
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 		return updatedServiceRequest;
 	}
