@@ -152,13 +152,17 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			
 			ServiceRequest originalServiceRequest = getServiceRequestById(id);
 			
+			log.info("StatusConfig: {}", srStatus.toString());
+			
 			//Closing transition
-			if(srStatus.getIsClosedTransition() != null && Boolean.TRUE.equals(srStatus.getIsClosedTransition())) {
+			if(Boolean.TRUE.equals(srStatus.getIsClosedTransition())) {
+				log.info("IsClosedTransition!");
 				eventMapper.setIsClosed(Boolean.TRUE);
 			}
 			
 			//Deactivation transition
-			if(srStatus.getIsDeactivateTransition() != null && Boolean.TRUE.equals(srStatus.getIsDeactivateTransition())) {
+			if(Boolean.TRUE.equals(srStatus.getIsDeactivateTransition())) {
+				log.info("IsDeactivateTransition!");
 				eventMapper.setIsActive(Boolean.FALSE);
 			}
 
