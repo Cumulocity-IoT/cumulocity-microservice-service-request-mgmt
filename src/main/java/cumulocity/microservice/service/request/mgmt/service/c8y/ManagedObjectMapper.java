@@ -8,7 +8,9 @@ import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ManagedObjectMapper {
 	
 	public static final String SR_ACTIVE_STATUS = "sr_ActiveStatus";
@@ -48,6 +50,9 @@ public class ManagedObjectMapper {
 			}
 		}
 		
+		for(String priority: priorityCounterMap.keySet()) {
+			log.info("updateServiceRequestPriorityCounter(): Priority: {}, Count: {}", priority, priorityCounterMap.get(priority));
+		}
 		managedObjectRepresentation.set(priorityCounterMap, SR_ACTIVE_STATUS);
 	}
 
