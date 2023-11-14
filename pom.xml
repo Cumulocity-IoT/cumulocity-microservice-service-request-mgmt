@@ -7,7 +7,7 @@
 
 	<groupId>cumulocity.microservice</groupId>
 	<artifactId>cumulocity-microservice-service-request-mgmt</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.1</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,7 +16,7 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<spring-boot-dependencies.version>2.5.4</spring-boot-dependencies.version>
-		<c8y.version>1017.73.0</c8y.version>
+		<c8y.version>1017.0.346</c8y.version>
 		<microservice.name>service-request-mgmt</microservice.name>
 		<c8y.docker.skip>false</c8y.docker.skip>
 		<lombok.version>1.18.24</lombok.version>
