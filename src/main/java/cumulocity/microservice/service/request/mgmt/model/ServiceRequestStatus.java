@@ -21,8 +21,6 @@ public class ServiceRequestStatus {
 	@NonNull
 	private String id;
 	
-	@Schema(required = true, description = "Name of status", example = "open")
-	@NotNull
-	@NonNull
+	@Schema(required = false, description = "Name of status", example = "open")
 	private String name;
 }

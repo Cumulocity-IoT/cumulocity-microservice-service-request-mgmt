@@ -130,7 +130,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			updatedServiceRequest = eventMapper.map2(updatedEvent);
 		}else {
 			log.debug("Service Request update with status changes!");
-			//Optional<ServiceRequestStatusConfig> srStatus = serviceRequestStatusConfigService.getStatus(serviceRequest.getStatus().getId());
 			List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
 			
 			ServiceRequestStatusConfig srStatus = null;
@@ -431,7 +430,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	
 	@Override
 	public ServiceRequest updateServiceRequestStatus(String id, ServiceRequestStatus status) {
-		log.debug("updateServiceRequestStatus(id: {}, name: {})", status.getId(), status.getName());
+		log.debug("updateServiceRequestStatus(id: {})", status.getId());
 		
 		ServiceRequestPatchRqBody serviceRequestPatch = new ServiceRequestPatchRqBody();
 		serviceRequestPatch.setStatus(status);
