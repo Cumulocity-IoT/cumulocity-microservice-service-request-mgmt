@@ -67,7 +67,7 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 
 	@Override
 	public List<ServiceRequestComment> getCompleteUserCommentListByServiceRequest(String serviceRequestId) {
-		log.info("fetch comments for service request {}", serviceRequestId);
+		log.info("getCompleteUserCommentListByServiceRequest(serviceRequestId: {})", serviceRequestId);
 		EventFilter filter = createCommentEventFilter(serviceRequestId);
 
 		Predicate<ServiceRequestComment> filterPredicate = srcomment -> srcomment.getType()
@@ -75,7 +75,7 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 
 		List<ServiceRequestComment> serviceRequestCommentByFilterAndInternalFilter = getServiceRequestCommentByFilterAndInternalFilter(
 				filter, filterPredicate);
-		log.info("return list of comments, size {}", serviceRequestCommentByFilterAndInternalFilter.size());
+		log.info("getCompleteUserCommentListByServiceRequest: return list.size {}", serviceRequestCommentByFilterAndInternalFilter.size());
 		return serviceRequestCommentByFilterAndInternalFilter;
 	}
 
@@ -183,7 +183,7 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 
 	@Override
 	public void uploadAttachment(Resource resource, String contentType, byte[] bytes, String commentId) {
-		log.info("Attachment info: Filename: {}, ContentType: {}", resource.getFilename(), contentType);
+		log.info("uploadAttachment(filename: {}, ContentType: {})", resource.getFilename(), contentType);
 		BinaryInfo binaryInfo = new BinaryInfo();
 		binaryInfo.setName(resource.getFilename());
 		binaryInfo.setType(contentType);
@@ -192,7 +192,7 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 
 	@Override
 	public EventAttachment downloadAttachment(String commentId) {
-		log.info("Attachment info: Service request comment {}", commentId);
+		log.info("downloadAttachment(commentId:  {})", commentId);
 		return eventAttachmentApi.downloadEventAttachment(commentId);
 	}
 

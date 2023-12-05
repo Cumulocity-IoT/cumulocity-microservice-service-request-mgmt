@@ -3,7 +3,6 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -73,12 +72,25 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
-		Optional<ServiceRequestStatusConfig> srStatus = serviceRequestStatusConfigService.getStatus(serviceRequestRqBody.getStatus().getId());
-		String srStatusIdExclude = null;
-		if(srStatus.isEmpty()) {
-			log.warn("Status {} is not part of the configured status list!", serviceRequestRqBody.getStatus().toString());
-		}else {
-			srStatusIdExclude = srStatus.get().getIsExcludeForCounter() != null ? srStatus.get().getId(): null;
+		log.info("createServiceRequest(serviceRequestRqBody {}, owner {})", serviceRequestRqBody.toString(), owner);
+
+		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
+		List<String> excludeList = new ArrayList<>();
+		
+		ServiceRequestStatusConfig srStatus = null;
+
+		for(ServiceRequestStatusConfig srStatusConfig: statusList) {
+			if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
+				excludeList.add(srStatusConfig.getId());
+			}
+			if(srStatusConfig.getId().equals(serviceRequestRqBody.getStatus().getId())) {
+				srStatus = srStatusConfig;
+			}
+		}
+		
+		if(srStatus == null) {
+			log.error("Status {} is not part of the configured status list! Service Reqeust can't be updated!!!", serviceRequestRqBody.getStatus().toString());
+			return null;
 		}
 		
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequestRqBody);
@@ -91,19 +103,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		createCommentForStatusChange("Initial Status", newServiceRequest);
 		
 		// Alarm status transition
-		if(srStatus.isPresent() && newServiceRequest.getAlarmRef() != null) {
-			updateAlarm(newServiceRequest, srStatus.get());
+		if(newServiceRequest.getAlarmRef() != null) {
+			updateAlarm(newServiceRequest, srStatus);
 		}
+		
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
 
-		if(srStatusIdExclude == null) {
-			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
-		}else {
-			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
-		}
-
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), excludeList);
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 
 		return newServiceRequest;
@@ -111,10 +119,10 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest) {
-		log.debug("Update Service Request: Id {}, Updat {}", id, serviceRequest.toString());
+		log.info("updateServiceRequest(id {}, serviceRequestBody {})", id, serviceRequest.toString());
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
 		ServiceRequest updatedServiceRequest = null;
-		String srStatusIdExclude = null;
+		List<String> excludeList = new ArrayList<>();
 		
 		if(serviceRequest.getStatus() == null) {
 			log.debug("Service Request update without status changes!");
@@ -122,29 +130,43 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			updatedServiceRequest = eventMapper.map2(updatedEvent);
 		}else {
 			log.debug("Service Request update with status changes!");
-			Optional<ServiceRequestStatusConfig> srStatus = serviceRequestStatusConfigService.getStatus(serviceRequest.getStatus().getId());
-			eventMapper.getStatus().setName(srStatus.get().getName());
+			List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
 			
-			if(srStatus.isEmpty()) {
-				log.warn("Status {} is not part of the configured status list!");
-			}else {
-				srStatusIdExclude = srStatus.get().getIsExcludeForCounter() != null ? srStatus.get().getId(): null;
+			ServiceRequestStatusConfig srStatus = null;
+
+			for(ServiceRequestStatusConfig srStatusConfig: statusList) {
+				if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
+					excludeList.add(srStatusConfig.getId());
+				}
+				if(srStatusConfig.getId().equals(serviceRequest.getStatus().getId())) {
+					srStatus = srStatusConfig;
+				}
+			}
+			
+
+			if(srStatus == null) {
+				log.error("Status {} is not part of the configured status list! Service Reqeust can't be updated!!!", serviceRequest.getStatus().toString());
+				return null;
 			}
 			
 			ServiceRequest originalServiceRequest = getServiceRequestById(id);
-
+			
+			log.info("StatusConfig: {}", srStatus.toString());
 			
 			//Closing transition
-			if(srStatus.get().getIsClosedTransition() != null) {
+			if(Boolean.TRUE.equals(srStatus.getIsClosedTransition())) {
+				log.info("IsClosedTransition!");
 				eventMapper.setIsClosed(Boolean.TRUE);
 			}
 			
-			if(srStatus.get().getIsDeactivateTransition() != null) {
+			//Deactivation transition
+			if(Boolean.TRUE.equals(srStatus.getIsDeactivateTransition())) {
+				log.info("IsDeactivateTransition!");
 				eventMapper.setIsActive(Boolean.FALSE);
 			}
 
 			if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(eventMapper.getIsActive())) {
-				createSystemComment("Service Request Deactivated", updatedServiceRequest);
+				log.info("Active status was changed from true to false!");
 				eventMapper.setIsClosed(Boolean.TRUE);				
 			}
 			
@@ -157,7 +179,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				createCommentForStatusChange("Updated Status", updatedServiceRequest);
 
 				// Alarm status transition
-				updateAlarm(updatedServiceRequest, srStatus.get());
+				updateAlarm(updatedServiceRequest, srStatus);
 			}
 			
 			//if service request is closed all comments must also be set to closed
@@ -170,11 +192,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		log.debug("Update Managed Object"); 
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(updatedServiceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		if(srStatusIdExclude == null) {
-			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()));
-		}else {
-			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), srStatusIdExclude);
-		}
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), excludeList);
+
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 		return updatedServiceRequest;
 	}
@@ -188,7 +207,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String sourceId, Integer pageSize,
 			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy) {
-		log.info("find all service requests!");
+		log.info("getAllServiceRequestByFilter(sourceId: {}, pageSize: {}, pageNumber: {}, withTotalPages: {}, statusList: {}, priorityList: {}, orderBy: {})", sourceId, pageSize, pageNumber, withTotalPages, statusList, priorityList, orderBy);
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		if (sourceId != null) {
@@ -219,7 +238,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String sourceId, Integer pageSize,
 			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy) {
-		log.info("find all active service requests!");
+		log.info("getActiveServiceRequestByFilter(sourceId: {}, pageSize: {}, pageNumber: {}, withTotalPages: {}, statusList: {}, priorityList: {}, orderBy: {})", sourceId, pageSize, pageNumber, withTotalPages, statusList, priorityList, orderBy);
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
@@ -250,7 +269,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public List<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned) {
-		log.info("fetch all active service requests which are assigned: {}", assigned);
+		log.info("getCompleteActiveServiceRequestByFilter(assigned: {})", assigned);
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
@@ -276,7 +295,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				}
 			}
 		}
-		log.info("return service request list. size {}", serviceRequestList.size());
+		log.info("getCompleteActiveServiceRequestByFilter: return list.size {}", serviceRequestList.size());
 		return serviceRequestList;
 	}
 
@@ -396,7 +415,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public void uploadAttachment(Resource resource, String contentType, byte[] bytes, String serviceRequestId) {
-		log.info("Attachment info: Filename: {}, ContentType: {}", resource.getFilename(), contentType);
+		log.info("uploadAttachment(filename: {}, ContentType: {})", resource.getFilename(), contentType);
 		BinaryInfo binaryInfo = new BinaryInfo();
 		binaryInfo.setName(resource.getFilename());
 		binaryInfo.setType(contentType);
@@ -405,13 +424,13 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public EventAttachment downloadAttachment(String serviceRequestId) {
-		log.info("Attachment info: Service request {}", serviceRequestId);
+		log.info("downloadAttachment(serviceRequestId: {})", serviceRequestId);
 		return eventAttachmentApi.downloadEventAttachment(serviceRequestId);
 	}
 	
 	@Override
 	public ServiceRequest updateServiceRequestStatus(String id, ServiceRequestStatus status) {
-		log.info("Change status of service request to id={}", status.getId());
+		log.debug("updateServiceRequestStatus(id: {})", status.getId());
 		
 		ServiceRequestPatchRqBody serviceRequestPatch = new ServiceRequestPatchRqBody();
 		serviceRequestPatch.setStatus(status);
@@ -421,7 +440,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequest updateServiceRequestActive(String id, Boolean isActive) {
-		log.info("Change active status of service request to isActive={}", isActive);
+		log.debug("updateServiceRequestActive(id: {}, isActive: {})",id, isActive);
 		
 		ServiceRequestPatchRqBody serviceRequestPatch = new ServiceRequestPatchRqBody();
 		serviceRequestPatch.setIsActive(isActive);
