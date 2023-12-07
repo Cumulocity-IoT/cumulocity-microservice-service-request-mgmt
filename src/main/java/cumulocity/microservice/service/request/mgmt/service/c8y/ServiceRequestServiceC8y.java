@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,7 @@ import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
 import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
+import com.google.common.base.Stopwatch;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
@@ -278,6 +280,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public List<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned) {
 		log.info("getCompleteActiveServiceRequestByFilter(assigned: {})", assigned);
+		Stopwatch stopwatch = Stopwatch.createStarted();
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_SYNC_STATUS);
@@ -305,7 +308,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				serviceRequestList.add(sr);
 			}
 		}
-		log.info("getCompleteActiveServiceRequestByFilter: return list.size {}", serviceRequestList.size());
+		stopwatch.stop();
+		long seconds = stopwatch.elapsed(TimeUnit.SECONDS);
+		log.info("getCompleteActiveServiceRequestByFilter: return list.size {} in seconds {}", serviceRequestList.size(), seconds);
 		return serviceRequestList;
 	}
 
