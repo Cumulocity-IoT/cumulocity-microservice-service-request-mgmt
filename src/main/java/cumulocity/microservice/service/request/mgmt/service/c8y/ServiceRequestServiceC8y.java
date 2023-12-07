@@ -278,10 +278,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public List<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned) {
 		log.info("getCompleteActiveServiceRequestByFilter(assigned: {})", assigned);
-		if(assigned == null) {
-			log.warn("assigned must not be null! Return empty list!");
-			return new ArrayList<>();
-		}
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_SYNC_STATUS);
