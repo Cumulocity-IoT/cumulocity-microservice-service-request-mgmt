@@ -285,10 +285,10 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_SYNC_STATUS);
-		if(assigned) {
+		if(assigned != null && assigned) {
 			// service request which must be updated
 			filter.byFragmentValue(String.valueOf(SyncStatus.ACTIVE.name()));
-		}else {
+		}else if(assigned != null && !assigned) {
 			// service request which are new
 			filter.byFragmentValue(String.valueOf(SyncStatus.NEW.name()));
 		}
@@ -297,8 +297,17 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		List<ServiceRequest> serviceRequestList = new ArrayList<>();
 		for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {
 			EventRepresentation eventRepresentation = iterator.next();
-			ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
-			serviceRequestList.add(sr);
+			if(assigned == null) {
+				ServiceRequestEventMapper eventMapper = new ServiceRequestEventMapper(eventRepresentation);
+				SyncStatus syncStatus = eventMapper.getSyncStatus();
+				if(syncStatus.equals(SyncStatus.NEW) || syncStatus.equals(SyncStatus.ACTIVE)) {
+					ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
+					serviceRequestList.add(sr);
+				}
+			}else {
+				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);				
+				serviceRequestList.add(sr);
+			}
 		}
 		log.info("getCompleteActiveServiceRequestByFilter: return list.size {}", serviceRequestList.size());
 		return serviceRequestList;
