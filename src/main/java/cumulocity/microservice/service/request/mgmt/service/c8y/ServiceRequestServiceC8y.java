@@ -309,7 +309,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			}
 		}
 		stopwatch.stop();
-		long seconds = stopwatch.elapsed(TimeUnit.SECONDS);
+		long seconds = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 		log.info("getCompleteActiveServiceRequestByFilter: return list.size {} in seconds {}", serviceRequestList.size(), seconds);
 		return serviceRequestList;
 	}
