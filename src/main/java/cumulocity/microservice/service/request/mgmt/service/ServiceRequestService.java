@@ -1,6 +1,6 @@
 package cumulocity.microservice.service.request.mgmt.service;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.springframework.core.io.Resource;
 
@@ -26,7 +26,7 @@ public interface ServiceRequestService {
 	
 	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy);
 	
-	public List<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned);
+	public Collection<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned);
 	
 	public void deleteServiceRequest(String id);
 

@@ -3,8 +3,10 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -287,7 +289,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 
 	@Override
-	public List<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned) {
+	public Collection<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned) {
 		log.info("getCompleteActiveServiceRequestByFilter(assigned: {})", assigned);
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		EventFilterExtend filter = new EventFilterExtend();
@@ -302,7 +304,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
 		Iterable<EventRepresentation> allPages = eventList.get(2000).allPages();
-		List<ServiceRequest> serviceRequestList = new ArrayList<>();
+		Set<ServiceRequest> serviceRequestList = new HashSet<ServiceRequest>();
 		for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {
 			EventRepresentation eventRepresentation = iterator.next();
 			if(assigned == null) {
