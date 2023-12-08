@@ -136,6 +136,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			
 			if(Boolean.FALSE.equals(eventMapper.getIsActive())) {
 				log.info("Active status has changed to false, service request will be closed!");
+				//TODO what should happen with alarm (maybe set back to ACTIVE)
+				//TODO create a comment for seeting active to false?
+				//TODO comments must be set to sr_Closed as well!
 				eventMapper.setIsClosed(Boolean.TRUE);
 				eventMapper.setSyncStatus(SyncStatus.STOP);
 			}
