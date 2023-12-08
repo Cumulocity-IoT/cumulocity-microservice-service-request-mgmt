@@ -133,9 +133,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		
 		if(serviceRequest.getStatus() == null) {
 			log.debug("Service Request update without status changes!");
+			
+			if(Boolean.FALSE.equals(eventMapper.getIsActive())) {
+				log.info("Active status has changed to false, service request will be closed!");
+				eventMapper.setIsClosed(Boolean.TRUE);
+				eventMapper.setSyncStatus(SyncStatus.STOP);
+			}
 			EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
 			updatedServiceRequest = eventMapper.map2(updatedEvent);
-		}else {
+		} else {
 			log.debug("Service Request update with status changes!");
 			List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
 			
@@ -175,7 +181,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			}
 
 			if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(eventMapper.getIsActive())) {
-				log.info("Active status was changed from true to false!");
+				log.info("Active status has changed from true to false, service request will be closed!");
 				eventMapper.setIsClosed(Boolean.TRUE);
 				eventMapper.setSyncStatus(SyncStatus.STOP);
 			}
