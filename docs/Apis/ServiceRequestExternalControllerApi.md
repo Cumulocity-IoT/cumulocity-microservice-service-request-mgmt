@@ -43,7 +43,7 @@ No authorization required
 
 GET service request list
 
-    Returns a list of all service requests in IoT Platform. Additional query parameter allow to filter that list. Parameter assigned&#x3D;false returns all service requests which are not assigned to external object. Parameter assigned&#x3D;true returns all assigned service requests.
+    Returns a list of all service requests in IoT Platform. Additional query parameter allow to filter that list. Parameter assigned&#x3D;false returns all service requests which are not yet synchronized to external system. Parameter assigned&#x3D;true returns all synchronized service requests.
 
 ### Parameters
 
