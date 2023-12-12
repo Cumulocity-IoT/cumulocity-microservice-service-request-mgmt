@@ -32,6 +32,7 @@ import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
 import com.google.common.base.Stopwatch;
 
+
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
@@ -317,6 +318,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			}else {
 				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);				
 				serviceRequestList.add(sr);
+			}else {
+				Object externalId = eventRepresentation.get(ServiceRequestEventMapper.SR_EXTERNAL_ID);
+				if (assigned && externalId != null) {
+					ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
+					serviceRequestList.add(sr);
+				} else if (!assigned && externalId == null) {
+					ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
+					serviceRequestList.add(sr);
+				}
 			}
 		}
 		stopwatch.stop();

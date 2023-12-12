@@ -71,6 +71,16 @@ public class ServiceRequestExternalController {
 		List<ServiceRequestComment> commentListByFilter = serviceRequestCommentService.getCompleteUserCommentListByServiceRequest(serviceRequestId);
 		return new ResponseEntity<List<ServiceRequestComment>>(commentListByFilter, HttpStatus.OK);
 	}
+	
+	@Operation(summary = "Returns all user comments of specific service request by internal Id.", description = "Each service request can have n comments. This endpoint returns the complete list of user comments of a specific service request.")
+	@ApiResponses(value = { 
+			@ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ServiceRequestComment.class)))),
+			@ApiResponse(responseCode = "404", description = "Not found")})
+	@GetMapping(path = "/{serviceRequestId}/comment", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<ServiceRequestComment>> getServiceRequestCommentList(@PathVariable String serviceRequestId) {
+		List<ServiceRequestComment> commentListByFilter = serviceRequestCommentService.getCompleteUserCommentListByServiceRequest(serviceRequestId);
+		return new ResponseEntity<List<ServiceRequestComment>>(commentListByFilter, HttpStatus.OK);
+	}
 
 	@Operation(summary = "UPDATE service request status by Id", description = "Updates specific service status request.", tags = {})
 	@ApiResponses(value = {
