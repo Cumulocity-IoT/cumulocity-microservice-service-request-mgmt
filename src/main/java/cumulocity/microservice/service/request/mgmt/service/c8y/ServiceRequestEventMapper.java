@@ -35,6 +35,11 @@ public class ServiceRequestEventMapper {
 	public static final String SR_CLOSED = "sr_Closed";
 	public static final String SR_EXTERNAL_ID = "sr_ExternalId";
 	public static final String C8Y_IS_BINARY = "c8y_IsBinary";
+	public static final String SR_SYNC_STATUS = "sr_SyncStatus";
+	
+	public enum SyncStatus {
+		NEW, ACTIVE, STOP;
+	}
 	
 	private final EventRepresentation event;
 	
@@ -289,6 +294,21 @@ public class ServiceRequestEventMapper {
 			return;
 		}
 		event.set(isClosed.toString(), SR_CLOSED);
+	}
+	
+	public SyncStatus getSyncStatus() {
+		String syncStatus = (String) event.get(SR_SYNC_STATUS);
+		if(syncStatus == null) {
+			return SyncStatus.NEW;
+		}
+		return SyncStatus.valueOf(syncStatus);
+	}
+	
+	public void setSyncStatus(SyncStatus syncStatus) {
+		if(syncStatus == null) {
+			return;
+		}
+		event.set(syncStatus.name(), SR_SYNC_STATUS);
 	}
 	
 	public ServiceRequestAttachment getAttachment() {

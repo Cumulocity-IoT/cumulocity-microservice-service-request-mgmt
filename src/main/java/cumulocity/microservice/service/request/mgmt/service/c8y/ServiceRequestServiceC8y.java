@@ -3,9 +3,11 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,7 @@ import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
 import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
+import com.google.common.base.Stopwatch;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
@@ -41,6 +44,7 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusCo
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusConfigService;
+import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestEventMapper.SyncStatus;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -96,6 +100,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequestRqBody);
 		eventMapper.setOwner(owner);
 		eventMapper.setIsActive(Boolean.TRUE);
+		eventMapper.setSyncStatus(SyncStatus.NEW);
 		EventRepresentation createdEvent = eventApi.create(eventMapper.getEvent());
 		ServiceRequest newServiceRequest = ServiceRequestEventMapper.map2(createdEvent);
 
@@ -121,14 +126,27 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest) {
 		log.info("updateServiceRequest(id {}, serviceRequestBody {})", id, serviceRequest.toString());
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
+		if(serviceRequest.getExternalId() != null) {
+			// if external ID is set, the sync status changes to active
+			eventMapper.setSyncStatus(SyncStatus.ACTIVE);
+		}
 		ServiceRequest updatedServiceRequest = null;
 		List<String> excludeList = new ArrayList<>();
 		
 		if(serviceRequest.getStatus() == null) {
 			log.debug("Service Request update without status changes!");
+			
+			if(Boolean.FALSE.equals(eventMapper.getIsActive())) {
+				log.info("Active status has changed to false, service request will be closed!");
+				//TODO what should happen with alarm (maybe set back to ACTIVE)
+				//TODO create a comment for seeting active to false?
+				//TODO comments must be set to sr_Closed as well!
+				eventMapper.setIsClosed(Boolean.TRUE);
+				eventMapper.setSyncStatus(SyncStatus.STOP);
+			}
 			EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
 			updatedServiceRequest = eventMapper.map2(updatedEvent);
-		}else {
+		} else {
 			log.debug("Service Request update with status changes!");
 			List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
 			
@@ -157,17 +175,20 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			if(Boolean.TRUE.equals(srStatus.getIsClosedTransition())) {
 				log.info("IsClosedTransition!");
 				eventMapper.setIsClosed(Boolean.TRUE);
+				eventMapper.setSyncStatus(SyncStatus.STOP);
 			}
 			
 			//Deactivation transition
 			if(Boolean.TRUE.equals(srStatus.getIsDeactivateTransition())) {
 				log.info("IsDeactivateTransition!");
 				eventMapper.setIsActive(Boolean.FALSE);
+				eventMapper.setSyncStatus(SyncStatus.STOP);
 			}
 
 			if(Boolean.TRUE.equals(originalServiceRequest.getIsActive()) && Boolean.FALSE.equals(eventMapper.getIsActive())) {
-				log.info("Active status was changed from true to false!");
-				eventMapper.setIsClosed(Boolean.TRUE);				
+				log.info("Active status has changed from true to false, service request will be closed!");
+				eventMapper.setIsClosed(Boolean.TRUE);
+				eventMapper.setSyncStatus(SyncStatus.STOP);
 			}
 			
 			EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
@@ -268,34 +289,39 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 
 	@Override
-	public List<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned) {
+	public Collection<ServiceRequest> getAllServiceRequestBySyncStatus(Boolean assigned) {
 		log.info("getCompleteActiveServiceRequestByFilter(assigned: {})", assigned);
+		Stopwatch stopwatch = Stopwatch.createStarted();
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
-		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
-		filter.byFragmentValue(Boolean.TRUE.toString());
-
+		filter.byFragmentType(ServiceRequestEventMapper.SR_SYNC_STATUS);
+		if(assigned != null && assigned) {
+			// service request which must be updated
+			filter.byFragmentValue(String.valueOf(SyncStatus.ACTIVE.name()));
+		}else if(assigned != null && !assigned) {
+			// service request which are new
+			filter.byFragmentValue(String.valueOf(SyncStatus.NEW.name()));
+		}
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
-
 		Iterable<EventRepresentation> allPages = eventList.get(2000).allPages();
-		List<ServiceRequest> serviceRequestList = new ArrayList<>();
+		Set<ServiceRequest> serviceRequestList = new HashSet<ServiceRequest>();
 		for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {
 			EventRepresentation eventRepresentation = iterator.next();
 			if(assigned == null) {
-				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
-				serviceRequestList.add(sr);
-			}else {
-				Object externalId = eventRepresentation.get(ServiceRequestEventMapper.SR_EXTERNAL_ID);
-				if (assigned && externalId != null) {
-					ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
-					serviceRequestList.add(sr);
-				} else if (!assigned && externalId == null) {
+				ServiceRequestEventMapper eventMapper = new ServiceRequestEventMapper(eventRepresentation);
+				SyncStatus syncStatus = eventMapper.getSyncStatus();
+				if(syncStatus.equals(SyncStatus.NEW) || syncStatus.equals(SyncStatus.ACTIVE)) {
 					ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
 					serviceRequestList.add(sr);
 				}
+			}else {
+				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);				
+				serviceRequestList.add(sr);
 			}
 		}
-		log.info("getCompleteActiveServiceRequestByFilter: return list.size {}", serviceRequestList.size());
+		stopwatch.stop();
+		long ms = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+		log.info("getCompleteActiveServiceRequestByFilter: return list.size {} in {} ms", serviceRequestList.size(), ms);
 		return serviceRequestList;
 	}
 
