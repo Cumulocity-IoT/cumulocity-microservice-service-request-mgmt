@@ -53,12 +53,12 @@ public class ServiceRequestExternalController {
 		this.serviceRequestCommentService = serviceRequestCommentService;
 	}
 
-	@Operation(summary = "GET service request list", description = "Returns a list of all service requests in IoT Platform. Additional query parameter allow to filter that list. Parameter assigned=false returns all service requests which are not assigned to external object. Parameter assigned=true returns all assigned service requests.", tags = {})
+	@Operation(summary = "GET service request list", description = "Returns a list of all service requests in IoT Platform. Additional query parameter allow to filter that list. Parameter assigned=false returns all service requests which are not yet synchronized to external system. Parameter assigned=true returns all synchronized service requests.", tags = {})
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK") })
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Collection<ServiceRequest>> getServiceRequestList(@Parameter(in = ParameterIn.QUERY, description = "filter, \"true\" returns all service request with external Id assigned, \"false\" returns service requests which doesn't have external Id assigned." , schema = @Schema()) @Valid @RequestParam(value = "assigned", required = false) Boolean assigned) {
-		Collection<ServiceRequest> serviceRequestList = serviceRequestService.getCompleteActiveServiceRequestByFilter(assigned);
+		Collection<ServiceRequest> serviceRequestList = serviceRequestService.getAllServiceRequestBySyncStatus(assigned);
 		return new ResponseEntity<Collection<ServiceRequest>>(serviceRequestList, HttpStatus.OK);
 	}
 	

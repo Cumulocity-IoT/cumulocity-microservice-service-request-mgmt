@@ -289,7 +289,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 
 	@Override
-	public Collection<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned) {
+	public Collection<ServiceRequest> getAllServiceRequestBySyncStatus(Boolean assigned) {
 		log.info("getCompleteActiveServiceRequestByFilter(assigned: {})", assigned);
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		EventFilterExtend filter = new EventFilterExtend();

@@ -26,7 +26,7 @@ public interface ServiceRequestService {
 	
 	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy);
 	
-	public Collection<ServiceRequest> getCompleteActiveServiceRequestByFilter(Boolean assigned);
+	public Collection<ServiceRequest> getAllServiceRequestBySyncStatus(Boolean assigned);
 	
 	public void deleteServiceRequest(String id);
 
