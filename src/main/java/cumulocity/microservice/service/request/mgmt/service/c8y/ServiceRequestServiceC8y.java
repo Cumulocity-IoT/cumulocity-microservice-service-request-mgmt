@@ -400,6 +400,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		requestList.setList(currentPage);
 		requestList.setPageSize(pageSize);
 		requestList.setTotalPages(pages.size());
+		requestList.setTotalElements(serviceRequestList.size());
 		return requestList;
 	}
 
