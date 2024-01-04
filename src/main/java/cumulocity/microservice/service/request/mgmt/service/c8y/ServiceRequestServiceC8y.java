@@ -355,6 +355,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		requestList.setList(serviceRequestList);
 		requestList.setPageSize(pageStatistics.getPageSize());
 		requestList.setTotalPages(pageStatistics.getTotalPages());
+		requestList.setTotalElements(pageStatistics.getTotalElements());
 		return requestList;
 	}
 
@@ -400,7 +401,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		requestList.setList(currentPage);
 		requestList.setPageSize(pageSize);
 		requestList.setTotalPages(pages.size());
-		requestList.setTotalElements(serviceRequestList.size());
+		requestList.setTotalElements(Long.valueOf(serviceRequestList.size()));
 		return requestList;
 	}
 

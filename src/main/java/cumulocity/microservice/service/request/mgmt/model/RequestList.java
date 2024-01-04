@@ -39,5 +39,5 @@ public class RequestList<T> {
 
 	@Schema(required = false, description = "totalElements", example = "83")
 	@Valid
-	private Integer totalElements;
+	private Long totalElements;
 }
