@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.management.Query;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -390,7 +392,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		List<List<ServiceRequest>> pages = getPages(serviceRequestList, pageSize);
 		List<ServiceRequest> currentPage = new ArrayList<>();
-		if(pages.size() > pageNumber) {
+		if(pageNumber == 0 || pages.size() > pageNumber) {
 			currentPage = pages.get(pageNumber);
 		}else {
 			log.warn("Page number {} exceeds pages {} !", pageNumber, pages.size());
@@ -420,24 +422,26 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	private PagedEventCollectionRepresentation getPagedEventCollection(EventCollection eventList, Integer pageSize,
 			Boolean withTotalPages) {
+		QueryParam queryParamWithTotalElements = new QueryParam(StatisticsParam.WITH_TOTAL_ELEMENTS, "true");
+		
 		if (pageSize != null && withTotalPages != null) {
 			QueryParam queryParam = new QueryParam(PagingParam.WITH_TOTAL_PAGES, withTotalPages.toString());
-			PagedEventCollectionRepresentation pagedEvent = eventList.get(pageSize, queryParam);
+			PagedEventCollectionRepresentation pagedEvent = eventList.get(pageSize, queryParam, queryParamWithTotalElements);
 			return pagedEvent;
 		}
 
 		if (pageSize == null && withTotalPages != null) {
 			QueryParam queryParam = new QueryParam(PagingParam.WITH_TOTAL_PAGES, withTotalPages.toString());
-			PagedEventCollectionRepresentation pagedEvent = eventList.get(queryParam);
+			PagedEventCollectionRepresentation pagedEvent = eventList.get(queryParam, queryParamWithTotalElements);
 			return pagedEvent;
 		}
 
 		if (pageSize != null && withTotalPages == null) {
-			PagedEventCollectionRepresentation pagedEvent = eventList.get(pageSize);
+			PagedEventCollectionRepresentation pagedEvent = eventList.get(pageSize, queryParamWithTotalElements);
 			return pagedEvent;
 		}
 
-		PagedEventCollectionRepresentation pagedEvent = eventList.get();
+		PagedEventCollectionRepresentation pagedEvent = eventList.get(queryParamWithTotalElements);
 		return pagedEvent;
 	}
 
