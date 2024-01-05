@@ -392,7 +392,19 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		List<List<ServiceRequest>> pages = getPages(serviceRequestList, pageSize);
 		List<ServiceRequest> currentPage = new ArrayList<>();
-		if(pageNumber == 0 || pages.size() > pageNumber) {
+
+		if(pages.size() == 0) {
+			log.debug("No pages found! Resultset are empty! List size {}",serviceRequestList.size());
+			RequestList<ServiceRequest> requestList = new RequestList<>();
+			requestList.setCurrentPage(0);
+			requestList.setList(currentPage);
+			requestList.setPageSize(0);
+			requestList.setTotalPages(0);
+			requestList.setTotalElements(0L);
+			return requestList;
+		}
+
+		if(pages.size() > pageNumber) {
 			currentPage = pages.get(pageNumber);
 		}else {
 			log.warn("Page number {} exceeds pages {} !", pageNumber, pages.size());
