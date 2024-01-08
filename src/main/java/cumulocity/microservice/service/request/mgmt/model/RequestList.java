@@ -36,4 +36,8 @@ public class RequestList<T> {
 	@NotNull
 	@Valid
 	private Integer totalPages;
+
+	@Schema(required = false, description = "totalElements", example = "83")
+	@Valid
+	private Long totalElements;
 }

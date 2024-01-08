@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.management.Query;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -355,6 +357,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		requestList.setList(serviceRequestList);
 		requestList.setPageSize(pageStatistics.getPageSize());
 		requestList.setTotalPages(pageStatistics.getTotalPages());
+		requestList.setTotalElements(pageStatistics.getTotalElements());
 		return requestList;
 	}
 
@@ -389,6 +392,18 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		List<List<ServiceRequest>> pages = getPages(serviceRequestList, pageSize);
 		List<ServiceRequest> currentPage = new ArrayList<>();
+
+		if(pages.size() == 0) {
+			log.debug("No pages found! Resultset are empty! List size {}",serviceRequestList.size());
+			RequestList<ServiceRequest> requestList = new RequestList<>();
+			requestList.setCurrentPage(0);
+			requestList.setList(currentPage);
+			requestList.setPageSize(0);
+			requestList.setTotalPages(0);
+			requestList.setTotalElements(0L);
+			return requestList;
+		}
+
 		if(pages.size() > pageNumber) {
 			currentPage = pages.get(pageNumber);
 		}else {
@@ -400,6 +415,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		requestList.setList(currentPage);
 		requestList.setPageSize(pageSize);
 		requestList.setTotalPages(pages.size());
+		requestList.setTotalElements(Long.valueOf(serviceRequestList.size()));
 		return requestList;
 	}
 
@@ -418,24 +434,26 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	private PagedEventCollectionRepresentation getPagedEventCollection(EventCollection eventList, Integer pageSize,
 			Boolean withTotalPages) {
+		QueryParam queryParamWithTotalElements = new QueryParam(StatisticsParam.WITH_TOTAL_ELEMENTS, "true");
+		
 		if (pageSize != null && withTotalPages != null) {
 			QueryParam queryParam = new QueryParam(PagingParam.WITH_TOTAL_PAGES, withTotalPages.toString());
-			PagedEventCollectionRepresentation pagedEvent = eventList.get(pageSize, queryParam);
+			PagedEventCollectionRepresentation pagedEvent = eventList.get(pageSize, queryParam, queryParamWithTotalElements);
 			return pagedEvent;
 		}
 
 		if (pageSize == null && withTotalPages != null) {
 			QueryParam queryParam = new QueryParam(PagingParam.WITH_TOTAL_PAGES, withTotalPages.toString());
-			PagedEventCollectionRepresentation pagedEvent = eventList.get(queryParam);
+			PagedEventCollectionRepresentation pagedEvent = eventList.get(queryParam, queryParamWithTotalElements);
 			return pagedEvent;
 		}
 
 		if (pageSize != null && withTotalPages == null) {
-			PagedEventCollectionRepresentation pagedEvent = eventList.get(pageSize);
+			PagedEventCollectionRepresentation pagedEvent = eventList.get(pageSize, queryParamWithTotalElements);
 			return pagedEvent;
 		}
 
-		PagedEventCollectionRepresentation pagedEvent = eventList.get();
+		PagedEventCollectionRepresentation pagedEvent = eventList.get(queryParamWithTotalElements);
 		return pagedEvent;
 	}
 
