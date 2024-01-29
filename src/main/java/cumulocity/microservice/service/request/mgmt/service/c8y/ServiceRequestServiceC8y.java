@@ -169,6 +169,10 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				return null;
 			}
 			
+			//Name is optional, the name of the status config will be used
+			serviceRequest.getStatus().setName(srStatus.getName());	
+			eventMapper.setStatus(serviceRequest.getStatus());
+
 			ServiceRequest originalServiceRequest = getServiceRequestById(id);
 			
 			log.info("StatusConfig: {}", srStatus.toString());
