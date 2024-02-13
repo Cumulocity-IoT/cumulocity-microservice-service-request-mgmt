@@ -5,19 +5,20 @@ import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 
 public class AlarmMapper {
 	public static final String SR_EVENT_ID = "sr_EventId";
 
 	private AlarmRepresentation alarm;
 	
-	public static AlarmMapper map2(ServiceRequest serviceRequest, CumulocityAlarmStatuses status) {
-		if(serviceRequest == null || serviceRequest.getId() == null || serviceRequest.getAlarmRef() == null) {
+	public static AlarmMapper map2(String serviceRequestId, ServiceRequestDataRef alarmRef, CumulocityAlarmStatuses status) {
+		if(alarmRef == null || alarmRef.getId() == null) {
 			return null;
 		}
 		
-		AlarmMapper mapper = new AlarmMapper(serviceRequest.getAlarmRef().getId(), status);
-		mapper.setServiceRequestEventId(serviceRequest.getId());
+		AlarmMapper mapper = new AlarmMapper(alarmRef.getId(), status);
+		mapper.setServiceRequestEventId(serviceRequestId);
 		return mapper;	
 	}
 

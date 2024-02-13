@@ -112,9 +112,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		createCommentForStatusChange("Initial Status", newServiceRequest);
 		
 		// Alarm status transition
-		if(newServiceRequest.getAlarmRef() != null) {
-			updateAlarm(newServiceRequest, srStatus);
-		}
+		if(newServiceRequest.getAlarmRefList() != null) {
+			for(ServiceRequestDataRef alarmRef: newServiceRequest.getAlarmRefList()) {
+				updateAlarm(newServiceRequest, alarmRef, srStatus);
+			}
+		};
 		
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
@@ -207,8 +209,10 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				//track status changes as system comment
 				createCommentForStatusChange("Updated Status", updatedServiceRequest);
 
-				// Alarm status transition
-				updateAlarm(updatedServiceRequest, srStatus);
+				// Alarm status transition, udate all alarms
+				for (ServiceRequestDataRef alarmRef : updatedServiceRequest.getAlarmRefList()) {
+					updateAlarm(updatedServiceRequest, alarmRef, srStatus);
+				}
 			}
 			
 			//if service request is closed all comments must also be set to closed
@@ -522,13 +526,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			}
 		}
 
-		updateAlarm(updatedServiceRequest, srStatus);
+		updateAlarm(updatedServiceRequest, alarmRef, srStatus);
 
 		return updatedServiceRequest;
 	}
-
 	
-	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestStatusConfig srStatus) {
+	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus) {
 		if(serviceRequest == null) {
 			return;
 		}
@@ -539,13 +542,13 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			return;
 		}
 		
-		AlarmMapper alarmMapper = AlarmMapper.map2(serviceRequest, alarmStatus);
+		AlarmMapper alarmMapper = AlarmMapper.map2(serviceRequest.getId(), alarmRef, alarmStatus);
 		if (alarmMapper != null) {
 			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
 			alarmApi.update(alarmRepresentation);
 		}
 	}
-	
+
 	private void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest) {
 		if(serviceRequest == null) {
 			log.warn("Couldn't add system comment, service request is null!");
