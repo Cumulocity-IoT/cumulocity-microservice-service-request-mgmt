@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.management.Query;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestCommentType;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
@@ -494,6 +496,37 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		serviceRequestPatch.setIsActive(isActive);
 		return updateServiceRequest(id, serviceRequestPatch);
 	}
+
+	@Override
+	public ServiceRequest addAlarmRefToServiceRequest(String serviceRequestId, @Valid ServiceRequestDataRef alarmRef) {
+		log.debug("addAlarmRefToServiceRequest(serviceRequestId: {}, alarmRef: {})", serviceRequestId, alarmRef);
+		ServiceRequest serviceRequest = getServiceRequestById(serviceRequestId);
+		if(serviceRequest == null) {
+			log.error("Service Request with id {} not found!", serviceRequestId);
+			return null;
+		}
+
+		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequestId, alarmRef);
+		EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
+		ServiceRequest updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
+
+		createSystemComment("Alarm added", updatedServiceRequest);
+
+		// Update alarm
+		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
+			
+		ServiceRequestStatusConfig srStatus = null;
+		for(ServiceRequestStatusConfig srStatusConfig: statusList) {
+			if(srStatusConfig.getId().equals(serviceRequest.getStatus().getId())) {
+				srStatus = srStatusConfig;
+			}
+		}
+
+		updateAlarm(updatedServiceRequest, srStatus);
+
+		return updatedServiceRequest;
+	}
+
 	
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestStatusConfig srStatus) {
 		if(serviceRequest == null) {
@@ -543,3 +576,4 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 	}
 }
+

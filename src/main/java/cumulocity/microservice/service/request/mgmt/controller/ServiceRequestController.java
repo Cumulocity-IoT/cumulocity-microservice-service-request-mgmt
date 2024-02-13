@@ -28,6 +28,7 @@ import com.cumulocity.microservice.context.credentials.UserCredentials;
 
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
 import cumulocity.microservice.service.request.mgmt.service.c8y.EventAttachment;
 import io.swagger.v3.oas.annotations.Operation;
@@ -160,5 +161,18 @@ public class ServiceRequestController {
 		} catch (Exception e) {
 			return new ResponseEntity( HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@Operation(summary = "Add alarm reference to service request", description = "Add alarm reference to service request", tags = {})
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok"),
+			@ApiResponse(responseCode = "404", description = "Not Found") })
+	@PutMapping(path = "/{serviceRequestId}/alarm", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ServiceRequest> addAlarmRefToServiceRequest(@PathVariable String serviceRequestId,
+			@Valid @RequestBody ServiceRequestDataRef alarmRef) {
+		ServiceRequest serviceRequest = serviceRequestService.addAlarmRefToServiceRequest(serviceRequestId, alarmRef);
+		if(serviceRequest == null) {
+			return new ResponseEntity<ServiceRequest>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<ServiceRequest>(serviceRequest, HttpStatus.OK);
 	}
 }

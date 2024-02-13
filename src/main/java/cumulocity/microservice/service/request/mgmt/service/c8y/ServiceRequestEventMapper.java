@@ -1,6 +1,10 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 
@@ -49,7 +53,7 @@ public class ServiceRequestEventMapper {
 		}
 		
 		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper();
-		mapper.setAlarmRef(serviceRequest.getAlarmRef());
+		mapper.setAlarmRef(Set.of(serviceRequest.getAlarmRef()));
 		//event.set(serviceRequest.getCustomProperties(); TODO
 		mapper.setDescription(serviceRequest.getDescription());
 		mapper.setSource(serviceRequest.getSource());
@@ -77,6 +81,16 @@ public class ServiceRequestEventMapper {
 		return mapper;
 		
 	}
+
+	public static ServiceRequestEventMapper map2(String id, ServiceRequestDataRef serviceRequestAlarmRef) {
+		if(serviceRequestAlarmRef == null) {
+			return null;
+		}
+
+		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper(id);
+		mapper.addAlarmRef(serviceRequestAlarmRef);
+		return mapper;
+	}
 	
 	public static ServiceRequest map2(EventRepresentation event) {
 		if(event == null) {
@@ -86,7 +100,7 @@ public class ServiceRequestEventMapper {
 		
 		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper(event);
 		ServiceRequest serviceRequest = new ServiceRequest();
-		serviceRequest.setAlarmRef(mapper.getAlarmRef());
+		serviceRequest.setAlarmRefList(mapper.getAlarmRefList());
 		serviceRequest.setCreationTime(mapper.getCreationDateTime());
 		//serviceRequest.setCustomProperties(event.get(EVENT_TYPE)); TODO
 		serviceRequest.setDescription(mapper.getDescription());
@@ -224,15 +238,29 @@ public class ServiceRequestEventMapper {
 		event.set(description, SR_DESCRIPTION);
 	}
 	
-	public ServiceRequestDataRef getAlarmRef() {
-		return parseDataRef(event.get(SR_ALARM_REF));
+	public Set<ServiceRequestDataRef> getAlarmRefList() {
+		Object alarmRefObj = event.get(SR_ALARM_REF);
+		if(alarmRefObj instanceof Collection) {
+			Collection<HashMap<String, String>> alarmRefColl = (Collection<HashMap<String, String>>) alarmRefObj;
+			Set<ServiceRequestDataRef> alarmRefList = alarmRefColl.stream().map(object -> parseDataRef(object)).collect(Collectors.toSet());
+			return alarmRefList;
+		}
+
+		return Set.of(parseDataRef(alarmRefObj));
 	}
 	
-	public void setAlarmRef(ServiceRequestDataRef alarmRef) {
-		if(alarmRef == null) {
+	public void setAlarmRef(Set<ServiceRequestDataRef> alarmRefList) {
+		if(alarmRefList == null || alarmRefList.isEmpty()) {
 			return;
 		}
-		event.set(alarmRef, SR_ALARM_REF);
+		event.set(alarmRefList, SR_ALARM_REF);
+	}
+
+	public Set<ServiceRequestDataRef> addAlarmRef(ServiceRequestDataRef alarmRef) {
+		Set<ServiceRequestDataRef> alarmRefSet = getAlarmRefList();
+		alarmRefSet.add(alarmRef);
+		setAlarmRef(alarmRefSet);
+		return alarmRefSet;
 	}
 	
 	public void setExternalId(String externalId) {
