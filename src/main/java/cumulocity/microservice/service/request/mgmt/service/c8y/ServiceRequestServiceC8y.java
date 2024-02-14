@@ -66,7 +66,22 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	private ServiceRequestStatusConfigService serviceRequestStatusConfigService;
 	
 	private ServiceRequestCommentService serviceRequestCommentService;
-			
+	
+	public enum ServiceRequestValidationResult {
+		ALARM_NOT_FOUND("Alarm doesn't exists anymore"), ALARM_ASSIGNED("Alarm already assigned to another service request!"), VALID("Service request is valid");
+
+		private String message;
+
+		private ServiceRequestValidationResult(String message) {
+			this.message = message;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+
+	}
+
 	@Autowired
 	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
 			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService) {
@@ -76,6 +91,31 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		this.inventoryApi = inventoryApi;
 		this.serviceRequestStatusConfigService = serviceRequestStatusConfigService;
 		this.serviceRequestCommentService = serviceRequestCommentService;
+	}
+
+	@Override
+	public ServiceRequestValidationResult validateNewServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
+		ServiceRequestDataRef alarmRef = serviceRequestRqBody.getAlarmRef();
+		return validateAlarm(alarmRef);
+	}
+
+	@Override
+	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef) {
+		AlarmRepresentation alarm = null;
+		try{
+			alarm = alarmApi.getAlarm(GId.asGId(alarmRef.getId()));
+		}catch(Exception e){
+			log.error("Fetching alarm failed!", e);
+		}
+		
+		if(alarm == null) {
+			return ServiceRequestValidationResult.ALARM_NOT_FOUND;
+		}
+		Object srId = alarm.get(AlarmMapper.SR_EVENT_ID);
+		if(srId != null) {
+			return ServiceRequestValidationResult.ALARM_ASSIGNED;
+		}
+		return ServiceRequestValidationResult.VALID;
 	}
 
 	@Override

@@ -13,8 +13,13 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.service.c8y.EventAttachment;
+import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestServiceC8y.ServiceRequestValidationResult;
 
 public interface ServiceRequestService {
+	public ServiceRequestValidationResult validateNewServiceRequest(ServiceRequestPostRqBody serviceRequest, String owner);
+
+	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef);
+
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequest, String owner);
 	
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest);

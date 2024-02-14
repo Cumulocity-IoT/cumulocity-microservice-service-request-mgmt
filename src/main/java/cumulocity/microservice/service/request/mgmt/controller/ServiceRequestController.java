@@ -31,6 +31,7 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
 import cumulocity.microservice.service.request.mgmt.service.c8y.EventAttachment;
+import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestServiceC8y.ServiceRequestValidationResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -63,9 +64,20 @@ public class ServiceRequestController {
 
 	@Operation(summary = "CREATE service request", description = "Creates a new service request object at Cumulocity IoT Platform.", tags={  })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))) })
+        @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))),
+		@ApiResponse(responseCode = "409", description = "Conflict, Alarm already assigned to service request!"),
+		@ApiResponse(responseCode = "412", description = "Precondition Failed, Alarm of service request not found!"),})
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequest> createServiceRequest(@Valid @RequestBody ServiceRequestPostRqBody serviceRequestRqBody) {
+		ServiceRequestValidationResult validateNewServiceRequest = serviceRequestService.validateNewServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
+		if(ServiceRequestValidationResult.ALARM_NOT_FOUND.equals(validateNewServiceRequest)) {
+			log.warn(validateNewServiceRequest.getMessage());
+			return new ResponseEntity<ServiceRequest>(HttpStatus.PRECONDITION_FAILED);
+		}
+		if(ServiceRequestValidationResult.ALARM_ASSIGNED.equals(validateNewServiceRequest)) {
+			log.warn(validateNewServiceRequest.getMessage());
+			return new ResponseEntity<ServiceRequest>(HttpStatus.CONFLICT);
+		}
 		ServiceRequest createServiceRequest = serviceRequestService.createServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
 		return new ResponseEntity<ServiceRequest>(createServiceRequest, HttpStatus.CREATED);
 	}
@@ -164,11 +176,23 @@ public class ServiceRequestController {
 	}
 
 	@Operation(summary = "Add alarm reference to service request", description = "Add alarm reference to service request", tags = {})
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok"),
-			@ApiResponse(responseCode = "404", description = "Not Found") })
+	@ApiResponses(value = { 
+		@ApiResponse(responseCode = "200", description = "Ok"),
+		@ApiResponse(responseCode = "404", description = "Not Found"),
+		@ApiResponse(responseCode = "409", description = "Conflict, Alarm already assigned to service request!"),
+		@ApiResponse(responseCode = "412", description = "Precondition Failed, Alarm of service request not found!")})
 	@PutMapping(path = "/{serviceRequestId}/alarm", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequest> addAlarmRefToServiceRequest(@PathVariable String serviceRequestId,
 			@Valid @RequestBody ServiceRequestDataRef alarmRef) {
+		ServiceRequestValidationResult validateAlarm = serviceRequestService.validateAlarm(alarmRef);
+		if(ServiceRequestValidationResult.ALARM_NOT_FOUND.equals(validateAlarm)) {
+			log.warn(validateAlarm.getMessage());
+			return new ResponseEntity<ServiceRequest>(HttpStatus.PRECONDITION_FAILED);
+		}
+		if(ServiceRequestValidationResult.ALARM_ASSIGNED.equals(validateAlarm)) {
+			log.warn(validateAlarm.getMessage());
+			return new ResponseEntity<ServiceRequest>(HttpStatus.CONFLICT);
+		}
 		ServiceRequest serviceRequest = serviceRequestService.addAlarmRefToServiceRequest(serviceRequestId, alarmRef);
 		if(serviceRequest == null) {
 			return new ResponseEntity<ServiceRequest>(HttpStatus.NOT_FOUND);
