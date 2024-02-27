@@ -82,13 +82,13 @@ public class ServiceRequestEventMapper {
 		
 	}
 
-	public static ServiceRequestEventMapper map2(String id, ServiceRequestDataRef serviceRequestAlarmRef) {
-		if(serviceRequestAlarmRef == null) {
+	public static ServiceRequestEventMapper map2(String id, Set<ServiceRequestDataRef> alarmDataRefs) {
+		if(alarmDataRefs == null) {
 			return null;
 		}
 
 		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper(id);
-		mapper.addAlarmRef(serviceRequestAlarmRef);
+		mapper.setAlarmRef(alarmDataRefs);
 		return mapper;
 	}
 	
@@ -241,7 +241,7 @@ public class ServiceRequestEventMapper {
 	public Set<ServiceRequestDataRef> getAlarmRefList() {
 		Object alarmRefObj = event.get(SR_ALARM_REF);
 		if(alarmRefObj instanceof Collection) {
-			Collection<HashMap<String, String>> alarmRefColl = (Collection<HashMap<String, String>>) alarmRefObj;
+			Collection<Object> alarmRefColl = (Collection<Object>) alarmRefObj;
 			Set<ServiceRequestDataRef> alarmRefList = alarmRefColl.stream().map(object -> parseDataRef(object)).collect(Collectors.toSet());
 			return alarmRefList;
 		}
@@ -358,7 +358,12 @@ public class ServiceRequestEventMapper {
 		if(obj == null) {
 			return null;
 		}
+		if(obj instanceof ServiceRequestDataRef) {
+			return (ServiceRequestDataRef) obj;
+		}		
+		
 		HashMap<String, String> map = (HashMap<String, String>) obj;
+
 		ServiceRequestDataRef dataRef = new ServiceRequestDataRef();
 		dataRef.setId(map.get("id"));
 		dataRef.setUri(map.get("uri"));

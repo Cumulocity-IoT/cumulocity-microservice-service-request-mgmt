@@ -544,14 +544,17 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public ServiceRequest addAlarmRefToServiceRequest(String serviceRequestId, @Valid ServiceRequestDataRef alarmRef) {
 		log.debug("addAlarmRefToServiceRequest(serviceRequestId: {}, alarmRef: {})", serviceRequestId, alarmRef);
-		ServiceRequest serviceRequest = getServiceRequestById(serviceRequestId);
-		if(serviceRequest == null) {
+		EventRepresentation event = eventApi.getEvent(GId.asGId(serviceRequestId));
+		if( event == null) {
 			log.error("Service Request with id {} not found!", serviceRequestId);
 			return null;
 		}
 
-		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequestId, alarmRef);
-		EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
+		ServiceRequestEventMapper eventMapper = new ServiceRequestEventMapper(event);
+		eventMapper.addAlarmRef(alarmRef);
+
+		ServiceRequestEventMapper updateEventMapper = ServiceRequestEventMapper.map2(serviceRequestId, eventMapper.getAlarmRefList());
+		EventRepresentation updatedEvent = eventApi.update(updateEventMapper.getEvent());
 		ServiceRequest updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
 
 		createSystemComment("Alarm added", updatedServiceRequest);
@@ -561,7 +564,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			
 		ServiceRequestStatusConfig srStatus = null;
 		for(ServiceRequestStatusConfig srStatusConfig: statusList) {
-			if(srStatusConfig.getId().equals(serviceRequest.getStatus().getId())) {
+			if(srStatusConfig.getId().equals(updatedServiceRequest.getStatus().getId())) {
 				srStatus = srStatusConfig;
 			}
 		}
