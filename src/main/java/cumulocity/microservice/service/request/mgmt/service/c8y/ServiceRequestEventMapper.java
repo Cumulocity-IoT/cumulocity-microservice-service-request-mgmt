@@ -2,7 +2,6 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -10,7 +9,6 @@ import org.joda.time.DateTime;
 
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.event.EventRepresentation;
-import com.cumulocity.rest.representation.identity.ExternalIDRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -101,6 +99,7 @@ public class ServiceRequestEventMapper {
 		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper(event);
 		ServiceRequest serviceRequest = new ServiceRequest();
 		serviceRequest.setAlarmRefList(mapper.getAlarmRefList());
+		serviceRequest.setAlarmRef(mapper.getAlarmRefList().stream().findFirst().orElse(null));
 		serviceRequest.setCreationTime(mapper.getCreationDateTime());
 		//serviceRequest.setCustomProperties(event.get(EVENT_TYPE)); TODO
 		serviceRequest.setDescription(mapper.getDescription());
