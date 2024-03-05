@@ -2,6 +2,7 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -245,7 +246,7 @@ public class ServiceRequestEventMapper {
 			return alarmRefList;
 		}
 
-		return Set.of(parseDataRef(alarmRefObj));
+		return new HashSet(Set.of(parseDataRef(alarmRefObj)));
 	}
 	
 	public void setAlarmRef(Set<ServiceRequestDataRef> alarmRefList) {
