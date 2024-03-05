@@ -4,7 +4,6 @@ import com.cumulocity.model.event.CumulocityAlarmStatuses;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 
-import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 
 public class AlarmMapper {
@@ -26,7 +25,9 @@ public class AlarmMapper {
 		super();
 		this.alarm = new AlarmRepresentation();
 		this.alarm.setId(GId.asGId(alarmId));
-		this.alarm.setStatus(status.toString());
+		if(status != null) {
+			this.alarm.setStatus(status.toString());
+		}
 	}
 	
 	public String getServiceRequestEventId() {

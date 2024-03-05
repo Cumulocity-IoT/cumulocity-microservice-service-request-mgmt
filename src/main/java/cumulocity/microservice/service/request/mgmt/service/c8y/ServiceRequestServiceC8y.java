@@ -557,7 +557,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		EventRepresentation updatedEvent = eventApi.update(updateEventMapper.getEvent());
 		ServiceRequest updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
 
-		createSystemComment("Alarm added", updatedServiceRequest);
+		createSystemComment("Alarm " + alarmRef.getId() + " reference added", updatedServiceRequest);
 
 		// Update alarm
 		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
@@ -575,19 +575,22 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 	
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus) {
-		if(serviceRequest == null) {
+		if((serviceRequest == null) || (alarmRef == null) || (srStatus == null)) {
+			log.error("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest, alarmRef, srStatus);
 			return;
 		}
+		log.debug("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest.getId(), alarmRef.getId(), srStatus.getId());
 		
 		CumulocityAlarmStatuses alarmStatus = srStatus.getAlarmStatusTransition() != null ? CumulocityAlarmStatuses.valueOf(srStatus.getAlarmStatusTransition()): null;
 
 		if(alarmStatus == null) {
-			return;
+			log.info("No alarm transition defined for service request status: {}", srStatus.getId());
 		}
 		
 		AlarmMapper alarmMapper = AlarmMapper.map2(serviceRequest.getId(), alarmRef, alarmStatus);
 		if (alarmMapper != null) {
 			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
+			log.info("update Alarm {}", alarmRepresentation.getId().getValue());
 			alarmApi.update(alarmRepresentation);
 		}
 	}
