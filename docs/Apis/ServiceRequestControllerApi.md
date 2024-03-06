@@ -4,6 +4,7 @@ All URIs are relative to *http://localhost:8080*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
+| [**addAlarmRefToServiceRequest**](ServiceRequestControllerApi.md#addAlarmRefToServiceRequest) | **PUT** /api/service/request/{serviceRequestId}/alarm | Add alarm reference to service request |
 | [**createServiceRequest**](ServiceRequestControllerApi.md#createServiceRequest) | **POST** /api/service/request | CREATE service request |
 | [**deleteServiceRequestById**](ServiceRequestControllerApi.md#deleteServiceRequestById) | **DELETE** /api/service/request/{serviceRequestId} | DELETE service request by Id |
 | [**downloadServiceRequestAttachment**](ServiceRequestControllerApi.md#downloadServiceRequestAttachment) | **GET** /api/service/request/{serviceRequestId}/attachment | DOWNLOAD attachment for specific service request |
@@ -12,6 +13,34 @@ All URIs are relative to *http://localhost:8080*
 | [**updateServiceRequestById**](ServiceRequestControllerApi.md#updateServiceRequestById) | **PUT** /api/service/request/{serviceRequestId} | PUT service request by Id |
 | [**uploadServiceRequestAttachment**](ServiceRequestControllerApi.md#uploadServiceRequestAttachment) | **POST** /api/service/request/{serviceRequestId}/attachment | UPLOAD attachment for specific service request |
 
+
+<a name="addAlarmRefToServiceRequest"></a>
+# **addAlarmRefToServiceRequest**
+> ServiceRequest addAlarmRefToServiceRequest(serviceRequestId, ServiceRequestDataRef)
+
+Add alarm reference to service request
+
+    Add alarm reference to service request
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **serviceRequestId** | **String**|  | [default to null] |
+| **ServiceRequestDataRef** | [**ServiceRequestDataRef**](../Models/ServiceRequestDataRef.md)|  | |
+
+### Return type
+
+[**ServiceRequest**](../Models/ServiceRequest.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 <a name="createServiceRequest"></a>
 # **createServiceRequest**

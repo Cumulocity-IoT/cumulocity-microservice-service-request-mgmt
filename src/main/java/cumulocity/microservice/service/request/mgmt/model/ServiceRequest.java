@@ -1,6 +1,8 @@
 package cumulocity.microservice.service.request.mgmt.model;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -48,9 +50,14 @@ public class ServiceRequest {
 	@Valid
 	private ServiceRequestSource source;
 
-	@Schema(description = "Cumulocity Alarm reference")
+	@Schema(description = "Cumulocity Alarm reference, deprecated, use alarmRefList instead of alarmRef!")
 	@Valid
+	@Deprecated(since = "1.2.0", forRemoval = true)
 	private ServiceRequestDataRef alarmRef;
+
+	@Schema(description = "Cumulocity Alarm reference list")
+	@Valid
+	private Set<ServiceRequestDataRef> alarmRefList;
 
 	@Schema(description = "Cumulocity Event reference")
 	@Valid

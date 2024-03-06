@@ -11,6 +11,7 @@
 | **description** | **String** | Service request detailed description | [optional] [default to null] |
 | **source** | [**ServiceRequestSource**](ServiceRequestSource.md) |  | [default to null] |
 | **alarmRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
+| **alarmRefList** | [**Set**](ServiceRequestDataRef.md) | Cumulocity Alarm reference list | [optional] [default to null] |
 | **eventRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
 | **seriesRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
 | **creationTime** | **Date** | Creation date time | [default to null] |
