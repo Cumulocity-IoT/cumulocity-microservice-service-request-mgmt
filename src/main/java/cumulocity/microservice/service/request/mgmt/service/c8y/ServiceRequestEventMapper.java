@@ -52,7 +52,7 @@ public class ServiceRequestEventMapper {
 		}
 		
 		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper();
-		mapper.setAlarmRef(Set.of(serviceRequest.getAlarmRef()));
+		mapper.setAlarmRef(new HashSet<>(Set.of(serviceRequest.getAlarmRef())));
 		//event.set(serviceRequest.getCustomProperties(); TODO
 		mapper.setDescription(serviceRequest.getDescription());
 		mapper.setSource(serviceRequest.getSource());
