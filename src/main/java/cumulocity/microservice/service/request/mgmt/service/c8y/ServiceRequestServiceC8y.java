@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.management.Query;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestCommentType;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
@@ -64,7 +66,22 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	private ServiceRequestStatusConfigService serviceRequestStatusConfigService;
 	
 	private ServiceRequestCommentService serviceRequestCommentService;
-			
+	
+	public enum ServiceRequestValidationResult {
+		ALARM_NOT_FOUND("Alarm doesn't exists anymore"), ALARM_ASSIGNED("Alarm already assigned to another service request!"), VALID("Service request is valid");
+
+		private String message;
+
+		private ServiceRequestValidationResult(String message) {
+			this.message = message;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+
+	}
+
 	@Autowired
 	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
 			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService) {
@@ -74,6 +91,31 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		this.inventoryApi = inventoryApi;
 		this.serviceRequestStatusConfigService = serviceRequestStatusConfigService;
 		this.serviceRequestCommentService = serviceRequestCommentService;
+	}
+
+	@Override
+	public ServiceRequestValidationResult validateNewServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
+		ServiceRequestDataRef alarmRef = serviceRequestRqBody.getAlarmRef();
+		return validateAlarm(alarmRef);
+	}
+
+	@Override
+	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef) {
+		AlarmRepresentation alarm = null;
+		try{
+			alarm = alarmApi.getAlarm(GId.asGId(alarmRef.getId()));
+		}catch(Exception e){
+			log.error("Fetching alarm failed!", e);
+		}
+		
+		if(alarm == null) {
+			return ServiceRequestValidationResult.ALARM_NOT_FOUND;
+		}
+		Object srId = alarm.get(AlarmMapper.SR_EVENT_ID);
+		if(srId != null) {
+			return ServiceRequestValidationResult.ALARM_ASSIGNED;
+		}
+		return ServiceRequestValidationResult.VALID;
 	}
 
 	@Override
@@ -110,9 +152,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		createCommentForStatusChange("Initial Status", newServiceRequest);
 		
 		// Alarm status transition
-		if(newServiceRequest.getAlarmRef() != null) {
-			updateAlarm(newServiceRequest, srStatus);
-		}
+		if(newServiceRequest.getAlarmRefList() != null) {
+			for(ServiceRequestDataRef alarmRef: newServiceRequest.getAlarmRefList()) {
+				updateAlarm(newServiceRequest, alarmRef, srStatus);
+			}
+		};
 		
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
@@ -205,8 +249,10 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				//track status changes as system comment
 				createCommentForStatusChange("Updated Status", updatedServiceRequest);
 
-				// Alarm status transition
-				updateAlarm(updatedServiceRequest, srStatus);
+				// Alarm status transition, udate all alarms
+				for (ServiceRequestDataRef alarmRef : updatedServiceRequest.getAlarmRefList()) {
+					updateAlarm(updatedServiceRequest, alarmRef, srStatus);
+				}
 			}
 			
 			//if service request is closed all comments must also be set to closed
@@ -494,25 +540,61 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		serviceRequestPatch.setIsActive(isActive);
 		return updateServiceRequest(id, serviceRequestPatch);
 	}
+
+	@Override
+	public ServiceRequest addAlarmRefToServiceRequest(String serviceRequestId, @Valid ServiceRequestDataRef alarmRef) {
+		log.debug("addAlarmRefToServiceRequest(serviceRequestId: {}, alarmRef: {})", serviceRequestId, alarmRef);
+		EventRepresentation event = eventApi.getEvent(GId.asGId(serviceRequestId));
+		if( event == null) {
+			log.error("Service Request with id {} not found!", serviceRequestId);
+			return null;
+		}
+
+		ServiceRequestEventMapper eventMapper = new ServiceRequestEventMapper(event);
+		eventMapper.addAlarmRef(alarmRef);
+
+		ServiceRequestEventMapper updateEventMapper = ServiceRequestEventMapper.map2(serviceRequestId, eventMapper.getAlarmRefList());
+		EventRepresentation updatedEvent = eventApi.update(updateEventMapper.getEvent());
+		ServiceRequest updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
+
+		createSystemComment("Alarm " + alarmRef.getId() + " reference added", updatedServiceRequest);
+
+		// Update alarm
+		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
+			
+		ServiceRequestStatusConfig srStatus = null;
+		for(ServiceRequestStatusConfig srStatusConfig: statusList) {
+			if(srStatusConfig.getId().equals(updatedServiceRequest.getStatus().getId())) {
+				srStatus = srStatusConfig;
+			}
+		}
+
+		updateAlarm(updatedServiceRequest, alarmRef, srStatus);
+
+		return updatedServiceRequest;
+	}
 	
-	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestStatusConfig srStatus) {
-		if(serviceRequest == null) {
+	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus) {
+		if((serviceRequest == null) || (alarmRef == null) || (srStatus == null)) {
+			log.error("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest, alarmRef, srStatus);
 			return;
 		}
+		log.debug("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest.getId(), alarmRef.getId(), srStatus.getId());
 		
 		CumulocityAlarmStatuses alarmStatus = srStatus.getAlarmStatusTransition() != null ? CumulocityAlarmStatuses.valueOf(srStatus.getAlarmStatusTransition()): null;
 
 		if(alarmStatus == null) {
-			return;
+			log.info("No alarm transition defined for service request status: {}", srStatus.getId());
 		}
 		
-		AlarmMapper alarmMapper = AlarmMapper.map2(serviceRequest, alarmStatus);
+		AlarmMapper alarmMapper = AlarmMapper.map2(serviceRequest.getId(), alarmRef, alarmStatus);
 		if (alarmMapper != null) {
 			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
+			log.info("update Alarm {}", alarmRepresentation.getId().getValue());
 			alarmApi.update(alarmRepresentation);
 		}
 	}
-	
+
 	private void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest) {
 		if(serviceRequest == null) {
 			log.warn("Couldn't add system comment, service request is null!");
@@ -543,3 +625,4 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 	}
 }
+
