@@ -469,7 +469,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		return requestList;
 	}
 
-	private <T> List<List<T>> getPages(Collection<T> c, Integer pageSize) {
+	public <T> List<List<T>> getPages(Collection<T> c, Integer pageSize) {
 		if (c == null)
 			return Collections.emptyList();
 		List<T> list = new ArrayList<T>(c);
@@ -477,8 +477,13 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			pageSize = list.size();
 		int numPages = (int) Math.ceil((double) list.size() / (double) pageSize);
 		List<List<T>> pages = new ArrayList<List<T>>(numPages);
-		for (int pageNum = 0; pageNum < numPages;)
-			pages.add(list.subList(pageNum * pageSize, Math.min(++pageNum * pageSize, list.size())));
+		for (int pageNum = 1; pageNum <= numPages; pageNum++) {
+			if(pageNum == 1) {
+				// cumulocity starts pages with 1, this is dummy page 0 contains same elements as page 1
+				pages.add(list.subList((pageNum -1) * pageSize, Math.min(pageNum * pageSize, list.size())));
+			}
+			pages.add(list.subList((pageNum -1) * pageSize, Math.min(pageNum * pageSize, list.size())));
+		}
 		return pages;
 	}
 
