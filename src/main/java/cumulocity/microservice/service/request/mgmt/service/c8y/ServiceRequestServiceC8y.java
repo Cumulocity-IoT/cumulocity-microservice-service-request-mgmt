@@ -469,7 +469,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		return requestList;
 	}
 
-	public <T> List<List<T>> getPages(Collection<T> c, Integer pageSize) {
+	protected <T> List<List<T>> getPages(Collection<T> c, Integer pageSize) {
 		if (c == null)
 			return Collections.emptyList();
 		List<T> list = new ArrayList<T>(c);
