@@ -1,8 +1,12 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.checkerframework.checker.units.qual.A;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +20,8 @@ import cumulocity.microservice.service.request.mgmt.service.ServiceRequestPriori
 
 @Service
 public class ServiceRequestPriorityServiceC8y implements ServiceRequestPriorityService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ServiceRequestPriorityServiceC8y.class);
 
 	private InventoryApi inventoryApi;
 
@@ -83,6 +89,38 @@ public class ServiceRequestPriorityServiceC8y implements ServiceRequestPriorityS
 			return managedObjectsByFilter.get().iterator().next();
 		}
 		return null;
+	}
+
+	@Override
+	public boolean createDefaultPriorityList() {
+
+		if(getManagedObjectRepresentation() != null) {
+			return false;
+		}
+
+		LOG.info("No priority list defined, creating default priority list!");
+
+		List<ServiceRequestPriority> defaultPriorityList = new ArrayList<>();
+		ServiceRequestPriority priority1 = new ServiceRequestPriority();
+		priority1.setOrdinal(1L);
+		priority1.setName("high");
+		defaultPriorityList.add(priority1);
+		ServiceRequestPriority priority2 = new ServiceRequestPriority();
+		priority2.setOrdinal(2L);
+		priority2.setName("medium");
+		defaultPriorityList.add(priority2);
+		ServiceRequestPriority priority3 = new ServiceRequestPriority();
+		priority3.setOrdinal(3L);
+		priority3.setName("low");
+		defaultPriorityList.add(priority3);
+		
+		List<ServiceRequestPriority> priorityList = this.createOrUpdatePriorityList(defaultPriorityList);
+		if(priorityList == null || priorityList.isEmpty()) {
+			LOG.error("Failed to create default priority list!");
+			return false;
+		}
+
+		return true;
 	}
 
 }
