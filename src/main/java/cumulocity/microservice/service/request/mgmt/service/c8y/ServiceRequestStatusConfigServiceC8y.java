@@ -146,9 +146,9 @@ public class ServiceRequestStatusConfigServiceC8y implements ServiceRequestStatu
 		List<ServiceRequestStatusConfig> statusList = this.createOrUpdateStatusList(defaultStatusList);
 		if(statusList == null || statusList.isEmpty()) {
 			LOG.error("Failed to create default status list!");
-			return false;
+			return;
 		}
 
-		return true;
+		return;
 	}
 }

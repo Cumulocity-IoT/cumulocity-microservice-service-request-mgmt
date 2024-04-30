@@ -118,10 +118,10 @@ public class ServiceRequestPriorityServiceC8y implements ServiceRequestPriorityS
 		List<ServiceRequestPriority> priorityList = this.createOrUpdatePriorityList(defaultPriorityList);
 		if(priorityList == null || priorityList.isEmpty()) {
 			LOG.error("Failed to create default priority list!");
-			return false;
+			return;
 		}
 
-		return true;
+		return;
 	}
 
 }
