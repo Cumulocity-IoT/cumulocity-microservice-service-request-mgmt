@@ -92,10 +92,11 @@ public class ServiceRequestPriorityServiceC8y implements ServiceRequestPriorityS
 	}
 
 	@Override
-	public boolean createDefaultPriorityList() {
+	public void createDefaultPriorityList() {
 
 		if(getManagedObjectRepresentation() != null) {
-			return false;
+			LOG.info("Priority list already defined, skipping creation of default priority list!");
+			return;
 		}
 
 		LOG.info("No priority list defined, creating default priority list!");

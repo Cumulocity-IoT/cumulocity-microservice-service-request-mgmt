@@ -14,5 +14,5 @@ public interface ServiceRequestStatusConfigService {
 	
 	public void deleteStatus(String statusId);
 
-	public boolean createDefaultStatusList();
+	public void createDefaultStatusList();
 }

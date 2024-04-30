@@ -91,10 +91,11 @@ public class ServiceRequestStatusConfigServiceC8y implements ServiceRequestStatu
 	}
 
 	@Override
-	public boolean createDefaultStatusList() {
+	public void createDefaultStatusList() {
 
 		if(getManagedObjectRepresentation() != null) {
-			return false;
+			LOG.info("Status list already defined, skipping creation of default status list!");
+			return;
 		}
 
 		LOG.info("No status list defined, creating default status list!");

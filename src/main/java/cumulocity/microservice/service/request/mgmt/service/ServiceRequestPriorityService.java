@@ -13,5 +13,5 @@ public interface ServiceRequestPriorityService {
 
 	public void deletePriority(Long priorityOrdinal);
 
-	public boolean createDefaultPriorityList();
+	public void createDefaultPriorityList();
 }
