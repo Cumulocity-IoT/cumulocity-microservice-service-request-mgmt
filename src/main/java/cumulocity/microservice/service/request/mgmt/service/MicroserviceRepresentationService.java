@@ -8,13 +8,12 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 /**
- * Service for add microservice as representation in cumulocity als
- * managedobject with agent fragment in order to store events etc. to it.
+ * Service for any microservice runtime related features.
  *
  * @author alexander.pester@softwareag.com
- * @version 0.0.1
+ * @version 1.2.2
  * <p>
- * 03.09.2019
+ * 03.05.2024
  */
 @Service
 public class MicroserviceRepresentationService {
@@ -31,7 +30,7 @@ public class MicroserviceRepresentationService {
     }
 
     /**
-     * Create default priority and status list for new tenant if not yet directyl exists
+     * Event listener for microservice subscription.
      *
      * @param event
      */
