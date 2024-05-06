@@ -13,4 +13,6 @@ public interface ServiceRequestStatusConfigService {
 	public Optional<ServiceRequestStatusConfig> getStatus(String statusId);
 	
 	public void deleteStatus(String statusId);
+
+	public void createDefaultStatusList();
 }
