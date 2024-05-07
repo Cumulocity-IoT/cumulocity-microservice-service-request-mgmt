@@ -3,6 +3,7 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ public class ServiceRequestEventMapper {
 	public static final String SR_EXTERNAL_ID = "sr_ExternalId";
 	public static final String C8Y_IS_BINARY = "c8y_IsBinary";
 	public static final String SR_SYNC_STATUS = "sr_SyncStatus";
+	public static final String SR_CUSTOM_PROPERTIES = "sr_CustomProperties";
 	
 	public enum SyncStatus {
 		NEW, ACTIVE, STOP;
@@ -53,7 +55,6 @@ public class ServiceRequestEventMapper {
 		
 		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper();
 		mapper.setAlarmRef(new HashSet<>(Set.of(serviceRequest.getAlarmRef())));
-		//event.set(serviceRequest.getCustomProperties(); TODO
 		mapper.setDescription(serviceRequest.getDescription());
 		mapper.setSource(serviceRequest.getSource());
 		mapper.setEventRef(serviceRequest.getEventRef());
@@ -62,6 +63,7 @@ public class ServiceRequestEventMapper {
 		mapper.setStatus(serviceRequest.getStatus());
 		mapper.setTitle(serviceRequest.getTitle());
 		mapper.setServiceRequestType(serviceRequest.getType());
+		mapper.setCustomProperties(serviceRequest.getCustomProperties());
 		return mapper;
 	}
 	
@@ -77,6 +79,7 @@ public class ServiceRequestEventMapper {
 		mapper.setTitle(serviceRequest.getTitle());
 		mapper.setIsActive(serviceRequest.getIsActive());
 		mapper.setExternalId(serviceRequest.getExternalId());
+		mapper.setCustomProperties(serviceRequest.getCustomProperties());
 		return mapper;
 		
 	}
@@ -102,7 +105,6 @@ public class ServiceRequestEventMapper {
 		serviceRequest.setAlarmRefList(mapper.getAlarmRefList());
 		serviceRequest.setAlarmRef(mapper.getAlarmRefList().stream().findFirst().orElse(null));
 		serviceRequest.setCreationTime(mapper.getCreationDateTime());
-		//serviceRequest.setCustomProperties(event.get(EVENT_TYPE)); TODO
 		serviceRequest.setDescription(mapper.getDescription());
 		serviceRequest.setSource(mapper.getSource());
 		serviceRequest.setEventRef(mapper.getEventRef());
@@ -118,6 +120,7 @@ public class ServiceRequestEventMapper {
 		serviceRequest.setAttachment(mapper.getAttachment());
 		serviceRequest.setExternalId(mapper.getExternalId());
 		serviceRequest.setIsClosed(mapper.getIsClosed());
+		serviceRequest.setCustomProperties(mapper.getCustomProperties());
 		return serviceRequest;
 	}
 	
@@ -349,7 +352,23 @@ public class ServiceRequestEventMapper {
 		}
 		event.set(attachment, C8Y_IS_BINARY);
 	}
+
+	public void setCustomProperties(Map<String, String> customProperties) {
+		if(customProperties == null) {
+			return;
+		}
+		event.set(customProperties, SR_CUSTOM_PROPERTIES);
+	}
 	
+	public Map<String, String> getCustomProperties() {
+		Object obj = event.get(SR_CUSTOM_PROPERTIES);
+		if (obj == null) {
+			return null;
+		}
+
+		return (HashMap<String, String>) obj;
+	}
+
 	public EventRepresentation getEvent() {
 		return event;
 	}
