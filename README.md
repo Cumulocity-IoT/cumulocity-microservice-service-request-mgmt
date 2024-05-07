@@ -39,7 +39,7 @@ classDiagram
         +String title
         +String description
         +ServiceRequestSource source
-        +ServiceRequestDataRef alarmRef
+        +List~ServiceRequestDataRef~ alarmRefList
         +ServiceRequestDataRef eventRef
         +ServiceRequestDataRef seriesRef
         +Date creationTime
@@ -49,8 +49,10 @@ classDiagram
         +Boolean isClosed
         +String externalId
         +ServiceRequestAttachment attachment
+        +Map~String,String~ customProperties
         
     }
+
     class ServiceRequestStatus{
         +String id
         +String name
