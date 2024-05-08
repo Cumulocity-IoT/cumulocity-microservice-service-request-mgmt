@@ -1,5 +1,6 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
+import java.security.Provider.Service;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,9 +10,11 @@ import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 
+import com.cumulocity.model.JSONBase;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
@@ -444,6 +447,7 @@ public class ServiceRequestEventMapper {
 			return null;
 		}
 		HashMap<String, Object> map = (HashMap<String, Object>) obj;
+
 		ServiceRequestAttachment attachment = new ServiceRequestAttachment();
 		attachment.setLength((Long)map.get("length"));
 		attachment.setName((String)map.get("name"));
@@ -455,11 +459,12 @@ public class ServiceRequestEventMapper {
 		if(obj == null) {
 			return null;
 		}
-		HashMap<String, String> map = (HashMap<String, String>) obj;
-		ServiceOrder order = new ServiceOrder();
-		order.setId(map.get("id"));
-		order.setPriority(map.get("priority"));
-		order.setStatus(map.get("status"));
+		if(obj instanceof ServiceOrder) {
+			return (ServiceOrder) obj;
+		}
+	
+		ObjectMapper mapper = new ObjectMapper();
+		ServiceOrder order = mapper.convertValue(obj, ServiceOrder.class);
 		return order;
 	}
 }
