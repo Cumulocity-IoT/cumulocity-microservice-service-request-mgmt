@@ -12,7 +12,6 @@ import org.joda.time.DateTime;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
@@ -23,6 +22,7 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
+import cumulocity.microservice.service.request.mgmt.model.ServiceOrder;
 
 public class ServiceRequestEventMapper {
 	public static final String EVENT_TYPE = "c8y_ServiceRequest";
@@ -40,6 +40,7 @@ public class ServiceRequestEventMapper {
 	public static final String SR_EXTERNAL_ID = "sr_ExternalId";
 	public static final String C8Y_IS_BINARY = "c8y_IsBinary";
 	public static final String SR_SYNC_STATUS = "sr_SyncStatus";
+	public static final String SR_ORDER = "sr_Order";
 	public static final String SR_CUSTOM_PROPERTIES = "sr_CustomProperties";
 	
 	public enum SyncStatus {
@@ -63,6 +64,7 @@ public class ServiceRequestEventMapper {
 		mapper.setStatus(serviceRequest.getStatus());
 		mapper.setTitle(serviceRequest.getTitle());
 		mapper.setServiceRequestType(serviceRequest.getType());
+		mapper.setOrder(serviceRequest.getOrder());
 		mapper.setCustomProperties(serviceRequest.getCustomProperties());
 		return mapper;
 	}
@@ -79,6 +81,7 @@ public class ServiceRequestEventMapper {
 		mapper.setTitle(serviceRequest.getTitle());
 		mapper.setIsActive(serviceRequest.getIsActive());
 		mapper.setExternalId(serviceRequest.getExternalId());
+		mapper.setOrder(serviceRequest.getOrder());
 		mapper.setCustomProperties(serviceRequest.getCustomProperties());
 		return mapper;
 		
@@ -120,6 +123,7 @@ public class ServiceRequestEventMapper {
 		serviceRequest.setAttachment(mapper.getAttachment());
 		serviceRequest.setExternalId(mapper.getExternalId());
 		serviceRequest.setIsClosed(mapper.getIsClosed());
+		serviceRequest.setOrder(mapper.getOrder());
 		serviceRequest.setCustomProperties(mapper.getCustomProperties());
 		return serviceRequest;
 	}
@@ -369,6 +373,18 @@ public class ServiceRequestEventMapper {
 		return (HashMap<String, String>) obj;
 	}
 
+	public void setOrder(ServiceOrder order) {
+		if(order == null) {
+			return;
+		}
+		event.set(order, SR_ORDER);
+	}
+	
+	public ServiceOrder getOrder() {
+		Object obj = event.get(SR_ORDER);
+		return parseOrder(obj);
+	}
+
 	public EventRepresentation getEvent() {
 		return event;
 	}
@@ -416,7 +432,6 @@ public class ServiceRequestEventMapper {
 			return null;
 		}
 		
-		ObjectMapper mapper = new ObjectMapper();
 		ServiceRequestSource source = new ServiceRequestSource();
 		source.setId(obj.getId().getValue());
 		source.setSelf(obj.getSelf());
@@ -434,5 +449,17 @@ public class ServiceRequestEventMapper {
 		attachment.setName((String)map.get("name"));
 		attachment.setType((String)map.get("type"));
 		return attachment;
+	}
+
+	private ServiceOrder parseOrder(Object obj) {
+		if(obj == null) {
+			return null;
+		}
+		HashMap<String, String> map = (HashMap<String, String>) obj;
+		ServiceOrder order = new ServiceOrder();
+		order.setId(map.get("id"));
+		order.setPriority(map.get("priority"));
+		order.setStatus(map.get("status"));
+		return order;
 	}
 }
