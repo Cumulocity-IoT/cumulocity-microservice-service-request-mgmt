@@ -3,7 +3,7 @@
 
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
-| **id** | **String** | External ID of order | [default to null] |
+| **id** | **String** | External ID of order | [optional] [default to null] |
 | **priority** | **String** | Priority of order | [optional] [default to null] |
 | **status** | **String** | Status of order | [optional] [default to null] |
 
