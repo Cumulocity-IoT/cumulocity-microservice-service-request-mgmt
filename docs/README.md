@@ -40,6 +40,7 @@ All URIs are relative to *http://localhost:8080*
 
  - [RequestListServiceRequest](./Models/RequestListServiceRequest.md)
  - [RequestListServiceRequestComment](./Models/RequestListServiceRequestComment.md)
+ - [ServiceOrder](./Models/ServiceOrder.md)
  - [ServiceRequest](./Models/ServiceRequest.md)
  - [ServiceRequestAttachment](./Models/ServiceRequestAttachment.md)
  - [ServiceRequestComment](./Models/ServiceRequestComment.md)

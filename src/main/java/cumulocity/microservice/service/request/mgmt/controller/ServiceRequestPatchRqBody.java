@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import cumulocity.microservice.service.request.mgmt.model.ServiceOrder;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,6 +35,9 @@ public class ServiceRequestPatchRqBody {
 	
 	@Schema(description = "Service request external ID, contains the service request object ID of the external system.", example = "123456789")
 	private String externalId;
+
+	@Schema(description = "Service Order")
+	private ServiceOrder order;
 
 	@Schema(description = "Custom specific properties")
 	private Map<String, String> customProperties;

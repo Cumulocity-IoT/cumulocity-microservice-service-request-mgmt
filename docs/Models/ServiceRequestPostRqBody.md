@@ -12,6 +12,7 @@
 | **alarmRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
 | **eventRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
 | **seriesRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
+| **order** | [**ServiceOrder**](ServiceOrder.md) |  | [optional] [default to null] |
 | **customProperties** | **Map** | Custom specific properties | [optional] [default to null] |
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

@@ -6,6 +6,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import cumulocity.microservice.service.request.mgmt.model.ServiceOrder;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
@@ -65,6 +66,11 @@ public class ServiceRequestPostRqBody {
 	@Valid
 	private ServiceRequestDataRef seriesRef;
 
+	@Schema(description = "Service Order")
+	@Valid
+	private ServiceOrder order;
+
 	@Schema(description = "Custom specific properties")
+	@Valid
 	private Map<String, String> customProperties;
 }

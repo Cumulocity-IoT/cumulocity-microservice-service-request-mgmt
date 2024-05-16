@@ -1,6 +1,5 @@
 package cumulocity.microservice.service.request.mgmt.model;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -93,6 +92,9 @@ public class ServiceRequest {
 	@Schema(description = "File attachment of Service Request")
 	private ServiceRequestAttachment attachment;
 	
+	@Schema(description = "Service Order, reference object to any kind of service order. Be aware the the order object must be complete. Partial order objects will set all not initialized properties to null!")
+	private ServiceOrder order;
+
 	@Schema(description = "Custom specific properties")
 	private Map<String, String> customProperties;
 }
