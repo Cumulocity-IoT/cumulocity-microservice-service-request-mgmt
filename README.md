@@ -28,6 +28,7 @@ classDiagram
     ServiceRequest "*" -- "1" ServiceRequestSource
     ServiceRequest "1" -- "*" ServiceRequestComment
     ServiceRequest -- ServiceRequestDataRef
+    ServiceRequest "1" -- "1" ServiceOrder
     ServiceRequestComment "*" -- "1" ServiceRequestSource
     ServiceRequestComment "1" -- "1" ServiceRequestAttachment
      
@@ -39,7 +40,7 @@ classDiagram
         +String title
         +String description
         +ServiceRequestSource source
-        +ServiceRequestDataRef alarmRef
+        +List~ServiceRequestDataRef~ alarmRefList
         +ServiceRequestDataRef eventRef
         +ServiceRequestDataRef seriesRef
         +Date creationTime
@@ -49,8 +50,11 @@ classDiagram
         +Boolean isClosed
         +String externalId
         +ServiceRequestAttachment attachment
+        +ServiceOrder order
+        +Map~String,String~ customProperties
         
     }
+
     class ServiceRequestStatus{
         +String id
         +String name
@@ -86,6 +90,11 @@ classDiagram
     class ServiceRequestDataRef{
         +String id
         +String uri
+    }
+    class ServiceOrder{
+        +String id
+        +String priority
+        +String status
     }
 ```
 
