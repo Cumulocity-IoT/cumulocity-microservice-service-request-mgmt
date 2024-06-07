@@ -53,9 +53,9 @@ public class ManagedObjectMapper {
 		for (ServiceRequest serviceRequest : serviceRequestList.getList()) {
 			if(excludeList.contains(serviceRequest.getStatus().getId()) == false) {
 				priorityCounterMap.merge(serviceRequest.getPriority().getName().replace(" ", "_"), 1L, Long::sum);
-				if(serviceRequest.getOrder() != null && serviceRequest.getOrder().getPriority() != null){
-					priorityOrderCounterMap.merge(serviceRequest.getOrder().getPriority().replace(" ", "_"), 1L, Long::sum);
-				}
+			}
+			if(serviceRequest.getOrder() != null && serviceRequest.getOrder().getPriority() != null){
+				priorityOrderCounterMap.merge(serviceRequest.getOrder().getPriority().replace(" ", "_"), 1L, Long::sum);
 			}
 		}
 		
