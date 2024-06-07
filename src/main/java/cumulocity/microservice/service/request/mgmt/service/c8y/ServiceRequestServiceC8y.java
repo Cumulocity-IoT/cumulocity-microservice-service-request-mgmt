@@ -413,7 +413,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	protected RequestList<ServiceRequest> getAllActiveEventsBySource(GId sourceId) {
 		EventFilter filter = new EventFilter();
-		filter.bySource(sourceId).byFragmentType(ServiceRequestEventMapper.SR_ACTIVE).byFragmentValue(Boolean.TRUE.toString());
+		filter.byType(ServiceRequestEventMapper.EVENT_TYPE).bySource(sourceId).byFragmentType(ServiceRequestEventMapper.SR_ACTIVE).byFragmentValue(Boolean.TRUE.toString());
 		return getServiceRequestByFilter(filter, 2000, null, null);
 	}
 
