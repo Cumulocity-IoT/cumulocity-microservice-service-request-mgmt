@@ -57,6 +57,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	
 	private EventApi eventApi;
 
+	private DebugEventApi debugEventApi;
+
 	private AlarmApi alarmApi;
 
 	private EventAttachmentApi eventAttachmentApi;
@@ -83,9 +85,10 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 
 	@Autowired
-	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
+	public ServiceRequestServiceC8y(EventApi eventApi, DebugEventApi debugEventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
 			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService) {
 		this.eventApi = eventApi;
+		this.debugEventApi = debugEventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
 		this.inventoryApi = inventoryApi;
