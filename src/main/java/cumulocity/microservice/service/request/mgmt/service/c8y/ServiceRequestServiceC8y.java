@@ -344,7 +344,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	public Collection<ServiceRequest> getAllServiceRequestBySyncStatus(Boolean assigned) {
 		log.info("getCompleteActiveServiceRequestByFilter(assigned: {})", assigned);
 		Stopwatch stopwatch = Stopwatch.createStarted();
-		EventFilterExtend filter = new EventFilterExtend();
+		EventFilter filter = new EventFilter();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_SYNC_STATUS);
 		if(assigned != null && assigned) {
@@ -361,8 +361,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		Set<ServiceRequest> serviceRequestList = new HashSet<ServiceRequest>();
 		for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {
 			EventRepresentation eventRepresentation = iterator.next();
-			log.info("EventRepresentation as JSON:");
-			log.info(eventRepresentation.toJSON());
 			if(assigned == null) {
 				ServiceRequestEventMapper eventMapper = new ServiceRequestEventMapper(eventRepresentation);
 				SyncStatus syncStatus = eventMapper.getSyncStatus();
@@ -378,6 +376,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);	
 				if(sr.getAlarmRefList() == null || sr.getAlarmRefList().size() == 0) {
 					log.info("Service Request {} has no alarm references and will be removed from list!", sr.getId());
+					log.info("EventRepresentation as JSON:");
+					log.info(eventRepresentation.toJSON());
 				}else{
 					serviceRequestList.add(sr);
 				}
