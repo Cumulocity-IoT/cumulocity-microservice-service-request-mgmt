@@ -381,7 +381,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 					log.info("Service Request {} has no alarm references and will be removed from list!", sr.getId());
 					log.info("EventRepresentation as JSON:");
 					log.info(eventRepresentation.toJSON());
-					debugEventApi.test();
+					getNew(filter);
 				}else{
 					serviceRequestList.add(sr);
 				}
@@ -391,6 +391,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		long ms = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 		log.info("getCompleteActiveServiceRequestByFilter(assigned: {}): return list.size {} in {} ms", assigned, serviceRequestList.size(), ms);
 		return serviceRequestList;
+	}
+
+	private void getNew(EventFilter filter) {
+		RequestList<ServiceRequest> serviceRequestByFilter = getServiceRequestByFilter(filter, 2000, 1, null);
+		log.info("GET NEW size: {}", serviceRequestByFilter.getList().size());
 	}
 
 	@Override
