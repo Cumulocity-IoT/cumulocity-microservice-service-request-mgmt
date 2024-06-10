@@ -33,8 +33,6 @@ public class DebugEventApi {
         }
 
         public void test() {
-            log.info("Test");
-
             HttpHeaders headers = new HttpHeaders();
 		    headers.set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
 		    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
