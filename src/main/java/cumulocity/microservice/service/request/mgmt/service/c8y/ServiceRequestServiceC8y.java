@@ -361,6 +361,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		Set<ServiceRequest> serviceRequestList = new HashSet<ServiceRequest>();
 		for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {
 			EventRepresentation eventRepresentation = iterator.next();
+			log.info("EventRepresentation as JSON:");
+			log.info(eventRepresentation.toJSON());
 			if(assigned == null) {
 				ServiceRequestEventMapper eventMapper = new ServiceRequestEventMapper(eventRepresentation);
 				SyncStatus syncStatus = eventMapper.getSyncStatus();
