@@ -25,8 +25,10 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestSource;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
+import lombok.extern.slf4j.Slf4j;
 import cumulocity.microservice.service.request.mgmt.model.ServiceOrder;
 
+@Slf4j
 public class ServiceRequestEventMapper {
 	public static final String EVENT_TYPE = "c8y_ServiceRequest";
 	
@@ -252,6 +254,9 @@ public class ServiceRequestEventMapper {
 		Object alarmRefObj = event.get(SR_ALARM_REF);
 
 		if(alarmRefObj == null) {
+			log.info("*** NULLPOINTER ANALYSIS ***");
+			log.info("alarmRefObj is null for event: {} and source {}", event.getId(), event.getSource().getId().getValue());
+			log.info("******");
 			return new HashSet<>();
 		}
 

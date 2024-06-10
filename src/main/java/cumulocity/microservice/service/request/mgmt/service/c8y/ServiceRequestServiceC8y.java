@@ -396,11 +396,20 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 
 		PageStatisticsRepresentation pageStatistics = pagedCollection.getPageStatistics();
+
 		List<EventRepresentation> events = pagedCollection.getEvents();
 
 		List<ServiceRequest> serviceRequestList = events.stream().map(event -> {
 			return ServiceRequestEventMapper.map2(event);
 		}).collect(Collectors.toList());
+
+		if(pageStatistics == null) {
+			log.error("PageStatistics is null!");
+			log.info("*** NULLPOINTER ANALYSIS ***");
+			log.info("Count service request list: {}", events.size());
+			log.info("Filter, source: {}", filter.getSource());
+			log.info("******");
+		}
 
 		RequestList<ServiceRequest> requestList = new RequestList<>();
 		requestList.setCurrentPage(pageStatistics.getCurrentPage());
