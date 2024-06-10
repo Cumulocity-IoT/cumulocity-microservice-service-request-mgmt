@@ -364,11 +364,19 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				SyncStatus syncStatus = eventMapper.getSyncStatus();
 				if(syncStatus.equals(SyncStatus.NEW) || syncStatus.equals(SyncStatus.ACTIVE)) {
 					ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
-					serviceRequestList.add(sr);
+					if(sr.getAlarmRefList() == null || sr.getAlarmRefList().size() == 0) {
+						log.info("Service Request {} has no alarm references and will be removed from list!", sr.getId());
+					}else{
+						serviceRequestList.add(sr);
+					}
 				}
 			}else {
-				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);				
-				serviceRequestList.add(sr);
+				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);	
+				if(sr.getAlarmRefList() == null || sr.getAlarmRefList().size() == 0) {
+					log.info("Service Request {} has no alarm references and will be removed from list!", sr.getId());
+				}else{
+					serviceRequestList.add(sr);
+				}
 			}
 		}
 		stopwatch.stop();
