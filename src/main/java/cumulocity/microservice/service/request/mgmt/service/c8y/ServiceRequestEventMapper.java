@@ -254,8 +254,8 @@ public class ServiceRequestEventMapper {
 		Object alarmRefObj = event.get(SR_ALARM_REF);
 
 		if(alarmRefObj == null) {
-			log.info("*** NULLPOINTER ANALYSIS ***");
-			log.info("alarmRefObj is null for event: {} and source {}", event.getId(), event.getSource().getId().getValue());
+			log.info("*** NULLPOINTER ANALYSIS *** " + event.getId());
+			//log.info("alarmRefObj is null for event: {} and source {}", event.getId(), event.getSource().getId().getValue());
 			log.info("******");
 			return new HashSet<>();
 		}
