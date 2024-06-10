@@ -381,6 +381,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 					log.info("Service Request {} has no alarm references and will be removed from list!", sr.getId());
 					log.info("EventRepresentation as JSON:");
 					log.info(eventRepresentation.toJSON());
+					debugEventApi.test();
 				}else{
 					serviceRequestList.add(sr);
 				}

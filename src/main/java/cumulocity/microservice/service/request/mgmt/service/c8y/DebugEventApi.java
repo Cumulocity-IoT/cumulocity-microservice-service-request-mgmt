@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class DebugEventApi {
+    
     	private ContextService<MicroserviceCredentials> contextService;
 	
 	    private final CumulocityClientProperties clientProperties;
