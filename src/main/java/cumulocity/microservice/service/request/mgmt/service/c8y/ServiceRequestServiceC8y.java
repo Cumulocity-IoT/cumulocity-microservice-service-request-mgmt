@@ -354,6 +354,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			// service request which are new
 			filter.byFragmentValue(String.valueOf(SyncStatus.NEW.name()));
 		}
+
+		log.info("Filter; Type: {}, FragmentType: {}, FragmentValue: {}", filter.getType(), filter.getFragmentType(), filter.getFragmentValue());
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
 		Iterable<EventRepresentation> allPages = eventList.get(2000).allPages();
 		Set<ServiceRequest> serviceRequestList = new HashSet<ServiceRequest>();
@@ -381,7 +383,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 		stopwatch.stop();
 		long ms = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-		log.info("getCompleteActiveServiceRequestByFilter: return list.size {} in {} ms", serviceRequestList.size(), ms);
+		log.info("getCompleteActiveServiceRequestByFilter(assigned: {}): return list.size {} in {} ms", assigned, serviceRequestList.size(), ms);
 		return serviceRequestList;
 	}
 
