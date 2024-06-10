@@ -13,7 +13,7 @@
 	
 	<springProfile name="dev">
 		<logger name="org.springframework.web" level="INFO" />
-		<logger name="org.apache.commons.httpclient" level="DEBUG" />
+		<logger name="org.apache.commons.httpclient" level="INFO" />
 		<logger name="httpclient.wire" level="DEBUG" />
 		<logger name="cumulocity.microservice.service.request.mgmt" level="DEBUG" />
 		<logger name="com.cumulocity" level="DEBUG" />
@@ -33,7 +33,7 @@
 	</springProfile>
 
 
-	<root level="DEBUG">
+	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>
