@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.management.Query;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -57,8 +56,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	
 	private EventApi eventApi;
 
-	private DebugEventApi debugEventApi;
-
 	private AlarmApi alarmApi;
 
 	private EventAttachmentApi eventAttachmentApi;
@@ -85,10 +82,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 
 	@Autowired
-	public ServiceRequestServiceC8y(EventApi eventApi, DebugEventApi debugEventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
+	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
 			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService) {
 		this.eventApi = eventApi;
-		this.debugEventApi = debugEventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
 		this.inventoryApi = inventoryApi;
@@ -358,7 +354,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			filter.byFragmentValue(String.valueOf(SyncStatus.NEW.name()));
 		}
 
-		log.info("Filter; Type: {}, FragmentType: {}, FragmentValue: {}", filter.getType(), filter.getFragmentType(), filter.getFragmentValue());
+		log.debug("Filter; Type: {}, FragmentType: {}, FragmentValue: {}", filter.getType(), filter.getFragmentType(), filter.getFragmentValue());
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
 		Iterable<EventRepresentation> allPages = eventList.get(2000).allPages();
 		Set<ServiceRequest> serviceRequestList = new HashSet<ServiceRequest>();
@@ -369,19 +365,18 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				SyncStatus syncStatus = eventMapper.getSyncStatus();
 				if(syncStatus.equals(SyncStatus.NEW) || syncStatus.equals(SyncStatus.ACTIVE)) {
 					ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
-					if(sr.getAlarmRefList() == null || sr.getAlarmRefList().size() == 0) {
-						log.info("Service Request {} has no alarm references and will be removed from list!", sr.getId());
-					}else{
+					if(sr.getStatus() == null) {
+						log.error("Service Request has no status, seems something wrong with the event! Event:");
+						log.error(eventRepresentation.toJSON());
+					}else {
 						serviceRequestList.add(sr);
 					}
 				}
 			}else {
 				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);	
-				if(sr.getAlarmRefList() == null || sr.getAlarmRefList().size() == 0) {
-					log.info("Service Request {} has no alarm references and will be removed from list!", sr.getId());
-					log.info("EventRepresentation as JSON:");
-					log.info(eventRepresentation.toJSON());
-					debugEventApi.test();
+				if(sr.getStatus() == null) {
+					log.error("Service Request has no status, seems something wrong with the event! Event:");
+					log.error(eventRepresentation.toJSON());
 				}else{
 					serviceRequestList.add(sr);
 				}
@@ -418,14 +413,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		List<ServiceRequest> serviceRequestList = events.stream().map(event -> {
 			return ServiceRequestEventMapper.map2(event);
 		}).collect(Collectors.toList());
-
-		if(pageStatistics == null) {
-			log.error("PageStatistics is null!");
-			log.info("*** NULLPOINTER ANALYSIS ***");
-			log.info("Count service request list: {}", events.size());
-			log.info("Filter, source: {}", filter.getSource());
-			log.info("******");
-		}
 
 		RequestList<ServiceRequest> requestList = new RequestList<>();
 		requestList.setCurrentPage(pageStatistics.getCurrentPage());
