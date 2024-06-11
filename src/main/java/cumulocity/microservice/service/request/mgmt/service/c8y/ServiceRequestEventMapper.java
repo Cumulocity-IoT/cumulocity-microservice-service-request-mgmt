@@ -250,11 +250,17 @@ public class ServiceRequestEventMapper {
 	
 	public Set<ServiceRequestDataRef> getAlarmRefList() {
 		Object alarmRefObj = event.get(SR_ALARM_REF);
+
+		if(alarmRefObj == null) {
+			return null;
+		}
+
 		if(alarmRefObj instanceof Collection) {
 			Collection<Object> alarmRefColl = (Collection<Object>) alarmRefObj;
 			Set<ServiceRequestDataRef> alarmRefList = alarmRefColl.stream().map(object -> parseDataRef(object)).collect(Collectors.toSet());
 			return alarmRefList;
 		}
+
 
 		return new HashSet(Set.of(parseDataRef(alarmRefObj)));
 	}
