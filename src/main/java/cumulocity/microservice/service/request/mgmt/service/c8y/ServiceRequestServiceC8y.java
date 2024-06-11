@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.management.Query;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -344,7 +343,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	public Collection<ServiceRequest> getAllServiceRequestBySyncStatus(Boolean assigned) {
 		log.info("getCompleteActiveServiceRequestByFilter(assigned: {})", assigned);
 		Stopwatch stopwatch = Stopwatch.createStarted();
-		EventFilterExtend filter = new EventFilterExtend();
+		EventFilter filter = new EventFilter();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_SYNC_STATUS);
 		if(assigned != null && assigned) {
@@ -354,6 +353,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			// service request which are new
 			filter.byFragmentValue(String.valueOf(SyncStatus.NEW.name()));
 		}
+
+		log.debug("Filter; Type: {}, FragmentType: {}, FragmentValue: {}", filter.getType(), filter.getFragmentType(), filter.getFragmentValue());
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
 		Iterable<EventRepresentation> allPages = eventList.get(2000).allPages();
 		Set<ServiceRequest> serviceRequestList = new HashSet<ServiceRequest>();
@@ -364,16 +365,26 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				SyncStatus syncStatus = eventMapper.getSyncStatus();
 				if(syncStatus.equals(SyncStatus.NEW) || syncStatus.equals(SyncStatus.ACTIVE)) {
 					ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
-					serviceRequestList.add(sr);
+					if(sr.getStatus() == null) {
+						log.error("Service Request has no status, seems something wrong with the event! Event:");
+						log.error(eventRepresentation.toJSON());
+					}else {
+						serviceRequestList.add(sr);
+					}
 				}
 			}else {
-				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);				
-				serviceRequestList.add(sr);
+				ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);	
+				if(sr.getStatus() == null) {
+					log.error("Service Request has no status, seems something wrong with the event! Event:");
+					log.error(eventRepresentation.toJSON());
+				}else{
+					serviceRequestList.add(sr);
+				}
 			}
 		}
 		stopwatch.stop();
 		long ms = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-		log.info("getCompleteActiveServiceRequestByFilter: return list.size {} in {} ms", serviceRequestList.size(), ms);
+		log.info("getCompleteActiveServiceRequestByFilter(assigned: {}): return list.size {} in {} ms", assigned, serviceRequestList.size(), ms);
 		return serviceRequestList;
 	}
 
@@ -396,6 +407,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 
 		PageStatisticsRepresentation pageStatistics = pagedCollection.getPageStatistics();
+
 		List<EventRepresentation> events = pagedCollection.getEvents();
 
 		List<ServiceRequest> serviceRequestList = events.stream().map(event -> {
