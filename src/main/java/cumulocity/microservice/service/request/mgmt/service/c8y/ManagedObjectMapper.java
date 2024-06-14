@@ -54,7 +54,12 @@ public class ManagedObjectMapper {
 			if(serviceRequest.getStatus() != null && serviceRequest.getStatus().getId() != null && excludeList.contains(serviceRequest.getStatus().getId()) == false) {
 				priorityCounterMap.merge(serviceRequest.getPriority().getName().replace(" ", "_"), 1L, Long::sum);
 			}
-			if(serviceRequest.getOrder() != null && serviceRequest.getOrder().getPriority() != null && serviceRequest.getOrder().getPriority().isEmpty() == false){
+
+			//count only active (not closed) service requests with valid order
+			boolean isNotClosed = !Boolean.TRUE.equals(serviceRequest.getIsClosed());
+			boolean hasValidOrder = serviceRequest.getOrder() != null && serviceRequest.getOrder().getPriority() != null && serviceRequest.getOrder().getPriority().isEmpty() == false;
+
+			if(isNotClosed && hasValidOrder){
 				priorityOrderCounterMap.merge(serviceRequest.getOrder().getPriority().replace(" ", "_"), 1L, Long::sum);
 			}
 		}
