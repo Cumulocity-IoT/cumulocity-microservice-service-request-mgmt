@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ManagedObjectMapper {
 	
 	public static final String SR_ACTIVE_STATUS = "sr_ActiveStatus";
+	public static final String SR_ACTIVE_ORDER_STATUS = "sr_ActiveOrderStatus";
 	
 	private ManagedObjectRepresentation managedObjectRepresentation;
 	
@@ -30,10 +31,15 @@ public class ManagedObjectMapper {
 		this.managedObjectRepresentation = new ManagedObjectRepresentation();
 		this.managedObjectRepresentation.setId(managedObjectRepresentation.getId());
 		this.managedObjectRepresentation.set(managedObjectRepresentation.get(SR_ACTIVE_STATUS), SR_ACTIVE_STATUS);
+		this.managedObjectRepresentation.set(managedObjectRepresentation.get(SR_ACTIVE_ORDER_STATUS), SR_ACTIVE_ORDER_STATUS);
 	}
 
 	public Map<String, Long> getServiceRequestPriorityCounterMap() {
 		return (Map<String, Long>) managedObjectRepresentation.get(SR_ACTIVE_STATUS);
+	}
+
+	public Map<String, Long> getServiceRequestOrderPriorityCounterMap() {
+		return (Map<String, Long>) managedObjectRepresentation.get(SR_ACTIVE_ORDER_STATUS);
 	}
 
 	public void updateServiceRequestPriorityCounter(RequestList<ServiceRequest> serviceRequestList, List<String> excludeList ) {
@@ -42,10 +48,19 @@ public class ManagedObjectMapper {
 		}
 		
 		Map<String, Long> priorityCounterMap = new HashMap<>();
+		Map<String, Long> priorityOrderCounterMap = new HashMap<>();
 		
 		for (ServiceRequest serviceRequest : serviceRequestList.getList()) {
-			if(excludeList.contains(serviceRequest.getStatus().getId()) == false) {
+			if(serviceRequest.getStatus() != null && serviceRequest.getStatus().getId() != null && excludeList.contains(serviceRequest.getStatus().getId()) == false) {
 				priorityCounterMap.merge(serviceRequest.getPriority().getName().replace(" ", "_"), 1L, Long::sum);
+			}
+
+			//count only active (not closed) service requests with valid order
+			boolean isNotClosed = !Boolean.TRUE.equals(serviceRequest.getIsClosed());
+			boolean hasValidOrder = serviceRequest.getOrder() != null && serviceRequest.getOrder().getPriority() != null && serviceRequest.getOrder().getPriority().isEmpty() == false;
+
+			if(isNotClosed && hasValidOrder){
+				priorityOrderCounterMap.merge(serviceRequest.getOrder().getPriority().replace(" ", "_"), 1L, Long::sum);
 			}
 		}
 		
@@ -53,6 +68,7 @@ public class ManagedObjectMapper {
 			log.info("updateServiceRequestPriorityCounter(): Priority: {}, Count: {}", priority, priorityCounterMap.get(priority));
 		}
 		managedObjectRepresentation.set(priorityCounterMap, SR_ACTIVE_STATUS);
+		managedObjectRepresentation.set(priorityOrderCounterMap, SR_ACTIVE_ORDER_STATUS);
 	}
 
 
