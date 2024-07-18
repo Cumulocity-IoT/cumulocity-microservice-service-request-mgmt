@@ -1,5 +1,6 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,8 +15,10 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.checkerframework.checker.units.qual.s;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.cumulocity.model.event.CumulocityAlarmStatuses;
@@ -170,6 +173,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest) {
 		log.info("updateServiceRequest(id {}, serviceRequestBody {})", id, serviceRequest.toString());
+		Stopwatch stopwatch = Stopwatch.createStarted();
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
 		if(serviceRequest.getExternalId() != null) {
 			// if external ID is set, the sync status changes to active
@@ -261,12 +265,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		}
 		
-		log.debug("Update Managed Object"); 
-		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(updatedServiceRequest.getSource().getId()));
-		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), excludeList);
+		updateServiceRequestCounter(updatedServiceRequest, excludeList);
 
-		inventoryApi.update(moMapper.getManagedObjectRepresentation());
+		stopwatch.stop();
+		long ms = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+		log.info("updateServiceRequest(id: {}): return in {} ms", id, ms);
 		return updatedServiceRequest;
 	}
 
@@ -591,6 +594,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		return updatedServiceRequest;
 	}
 	
+	@Async
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus) {
 		if((serviceRequest == null) || (alarmRef == null) || (srStatus == null)) {
 			log.error("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest, alarmRef, srStatus);
@@ -612,6 +616,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 	}
 
+	@Async
 	private void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest) {
 		if(serviceRequest == null) {
 			log.warn("Couldn't add system comment, service request is null!");
@@ -632,6 +637,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		serviceRequestCommentService.createComment(serviceRequest.getSource().getId(), serviceRequest.getId(), comment, null);
 	}
 	
+	@Async
 	private void updateAllCommentsToClosed(ServiceRequest serviceRequest) {
 		List<ServiceRequestComment> commentList = serviceRequestCommentService.getCompleteCommentListByServiceRequest(serviceRequest.getId());
 		
@@ -640,6 +646,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			commentUpdate.setIsClosed(Boolean.TRUE);
 			serviceRequestCommentService.updateComment(comment.getId(), commentUpdate);			
 		}
+	}
+
+	@Async
+	private void updateServiceRequestCounter(ServiceRequest serviceRequest, List<String> excludeList) {
+		log.debug("Update Managed Object"); 
+		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(serviceRequest.getSource().getId()));
+		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), excludeList);
+		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 	}
 }
 
