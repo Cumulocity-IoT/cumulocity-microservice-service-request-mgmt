@@ -4,20 +4,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
-import com.cumulocity.microservice.context.credentials.UserCredentials;
 import com.cumulocity.model.event.CumulocityAlarmStatuses;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
-import com.cumulocity.sdk.client.PagingParam;
 import com.cumulocity.sdk.client.QueryParam;
 import com.cumulocity.sdk.client.alarm.AlarmApi;
 import com.cumulocity.sdk.client.event.EventApi;
@@ -39,47 +36,54 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class ServiceRequestUpdateService {
-    
+
 	private EventApi eventApi;
 
 	private AlarmApi alarmApi;
 
 	private InventoryApi inventoryApi;
-	
+
 	private ServiceRequestCommentService serviceRequestCommentService;
 
-    private ContextService<MicroserviceCredentials> contextService;
+	private ContextService<MicroserviceCredentials> contextService;
 
 	@Autowired
 	public ServiceRequestUpdateService(EventApi eventApi, AlarmApi alarmApi, InventoryApi inventoryApi,
-            ServiceRequestCommentService serviceRequestCommentService, ContextService<MicroserviceCredentials> contextService ) {
-        this.eventApi = eventApi;
-        this.alarmApi = alarmApi;
-        this.inventoryApi = inventoryApi;
-        this.serviceRequestCommentService = serviceRequestCommentService;
-        this.contextService = contextService;
-    }
+			ServiceRequestCommentService serviceRequestCommentService,
+			ContextService<MicroserviceCredentials> contextService) {
+		this.eventApi = eventApi;
+		this.alarmApi = alarmApi;
+		this.inventoryApi = inventoryApi;
+		this.serviceRequestCommentService = serviceRequestCommentService;
+		this.contextService = contextService;
+	}
 
-    @Async
-	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus, MicroserviceCredentials credentials) {	
+	@Async
+	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef,
+			ServiceRequestStatusConfig srStatus, MicroserviceCredentials credentials) {
 		contextService.runWithinContext(credentials, () -> {
 			updateAlarm(serviceRequest, alarmRef, srStatus);
 		});
 	}
 
-	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus) {
-		if((serviceRequest == null) || (alarmRef == null) || (srStatus == null)) {
-			log.error("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest, alarmRef, srStatus);
+	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef,
+			ServiceRequestStatusConfig srStatus) {
+		if ((serviceRequest == null) || (alarmRef == null) || (srStatus == null)) {
+			log.error("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest, alarmRef,
+					srStatus);
 			return;
 		}
-		log.debug("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest.getId(), alarmRef.getId(), srStatus.getId());
-		
-		CumulocityAlarmStatuses alarmStatus = srStatus.getAlarmStatusTransition() != null ? CumulocityAlarmStatuses.valueOf(srStatus.getAlarmStatusTransition()): null;
+		log.debug("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest.getId(),
+				alarmRef.getId(), srStatus.getId());
 
-		if(alarmStatus == null) {
+		CumulocityAlarmStatuses alarmStatus = srStatus.getAlarmStatusTransition() != null
+				? CumulocityAlarmStatuses.valueOf(srStatus.getAlarmStatusTransition())
+				: null;
+
+		if (alarmStatus == null) {
 			log.info("No alarm transition defined for service request status: {}", srStatus.getId());
 		}
-		
+
 		AlarmMapper alarmMapper = AlarmMapper.map2(serviceRequest.getId(), alarmRef, alarmStatus);
 		if (alarmMapper != null) {
 			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
@@ -88,33 +92,36 @@ public class ServiceRequestUpdateService {
 		}
 	}
 
-    @Async
-	public void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest, MicroserviceCredentials credentials) {
+	@Async
+	public void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest,
+			MicroserviceCredentials credentials) {
 		contextService.runWithinContext(credentials, () -> {
 			createCommentForStatusChange(prefix, serviceRequest);
 		});
 	}
 
 	private void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest) {
-		if(serviceRequest == null) {
+		if (serviceRequest == null) {
 			log.warn("Couldn't add system comment, service request is null!");
 			return;
 		}
-		String text = prefix + ", Id: " + serviceRequest.getStatus().getId() + ", Name: " + serviceRequest.getStatus().getName();
+		String text = prefix + ", Id: " + serviceRequest.getStatus().getId() + ", Name: "
+				+ serviceRequest.getStatus().getName();
 		createSystemComment(text, serviceRequest);
 	}
-	
+
 	private void createSystemComment(String text, ServiceRequest serviceRequest) {
-		if(serviceRequest == null) {
+		if (serviceRequest == null) {
 			log.warn("Couldn't add system comment, service request is null!");
 			return;
 		}
 		ServiceRequestCommentRqBody comment = new ServiceRequestCommentRqBody();
 		comment.setText(text);
 		comment.setType(ServiceRequestCommentType.SYSTEM);
-		serviceRequestCommentService.createComment(serviceRequest.getSource().getId(), serviceRequest.getId(), comment, null);
+		serviceRequestCommentService.createComment(serviceRequest.getSource().getId(), serviceRequest.getId(), comment,
+				null);
 	}
-	
+
 	@Async
 	public void updateAllCommentsToClosed(ServiceRequest serviceRequest, MicroserviceCredentials credentials) {
 		contextService.runWithinContext(credentials, () -> {
@@ -123,33 +130,36 @@ public class ServiceRequestUpdateService {
 	}
 
 	private void updateAllCommentsToClosed(ServiceRequest serviceRequest) {
-		List<ServiceRequestComment> commentList = serviceRequestCommentService.getCompleteCommentListByServiceRequest(serviceRequest.getId());
-		
-		for(ServiceRequestComment comment: commentList) {
+		List<ServiceRequestComment> commentList = serviceRequestCommentService
+				.getCompleteCommentListByServiceRequest(serviceRequest.getId());
+
+		for (ServiceRequestComment comment : commentList) {
 			ServiceRequestCommentRqBody commentUpdate = new ServiceRequestCommentRqBody();
 			commentUpdate.setIsClosed(Boolean.TRUE);
-			serviceRequestCommentService.updateComment(comment.getId(), commentUpdate);			
+			serviceRequestCommentService.updateComment(comment.getId(), commentUpdate);
 		}
 	}
 
 	@Async
-	public void updateServiceRequestCounter(ServiceRequest serviceRequest, List<String> excludeList, MicroserviceCredentials credentials) {
+	public void updateServiceRequestCounter(ServiceRequest serviceRequest, List<String> excludeList,
+			MicroserviceCredentials credentials) {
 		contextService.runWithinContext(credentials, () -> {
 			updateServiceRequestCounter(serviceRequest, excludeList);
 		});
 	}
 
 	private void updateServiceRequestCounter(ServiceRequest serviceRequest, List<String> excludeList) {
-		log.debug("Update Managed Object"); 
+		log.debug("Update Managed Object");
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(serviceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
 		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), excludeList);
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 	}
 
-    private RequestList<ServiceRequest> getAllActiveEventsBySource(GId sourceId) {
+	private RequestList<ServiceRequest> getAllActiveEventsBySource(GId sourceId) {
 		EventFilter filter = new EventFilter();
-		filter.byType(ServiceRequestEventMapper.EVENT_TYPE).bySource(sourceId).byFragmentType(ServiceRequestEventMapper.SR_ACTIVE).byFragmentValue(Boolean.TRUE.toString());
+		filter.byType(ServiceRequestEventMapper.EVENT_TYPE).bySource(sourceId)
+				.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE).byFragmentValue(Boolean.TRUE.toString());
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
 
 		QueryParam queryParamWithTotalElements = new QueryParam(StatisticsParam.WITH_TOTAL_ELEMENTS, "true");

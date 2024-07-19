@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
-import com.cumulocity.microservice.context.credentials.UserCredentials;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
@@ -69,7 +68,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	private ServiceRequestUpdateService serviceRequestUpdateService;
 
-    private ContextService<MicroserviceCredentials> contextService;
+	private ContextService<MicroserviceCredentials> contextService;
 
 	
 	public enum ServiceRequestValidationResult {
