@@ -61,9 +61,7 @@ public class ServiceRequestUpdateService {
     }
 
     @Async
-	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus, MicroserviceCredentials credentials) {
-		log.info("User Credentials (Async): tenant: {}, user: {}", credentials.getTenant(), credentials.getUsername());
-		
+	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus, MicroserviceCredentials credentials) {	
 		contextService.runWithinContext(credentials, () -> {
 			updateAlarm(serviceRequest, alarmRef, srStatus);
 		});
@@ -149,22 +147,13 @@ public class ServiceRequestUpdateService {
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 	}
 
-    protected RequestList<ServiceRequest> getAllActiveEventsBySource(GId sourceId) {
+    private RequestList<ServiceRequest> getAllActiveEventsBySource(GId sourceId) {
 		EventFilter filter = new EventFilter();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE).bySource(sourceId).byFragmentType(ServiceRequestEventMapper.SR_ACTIVE).byFragmentValue(Boolean.TRUE.toString());
-		return getServiceRequestByFilter(filter, 2000, null, null);
-	}
-
-    private RequestList<ServiceRequest> getServiceRequestByFilter(EventFilter filter, Integer pageSize,
-			Integer pageNumber, Boolean withTotalPages) {
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
 
-		// TODO return specific page, eventList.getPage(null, 0, 0)
-		PagedEventCollectionRepresentation pagedCollection = getPagedEventCollection(eventList, pageSize,
-				withTotalPages);
-		if (pageNumber != null) {
-			pagedCollection = eventList.getPage(pagedCollection, pageNumber, pageSize);
-		}
+		QueryParam queryParamWithTotalElements = new QueryParam(StatisticsParam.WITH_TOTAL_ELEMENTS, "true");
+		PagedEventCollectionRepresentation pagedCollection = eventList.get(queryParamWithTotalElements);
 
 		PageStatisticsRepresentation pageStatistics = pagedCollection.getPageStatistics();
 
@@ -181,30 +170,5 @@ public class ServiceRequestUpdateService {
 		requestList.setTotalPages(pageStatistics.getTotalPages());
 		requestList.setTotalElements(pageStatistics.getTotalElements());
 		return requestList;
-	}
-
-    private PagedEventCollectionRepresentation getPagedEventCollection(EventCollection eventList, Integer pageSize,
-			Boolean withTotalPages) {
-		QueryParam queryParamWithTotalElements = new QueryParam(StatisticsParam.WITH_TOTAL_ELEMENTS, "true");
-		
-		if (pageSize != null && withTotalPages != null) {
-			QueryParam queryParam = new QueryParam(PagingParam.WITH_TOTAL_PAGES, withTotalPages.toString());
-			PagedEventCollectionRepresentation pagedEvent = eventList.get(pageSize, queryParam, queryParamWithTotalElements);
-			return pagedEvent;
-		}
-
-		if (pageSize == null && withTotalPages != null) {
-			QueryParam queryParam = new QueryParam(PagingParam.WITH_TOTAL_PAGES, withTotalPages.toString());
-			PagedEventCollectionRepresentation pagedEvent = eventList.get(queryParam, queryParamWithTotalElements);
-			return pagedEvent;
-		}
-
-		if (pageSize != null && withTotalPages == null) {
-			PagedEventCollectionRepresentation pagedEvent = eventList.get(pageSize, queryParamWithTotalElements);
-			return pagedEvent;
-		}
-
-		PagedEventCollectionRepresentation pagedEvent = eventList.get(queryParamWithTotalElements);
-		return pagedEvent;
 	}
 }
