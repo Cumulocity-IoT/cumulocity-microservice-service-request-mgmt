@@ -12,11 +12,11 @@
 	<logger name="com.cumulocity.microservice.security.filter.provider.SpringSecurityContextProvider" level="ERROR" />
 	
 	<springProfile name="dev">
-		<logger name="org.springframework.web" level="WARN" />
-		<logger name="org.apache.commons.httpclient" level="WARN" />
-		<logger name="httpclient.wire" level="WARN" />
-		<logger name="cumulocity.microservice.service.request.mgmt" level="WARN" />
-		<logger name="com.cumulocity" level="WARN" />
+		<logger name="org.springframework.web" level="INFO" />
+		<logger name="org.apache.commons.httpclient" level="INFO" />
+		<logger name="httpclient.wire" level="INFO" />
+		<logger name="cumulocity.microservice.service.request.mgmt" level="DEBUG" />
+		<logger name="com.cumulocity" level="INFO" />
 	</springProfile>
 
 	<springProfile name="test">
@@ -24,7 +24,7 @@
 		<logger name="org.apache.commons.httpclient" level="INFO" />
 		<logger name="httpclient.wire" level="INFO" />
 		<logger name="cumulocity.microservice.service.request.mgmt" level="DEBUG" />
-		<logger name="com.cumulocity" level="DEBUG" />
+		<logger name="com.cumulocity" level="INFO" />
 	</springProfile>
 	
 	<springProfile name="prod">
