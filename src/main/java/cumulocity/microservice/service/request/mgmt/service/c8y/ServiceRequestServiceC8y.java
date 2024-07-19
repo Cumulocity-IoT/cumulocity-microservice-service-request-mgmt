@@ -1,6 +1,5 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,13 +14,13 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.checkerframework.checker.units.qual.s;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.cumulocity.model.event.CumulocityAlarmStatuses;
+import com.cumulocity.microservice.context.ContextService;
+import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
+import com.cumulocity.microservice.context.credentials.UserCredentials;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
@@ -42,7 +41,6 @@ import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPat
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
-import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestCommentType;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
@@ -68,6 +66,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	private ServiceRequestStatusConfigService serviceRequestStatusConfigService;
 	
 	private ServiceRequestCommentService serviceRequestCommentService;
+
+	private ServiceRequestUpdateService serviceRequestUpdateService;
+
+    private ContextService<MicroserviceCredentials> contextService;
+
 	
 	public enum ServiceRequestValidationResult {
 		ALARM_NOT_FOUND("Alarm doesn't exists anymore"), ALARM_ASSIGNED("Alarm already assigned to another service request!"), VALID("Service request is valid");
@@ -86,13 +89,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Autowired
 	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
-			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService) {
+			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService, ServiceRequestUpdateService serviceRequestUpdateService, ContextService<MicroserviceCredentials> contextService) {
 		this.eventApi = eventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
 		this.inventoryApi = inventoryApi;
 		this.serviceRequestStatusConfigService = serviceRequestStatusConfigService;
 		this.serviceRequestCommentService = serviceRequestCommentService;
+		this.serviceRequestUpdateService = serviceRequestUpdateService;
+		this.contextService = contextService;
 	}
 
 	@Override
@@ -594,36 +599,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		return updatedServiceRequest;
 	}
 	
-	@Async
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus) {
-		if((serviceRequest == null) || (alarmRef == null) || (srStatus == null)) {
-			log.error("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest, alarmRef, srStatus);
-			return;
-		}
-		log.debug("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest.getId(), alarmRef.getId(), srStatus.getId());
-		
-		CumulocityAlarmStatuses alarmStatus = srStatus.getAlarmStatusTransition() != null ? CumulocityAlarmStatuses.valueOf(srStatus.getAlarmStatusTransition()): null;
-
-		if(alarmStatus == null) {
-			log.info("No alarm transition defined for service request status: {}", srStatus.getId());
-		}
-		
-		AlarmMapper alarmMapper = AlarmMapper.map2(serviceRequest.getId(), alarmRef, alarmStatus);
-		if (alarmMapper != null) {
-			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
-			log.info("update Alarm {}", alarmRepresentation.getId().getValue());
-			alarmApi.update(alarmRepresentation);
-		}
+		serviceRequestUpdateService.updateAlarm(serviceRequest, alarmRef, srStatus, contextService.getContext());
 	}
 
-	@Async
 	private void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest) {
-		if(serviceRequest == null) {
-			log.warn("Couldn't add system comment, service request is null!");
-			return;
-		}
-		String text = prefix + ", Id: " + serviceRequest.getStatus().getId() + ", Name: " + serviceRequest.getStatus().getName();
-		createSystemComment(text, serviceRequest);
+		serviceRequestUpdateService.createCommentForStatusChange(prefix, serviceRequest, contextService.getContext());
 	}
 	
 	private void createSystemComment(String text, ServiceRequest serviceRequest) {
@@ -637,24 +618,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		serviceRequestCommentService.createComment(serviceRequest.getSource().getId(), serviceRequest.getId(), comment, null);
 	}
 	
-	@Async
 	private void updateAllCommentsToClosed(ServiceRequest serviceRequest) {
-		List<ServiceRequestComment> commentList = serviceRequestCommentService.getCompleteCommentListByServiceRequest(serviceRequest.getId());
-		
-		for(ServiceRequestComment comment: commentList) {
-			ServiceRequestCommentRqBody commentUpdate = new ServiceRequestCommentRqBody();
-			commentUpdate.setIsClosed(Boolean.TRUE);
-			serviceRequestCommentService.updateComment(comment.getId(), commentUpdate);			
-		}
+		serviceRequestUpdateService.updateAllCommentsToClosed(serviceRequest, contextService.getContext());
 	}
 
-	@Async
 	private void updateServiceRequestCounter(ServiceRequest serviceRequest, List<String> excludeList) {
-		log.debug("Update Managed Object"); 
-		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(serviceRequest.getSource().getId()));
-		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), excludeList);
-		inventoryApi.update(moMapper.getManagedObjectRepresentation());
+		serviceRequestUpdateService.updateServiceRequestCounter(serviceRequest, excludeList, contextService.getContext());
 	}
 }
 
