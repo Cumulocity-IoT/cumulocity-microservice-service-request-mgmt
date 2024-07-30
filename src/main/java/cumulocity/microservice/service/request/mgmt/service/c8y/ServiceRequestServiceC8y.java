@@ -185,11 +185,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 		ServiceRequest updatedServiceRequest = null;
 		List<String> excludeList = new ArrayList<>();
-
-		ServiceRequestStatusConfig srStatus = null;
 		
 		if(serviceRequest.getStatus() == null) {
-
 			log.debug("Service Request update without status changes!");
 			
 			if(Boolean.FALSE.equals(eventMapper.getIsActive())) {
@@ -211,13 +208,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 						excludeList.add(srStatusConfig.getId());
 					}
 				}
-
 				updateServiceRequestCounter(updatedServiceRequest, excludeList);
 			}
 
 		} else {	
 			log.debug("Service Request update with status changes!");
 			List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
+			
+			ServiceRequestStatusConfig srStatus = null;
+
 			for(ServiceRequestStatusConfig srStatusConfig: statusList) {
 				if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
 					excludeList.add(srStatusConfig.getId());
