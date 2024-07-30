@@ -198,8 +198,20 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				eventMapper.setSyncStatus(SyncStatus.STOP);
 			}
 			EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
-			updatedServiceRequest = eventMapper.map2(updatedEvent);
-		} else {
+			updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
+
+			//if service request priority is changed, update the managed object, active counter
+			if(serviceRequest.getPriority() != null) {
+				List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
+				for(ServiceRequestStatusConfig srStatusConfig: statusList) {
+					if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
+						excludeList.add(srStatusConfig.getId());
+					}
+				}
+				updateServiceRequestCounter(updatedServiceRequest, excludeList);
+			}
+
+		} else {	
 			log.debug("Service Request update with status changes!");
 			List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
 			
@@ -213,7 +225,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 					srStatus = srStatusConfig;
 				}
 			}
-			
 
 			if(srStatus == null) {
 				log.error("Status {} is not part of the configured status list! Service Reqeust can't be updated!!!", serviceRequest.getStatus().toString());
@@ -250,7 +261,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			
 			EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
 
-			updatedServiceRequest = eventMapper.map2(updatedEvent);
+			updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
 
 			if(!originalServiceRequest.getStatus().getId().equals(updatedServiceRequest.getStatus().getId())) {
 				//track status changes as system comment
@@ -433,6 +444,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	protected RequestList<ServiceRequest> getAllActiveEventsBySource(GId sourceId) {
 		EventFilter filter = new EventFilter();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE).bySource(sourceId).byFragmentType(ServiceRequestEventMapper.SR_ACTIVE).byFragmentValue(Boolean.TRUE.toString());
+		//TODO if the number of events is more than 2000, we need to implement pagination!!!
 		return getServiceRequestByFilter(filter, 2000, null, null);
 	}
 

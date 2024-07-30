@@ -163,7 +163,8 @@ public class ServiceRequestUpdateService {
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
 
 		QueryParam queryParamWithTotalElements = new QueryParam(StatisticsParam.WITH_TOTAL_ELEMENTS, "true");
-		PagedEventCollectionRepresentation pagedCollection = eventList.get(queryParamWithTotalElements);
+		//TODO if the number of events is more than 2000, we need to implement pagination!!!
+		PagedEventCollectionRepresentation pagedCollection = eventList.get(2000, queryParamWithTotalElements);
 
 		PageStatisticsRepresentation pageStatistics = pagedCollection.getPageStatistics();
 
