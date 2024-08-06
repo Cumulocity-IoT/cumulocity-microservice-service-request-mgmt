@@ -441,7 +441,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		stopwatch.stop();
 		long ms = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-		log.info("getAllServiceRequestBySyncStatus(assigned: {}): return list.size {} in {} ms", assigned, serviceRequestList.size(), ms);
+		log.info("getAllServiceRequestBySyncStatus(assigned: {}, serviceRequestIds: {}): return list.size {} in {} ms", assigned, serviceRequestIds, serviceRequestList.size(), ms);
 		return serviceRequestList;
 	}
 
