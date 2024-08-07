@@ -408,9 +408,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public Collection<ServiceRequest> getAllServiceRequestBySyncStatus(Boolean assigned, String[] serviceRequestIds) {
-		log.info("getAllServiceRequestBySyncStatus(assigned: {}, serviceRequestIds: {})", assigned, serviceRequestIds.toString());
-		Stopwatch stopwatch = Stopwatch.createStarted();
-
 		Set<ServiceRequest> serviceRequestList = new HashSet<ServiceRequest>();
 
 		if(serviceRequestIds == null || serviceRequestIds.length <= 0) {
@@ -418,10 +415,18 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			return serviceRequestList;
 		}
 
+		log.info("getAllServiceRequestBySyncStatus(assigned: {}, serviceRequestIds: {})", assigned, serviceRequestIds.toString());
+		Stopwatch stopwatch = Stopwatch.createStarted();
+
 		List<EventRepresentation> events = new ArrayList<>();
 		for(String id: serviceRequestIds) {
-			EventRepresentation event = eventApi.getEvent(GId.asGId(id));
-			events.add(event);
+			try {
+				EventRepresentation event = eventApi.getEvent(GId.asGId(id));
+				events.add(event);
+			}catch(Exception e) {
+				log.error("Fetching event with id {} failed!", id);
+			}
+
 		}
 
 		log.debug("Events found for IDs: count= {}", events.size());
