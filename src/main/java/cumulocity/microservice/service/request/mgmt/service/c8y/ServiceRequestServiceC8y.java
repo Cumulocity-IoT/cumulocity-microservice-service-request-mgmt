@@ -426,7 +426,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			}catch(Exception e) {
 				log.error("Fetching event with id {} failed!", id);
 			}
-
 		}
 
 		log.debug("Events found for IDs: count= {}", events.size());
