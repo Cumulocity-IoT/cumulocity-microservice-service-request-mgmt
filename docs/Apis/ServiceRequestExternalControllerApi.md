@@ -49,7 +49,7 @@ GET service request list
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **assigned** | **Boolean**| Filter, \&quot;true\&quot; returns all service request with external Id assigned, \&quot;false\&quot; returns service requests which doesn&#39;t have external Id assigned. | [optional] [default to null] |
+| **assigned** | **Boolean**| Filter, assigned &#x3D;&#x3D; \&quot;true\&quot; returns all service request with external Id assigned, assigned &#x3D;&#x3D; \&quot;false\&quot; returns service requests which doesn&#39;t have external Id assigned. If query parameter is not set all service requests will be returned. | [optional] [default to null] |
 | **serviceRequestIds** | [**List**](../Models/String.md)| Filter by service request IDs, returns all service requests with the IDs defined in that list | [optional] [default to null] |
 
 ### Return type
