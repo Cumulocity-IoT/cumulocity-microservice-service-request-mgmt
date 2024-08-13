@@ -434,10 +434,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		if(assigned != null && assigned) {
 			filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE) && event.get(ServiceRequestEventMapper.SR_SYNC_STATUS).equals(String.valueOf(SyncStatus.ACTIVE.name()));
-		}else {
+		}else if(assigned != null && !assigned) {
 			filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE) && event.get(ServiceRequestEventMapper.SR_SYNC_STATUS).equals(String.valueOf(SyncStatus.NEW.name()));
+		}else {
+			filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE);
 		}
-
 		serviceRequestList= events.stream().filter(filterPredicate).map(event -> {
 			return ServiceRequestEventMapper.map2(event);
 		}).collect(Collectors.toSet());
