@@ -60,7 +60,7 @@ public class ServiceRequestExternalController {
 			@ApiResponse(responseCode = "200", description = "OK") })
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Collection<ServiceRequest>> getServiceRequestList(
-		@Parameter(in = ParameterIn.QUERY, description = "Filter, \"true\" returns all service request with external Id assigned, \"false\" returns service requests which doesn't have external Id assigned." , schema = @Schema()) @Valid @RequestParam(value = "assigned", required = false) Boolean assigned,
+		@Parameter(in = ParameterIn.QUERY, description = "Filter, assigned == \"true\" returns all service request with external Id assigned, assigned == \"false\" returns service requests which doesn't have external Id assigned. If query parameter is not set all service requests will be returned." , schema = @Schema()) @Valid @RequestParam(value = "assigned", required = false) Boolean assigned,
 		@Parameter(in = ParameterIn.QUERY, description = "Filter by service request IDs, returns all service requests with the IDs defined in that list", schema = @Schema()) @Valid @RequestParam(value = "serviceRequestIds", required = false) String[] serviceRequestIds) {
 		
 		Collection<ServiceRequest> serviceRequestList = new ArrayList<>();
