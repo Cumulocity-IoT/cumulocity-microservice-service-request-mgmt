@@ -415,7 +415,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			return serviceRequestList;
 		}
 
-		log.info("getAllServiceRequestBySyncStatus(assigned: {}, serviceRequestIds: {})", assigned, serviceRequestIds.toString());
+		log.info("getAllServiceRequestBySyncStatus(assigned: {}, serviceRequestIds: {})", assigned, serviceRequestIds);
 		Stopwatch stopwatch = Stopwatch.createStarted();
 
 		List<EventRepresentation> events = new ArrayList<>();
