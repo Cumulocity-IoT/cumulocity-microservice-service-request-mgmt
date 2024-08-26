@@ -92,7 +92,7 @@ public class ServiceRequestUpdateService {
 			return;
 		}
 
-		if (currentAlarm != null && currentAlarm.getStatus() == CumulocityAlarmStatuses.CLEARED.name()) {
+		if (CumulocityAlarmStatuses.CLEARED.name().equals(currentAlarm.getStatus())) {
 			log.info("Alarm status is already {}, no update needed!", CumulocityAlarmStatuses.CLEARED.name());
 			return;
 		}
