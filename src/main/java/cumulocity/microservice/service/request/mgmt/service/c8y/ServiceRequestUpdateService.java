@@ -84,6 +84,12 @@ public class ServiceRequestUpdateService {
 			log.info("No alarm transition defined for service request status: {}", srStatus.getId());
 		}
 
+		AlarmRepresentation currentAlarm = alarmApi.getAlarm(GId.asGId(alarmRef.getId()));
+		if (currentAlarm != null && currentAlarm.getStatus() == CumulocityAlarmStatuses.CLEARED.name()) {
+			log.info("Alarm status is already {}, no update needed!", CumulocityAlarmStatuses.CLEARED.name());
+			return;
+		}
+
 		AlarmMapper alarmMapper = AlarmMapper.map2(serviceRequest.getId(), alarmRef, alarmStatus);
 		if (alarmMapper != null) {
 			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
