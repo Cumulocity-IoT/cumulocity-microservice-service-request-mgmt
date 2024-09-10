@@ -2,6 +2,7 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import java.util.Arrays;
 
+import org.apache.tomcat.jni.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
@@ -17,6 +18,9 @@ import org.springframework.web.client.RestTemplate;
 import com.cumulocity.microservice.api.CumulocityClientProperties;
 import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
+import com.cumulocity.microservice.context.credentials.UserCredentials;
+import com.cumulocity.model.authentication.CumulocityCredentials;
+import com.cumulocity.model.authentication.CumulocityCredentialsFactory;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.sdk.client.event.EventApi;
@@ -27,16 +31,18 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class EventAttachmentApi {
 		
-	private ContextService<MicroserviceCredentials> contextService;
+	private ContextService<MicroserviceCredentials> microserviceContextService;
+
+	private ContextService<UserCredentials> userContextService;
 	
 	private final CumulocityClientProperties clientProperties;
 	
 	private EventApi eventApi;
 	
 	@Autowired
-	public EventAttachmentApi(ContextService<MicroserviceCredentials> contextService, CumulocityClientProperties clientProperties, EventApi eventApi) {
+	public EventAttachmentApi(ContextService<MicroserviceCredentials> microserviceContextService, ContextService<UserCredentials> userContextService, CumulocityClientProperties clientProperties, EventApi eventApi) {
 		super();
-		this.contextService = contextService;
+		this.microserviceContextService = microserviceContextService;
 		this.clientProperties = clientProperties;
 		this.eventApi = eventApi;
 	}
@@ -51,7 +57,7 @@ public class EventAttachmentApi {
 		//TODO Before sending this data to cumulocity an validation should be done: file size, does the content type fit etc.
 		
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
+		headers.set("Authorization", getCumulocityCredentials().getAuthenticationString());
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 		
@@ -80,14 +86,14 @@ public class EventAttachmentApi {
 		
 		
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
+		headers.set("Authorization", getCumulocityCredentials().getAuthenticationString());
 
 		String serverUrl = clientProperties.getBaseURL() + "/event/events/" + eventId + "/binaries";
 		RestTemplate restTemplate = new RestTemplate();
 		
 		
 		EventAttachment attachment = restTemplate.execute(serverUrl, HttpMethod.GET, clientHttpRequest -> {
-			clientHttpRequest.getHeaders().set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
+			clientHttpRequest.getHeaders().set("Authorization", getCumulocityCredentials().getAuthenticationString());
 		}, clientHttpResponse -> {
 			//TODO currently the byte array of file is stored in memory, better solution would be to use a stream.
 			EventAttachment eventAttachment = new EventAttachment();
@@ -104,5 +110,14 @@ public class EventAttachmentApi {
 		
 		return attachment;
 	}
+
+   public CumulocityCredentials getCumulocityCredentials() {
+		if(userContextService.isInContext()) {
+			UserCredentials userCredentials = userContextService.getContext();
+			return (new CumulocityCredentialsFactory()).withUsername(userCredentials.getUsername()).withTenant(userCredentials.getTenant()).withPassword(userCredentials.getPassword()).withOAuthAccessToken(userCredentials.getOAuthAccessToken()).withXsrfToken(userCredentials.getXsrfToken()).getCredentials();
+		}
+		
+		return microserviceContextService.getContext().toCumulocityCredentials();
+   }
 	
 }

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
+import com.cumulocity.microservice.context.credentials.UserCredentials;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
@@ -69,7 +70,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	private ServiceRequestUpdateService serviceRequestUpdateService;
 
-	private ContextService<MicroserviceCredentials> contextService;
+	private ContextService<UserCredentials> contextService;
 
 	
 	public enum ServiceRequestValidationResult {
@@ -89,7 +90,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Autowired
 	public ServiceRequestServiceC8y(@Qualifier("userEventApi") EventApi eventApi, EventAttachmentApi eventAttachmentApi, @Qualifier("userAlarmApi") AlarmApi alarmApi,
-	@Qualifier("userInventoryApi") InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService, ServiceRequestUpdateService serviceRequestUpdateService, ContextService<MicroserviceCredentials> contextService) {
+	@Qualifier("userInventoryApi") InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService, ServiceRequestUpdateService serviceRequestUpdateService, ContextService<UserCredentials> contextService) {
 		this.eventApi = eventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
