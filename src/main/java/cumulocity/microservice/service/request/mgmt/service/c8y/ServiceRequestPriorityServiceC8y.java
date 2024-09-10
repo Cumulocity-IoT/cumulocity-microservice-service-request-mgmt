@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
@@ -25,7 +26,7 @@ public class ServiceRequestPriorityServiceC8y implements ServiceRequestPriorityS
 	private InventoryApi inventoryApi;
 
 	@Autowired
-	public ServiceRequestPriorityServiceC8y(InventoryApi inventoryApi) {
+	public ServiceRequestPriorityServiceC8y(@Qualifier("userInventoryApi") InventoryApi inventoryApi) {
 		super();
 		this.inventoryApi = inventoryApi;
 	}

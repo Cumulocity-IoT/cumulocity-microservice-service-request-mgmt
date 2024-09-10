@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,7 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 	private EventAttachmentApi eventAttachmentApi;
 
 	@Autowired
-	public ServiceRequestCommentServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi) {
+	public ServiceRequestCommentServiceC8y(@Qualifier("userEventApi") EventApi eventApi, EventAttachmentApi eventAttachmentApi) {
 		super();
 		this.eventApi = eventApi;
 		this.eventAttachmentApi = eventAttachmentApi;

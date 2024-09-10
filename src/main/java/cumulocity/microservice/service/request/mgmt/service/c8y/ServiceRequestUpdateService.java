@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +49,7 @@ public class ServiceRequestUpdateService {
 	private ContextService<MicroserviceCredentials> contextService;
 
 	@Autowired
-	public ServiceRequestUpdateService(EventApi eventApi, AlarmApi alarmApi, InventoryApi inventoryApi,
+	public ServiceRequestUpdateService(@Qualifier("userEventApi") EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi alarmApi, @Qualifier("userInventoryApi") InventoryApi inventoryApi,
 			ServiceRequestCommentService serviceRequestCommentService,
 			ContextService<MicroserviceCredentials> contextService) {
 		this.eventApi = eventApi;
