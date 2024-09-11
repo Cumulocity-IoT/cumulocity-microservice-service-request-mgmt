@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
+import com.cumulocity.microservice.context.credentials.UserCredentials;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
@@ -70,6 +71,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	private ContextService<MicroserviceCredentials> contextService;
 
+	private ContextService<UserCredentials> userContextService;
+
 	
 	public enum ServiceRequestValidationResult {
 		ALARM_NOT_FOUND("Alarm doesn't exists anymore"), ALARM_ASSIGNED("Alarm already assigned to another service request!"), VALID("Service request is valid");
@@ -88,7 +91,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Autowired
 	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
-			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService, ServiceRequestUpdateService serviceRequestUpdateService, ContextService<MicroserviceCredentials> contextService) {
+			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService, ServiceRequestUpdateService serviceRequestUpdateService, ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService) {
 		this.eventApi = eventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
@@ -97,6 +100,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		this.serviceRequestCommentService = serviceRequestCommentService;
 		this.serviceRequestUpdateService = serviceRequestUpdateService;
 		this.contextService = contextService;
+		this.userContextService = userContextService;
 	}
 
 	@Override
@@ -655,7 +659,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 	
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus) {
-		serviceRequestUpdateService.updateAlarm(serviceRequest, alarmRef, srStatus, contextService.getContext());
+		serviceRequestUpdateService.updateAlarm(serviceRequest, alarmRef, srStatus, userContextService.getContext());
 	}
 
 	private void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest) {

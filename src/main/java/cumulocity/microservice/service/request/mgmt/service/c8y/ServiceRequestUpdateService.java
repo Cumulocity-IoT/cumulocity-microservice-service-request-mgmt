@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
+import com.cumulocity.microservice.context.credentials.UserCredentials;
 import com.cumulocity.model.event.CumulocityAlarmStatuses;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
@@ -47,21 +49,24 @@ public class ServiceRequestUpdateService {
 
 	private ContextService<MicroserviceCredentials> contextService;
 
+	private ContextService<UserCredentials> userContextService;
+
 	@Autowired
-	public ServiceRequestUpdateService(EventApi eventApi, AlarmApi alarmApi, InventoryApi inventoryApi,
+	public ServiceRequestUpdateService(EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi alarmApi, InventoryApi inventoryApi,
 			ServiceRequestCommentService serviceRequestCommentService,
-			ContextService<MicroserviceCredentials> contextService) {
+			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService) {
 		this.eventApi = eventApi;
 		this.alarmApi = alarmApi;
 		this.inventoryApi = inventoryApi;
 		this.serviceRequestCommentService = serviceRequestCommentService;
 		this.contextService = contextService;
+		this.userContextService = userContextService;
 	}
 
 	@Async
 	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef,
-			ServiceRequestStatusConfig srStatus, MicroserviceCredentials credentials) {
-		contextService.runWithinContext(credentials, () -> {
+			ServiceRequestStatusConfig srStatus, UserCredentials credentials) {
+		userContextService.runWithinContext(credentials, () -> {
 			updateAlarm(serviceRequest, alarmRef, srStatus);
 		});
 	}
