@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.cumulocity.microservice.context.ContextService;
+import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
 import com.cumulocity.microservice.context.credentials.UserCredentials;
 import com.cumulocity.model.event.CumulocityAlarmStatuses;
 import com.cumulocity.model.idtype.GId;
@@ -46,23 +47,26 @@ public class ServiceRequestUpdateService {
 
 	private ServiceRequestCommentService serviceRequestCommentService;
 
-	private ContextService<UserCredentials> contextService;
+	private ContextService<UserCredentials> userContextService;
+
+	private ContextService<MicroserviceCredentials> microserviceContextService;
 
 	@Autowired
-	public ServiceRequestUpdateService(@Qualifier("userEventApi") EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi alarmApi, @Qualifier("userInventoryApi") InventoryApi inventoryApi,
+	public ServiceRequestUpdateService(@Qualifier("userEventApi") EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi alarmApi, InventoryApi inventoryApi,
 			ServiceRequestCommentService serviceRequestCommentService,
-			ContextService<UserCredentials> contextService) {
+			ContextService<UserCredentials> contextService, ContextService<MicroserviceCredentials> microserviceContextService) {
 		this.eventApi = eventApi;
 		this.alarmApi = alarmApi;
 		this.inventoryApi = inventoryApi;
 		this.serviceRequestCommentService = serviceRequestCommentService;
-		this.contextService = contextService;
+		this.userContextService = contextService;
+		this.microserviceContextService = microserviceContextService;
 	}
 
 	@Async
 	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef,
 			ServiceRequestStatusConfig srStatus, UserCredentials credentials) {
-		contextService.runWithinContext(credentials, () -> {
+		userContextService.runWithinContext(credentials, () -> {
 			updateAlarm(serviceRequest, alarmRef, srStatus);
 		});
 	}
@@ -108,8 +112,8 @@ public class ServiceRequestUpdateService {
 
 	@Async
 	public void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest,
-	UserCredentials credentials) {
-		contextService.runWithinContext(credentials, () -> {
+	MicroserviceCredentials credentials) {
+		microserviceContextService.runWithinContext(credentials, () -> {
 			createCommentForStatusChange(prefix, serviceRequest);
 		});
 	}
@@ -137,8 +141,8 @@ public class ServiceRequestUpdateService {
 	}
 
 	@Async
-	public void updateAllCommentsToClosed(ServiceRequest serviceRequest, UserCredentials credentials) {
-		contextService.runWithinContext(credentials, () -> {
+	public void updateAllCommentsToClosed(ServiceRequest serviceRequest, MicroserviceCredentials credentials) {
+		microserviceContextService.runWithinContext(credentials, () -> {
 			updateAllCommentsToClosed(serviceRequest);
 		});
 	}

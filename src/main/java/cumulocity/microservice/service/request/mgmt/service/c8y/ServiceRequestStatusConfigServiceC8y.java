@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
@@ -24,7 +23,7 @@ public class ServiceRequestStatusConfigServiceC8y implements ServiceRequestStatu
 
 	private InventoryApi inventoryApi;
 	
-	public ServiceRequestStatusConfigServiceC8y(@Qualifier("userInventoryApi") InventoryApi inventoryApi) {
+	public ServiceRequestStatusConfigServiceC8y(InventoryApi inventoryApi) {
 		this.inventoryApi = inventoryApi;
 	}
 
