@@ -659,7 +659,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 	
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus) {
-		serviceRequestUpdateService.updateAlarm(serviceRequest, alarmRef, srStatus, userContextService.getContext());
+		serviceRequestUpdateService.updateAlarm(serviceRequest, alarmRef, srStatus, userContextService.getContext(), contextService.getContext());
 	}
 
 	private void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest) {

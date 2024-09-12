@@ -17,6 +17,8 @@ import com.cumulocity.rest.representation.PageStatisticsRepresentation;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
+import com.cumulocity.rest.representation.user.GroupReferenceRepresentation;
+import com.cumulocity.rest.representation.user.UserRepresentation;
 import com.cumulocity.sdk.client.QueryParam;
 import com.cumulocity.sdk.client.alarm.AlarmApi;
 import com.cumulocity.sdk.client.event.EventApi;
@@ -24,6 +26,7 @@ import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
 import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
+import com.cumulocity.sdk.client.user.UserApi;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
@@ -41,9 +44,13 @@ public class ServiceRequestUpdateService {
 
 	private EventApi eventApi;
 
-	private AlarmApi alarmApi;
+	private AlarmApi userAlarmApi;
+
+	private AlarmApi serviceAlarmApi;
 
 	private InventoryApi inventoryApi;
+
+	private UserApi userApi;
 
 	private ServiceRequestCommentService serviceRequestCommentService;
 
@@ -52,27 +59,46 @@ public class ServiceRequestUpdateService {
 	private ContextService<UserCredentials> userContextService;
 
 	@Autowired
-	public ServiceRequestUpdateService(EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi alarmApi, InventoryApi inventoryApi,
+	public ServiceRequestUpdateService(EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi userAlarmApi, AlarmApi serviceAlarmApi, InventoryApi inventoryApi, UserApi userApi,
 			ServiceRequestCommentService serviceRequestCommentService,
 			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService) {
 		this.eventApi = eventApi;
-		this.alarmApi = alarmApi;
+		this.userAlarmApi = userAlarmApi;
 		this.inventoryApi = inventoryApi;
+		this.userApi = userApi;
 		this.serviceRequestCommentService = serviceRequestCommentService;
 		this.contextService = contextService;
 		this.userContextService = userContextService;
+		this.serviceAlarmApi = serviceAlarmApi;
+		this.userAlarmApi = userAlarmApi;
 	}
 
 	@Async
-	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef,
-			ServiceRequestStatusConfig srStatus, UserCredentials credentials) {
-		userContextService.runWithinContext(credentials, () -> {
-			updateAlarm(serviceRequest, alarmRef, srStatus);
+	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus, UserCredentials credentials, MicroserviceCredentials microserviceCredentials) {
+
+		UserRepresentation user = contextService.callWithinContext(microserviceCredentials, () -> {
+			UserRepresentation userRepresentation = userApi.getUser(credentials.getTenant(), credentials.getUsername());
+			return userRepresentation;
 		});
+
+		if (hasUserAlarmAdmin(user.getGroups().getReferences())) {
+			userContextService.runWithinContext(credentials, () -> {
+				updateAlarm(serviceRequest, alarmRef, srStatus, userAlarmApi);
+			});
+		}else {
+			contextService.runWithinContext(microserviceCredentials, () -> {
+				updateAlarm(serviceRequest, alarmRef, srStatus, serviceAlarmApi);
+			});
+		}
+
+	}
+
+	private boolean hasUserAlarmAdmin(List<GroupReferenceRepresentation> groupReferences) {
+		return groupReferences.stream().flatMap(reference -> reference.getGroup().getRoles().getReferences().stream()).anyMatch(role -> role.getRole().getId().equals("ROLE_ALARM_ADMIN"));
 	}
 
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef,
-			ServiceRequestStatusConfig srStatus) {
+			ServiceRequestStatusConfig srStatus, AlarmApi alarmApi) {
 		if ((serviceRequest == null) || (alarmRef == null) || (srStatus == null)) {
 			log.error("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest, alarmRef,
 					srStatus);
