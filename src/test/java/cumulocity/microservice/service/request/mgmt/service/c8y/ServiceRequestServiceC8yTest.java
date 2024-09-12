@@ -86,7 +86,7 @@ class ServiceRequestServiceC8yTest {
 
 	@Test
     public void testGetPages() {
-        ServiceRequestServiceC8y service = new ServiceRequestServiceC8y(null, null, null, null, null, null,null, null);
+        ServiceRequestServiceC8y service = new ServiceRequestServiceC8y(null, null, null, null, null, null,null, null, null);
         List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
         List<List<Integer>> pages = service.getPages(list, 5);
 
