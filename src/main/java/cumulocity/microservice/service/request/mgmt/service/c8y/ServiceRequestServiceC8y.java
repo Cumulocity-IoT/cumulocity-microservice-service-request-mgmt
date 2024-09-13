@@ -247,7 +247,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			if(Boolean.TRUE.equals(srStatus.getIsClosedTransition())) {
 				log.info("IsClosedTransition!");
 				eventMapper.setIsClosed(Boolean.TRUE);
-				eventMapper.setSyncStatus(SyncStatus.STOP);
+				eventMapper.setSyncStatus(SyncStatus.valueOf(srStatus.getSyncStatusTransition()));
 			}
 			
 			//Deactivation transition
