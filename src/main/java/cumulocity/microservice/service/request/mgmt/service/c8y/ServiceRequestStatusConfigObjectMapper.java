@@ -7,7 +7,6 @@ import java.util.List;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 
-import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,6 +21,7 @@ public class ServiceRequestStatusConfigObjectMapper {
 	public static final String SR_IS_CLOSED_TRANSITION = "isClosedTransition";
 	public static final String SR_IS_DEACTIVATE_TRANSITON = "isDeactivateTransition";
 	public static final String SR_IS_EXCLUDE_FOR_COUNTER = "isExcludeForCounter";
+	public static final String SR_IS_SYNCHRONISATION_ACTIVE = "isSynchronisationActive";
 	
 	private final ManagedObjectRepresentation managedObject;
 
@@ -102,6 +102,7 @@ public class ServiceRequestStatusConfigObjectMapper {
 		status.setIsClosedTransition((Boolean)map.get(SR_IS_CLOSED_TRANSITION));
 		status.setIsDeactivateTransition((Boolean)map.get(SR_IS_DEACTIVATE_TRANSITON));
 		status.setIsExcludeForCounter((Boolean)map.get(SR_IS_EXCLUDE_FOR_COUNTER));
+		status.setIsSynchronisationActive((Boolean)map.get(SR_IS_SYNCHRONISATION_ACTIVE));
 		return status;
 	}
 	

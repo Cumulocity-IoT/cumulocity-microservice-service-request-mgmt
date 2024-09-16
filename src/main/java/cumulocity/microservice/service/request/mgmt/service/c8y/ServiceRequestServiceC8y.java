@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.checkerframework.checker.units.qual.s;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -247,7 +248,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			if(Boolean.TRUE.equals(srStatus.getIsClosedTransition())) {
 				log.info("IsClosedTransition!");
 				eventMapper.setIsClosed(Boolean.TRUE);
-				eventMapper.setSyncStatus(SyncStatus.valueOf(srStatus.getSyncStatusTransition()));
+				eventMapper.setSyncStatus(SyncStatus.STOP);
 			}
 			
 			//Deactivation transition
@@ -263,6 +264,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				eventMapper.setSyncStatus(SyncStatus.STOP);
 			}
 			
+			//With isSynchronisationActive the sync status can be set to active and overwrites the default behaviour
+			if(Boolean.TRUE.equals(srStatus.getIsSynchronisationActive())) {
+				eventMapper.setSyncStatus(SyncStatus.ACTIVE);
+			}
+
 			EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
 
 			updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
