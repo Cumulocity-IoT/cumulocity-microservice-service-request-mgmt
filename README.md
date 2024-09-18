@@ -193,6 +193,8 @@ The property `isDeactivateTransition` defines the service request as deactivated
 
 The property `isExcludeForCounter` defines the service request status which shouldn't be counted. The counter is stored and maintained on the device managed object.
 
+The property `isSynchronisationActive` defines if the service request gets synchronized with the FSM/ITS. If this is not set, the default behaviour is used. For `isClosedTransition` == true or `isDeactivateTransition` == true the property is false. This means synchronisation are not active.
+
 ![Retention Rules](./docs/retention-rules.PNG)
 
 

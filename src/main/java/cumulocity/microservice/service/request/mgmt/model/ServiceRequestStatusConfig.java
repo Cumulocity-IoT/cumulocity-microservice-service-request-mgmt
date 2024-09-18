@@ -28,7 +28,10 @@ public class ServiceRequestStatusConfig {
 	
 	@Schema(required = false, description = "Set Alarm status when this status of Service Request status is set. (Transition)", example = "ACKNOWLEDGED")
 	private String alarmStatusTransition;
-	
+
+	@Schema(required = false, description = "Set Synchronisation status of service request when this status of Service Request status is set. (Transition)", example = "NEW")
+	private Boolean isSynchronisationActive;
+
 	@Schema(required = false, description = "Closes Service Request when this status of Service Request is set.", example = "true")	
 	private Boolean isClosedTransition;
 	
