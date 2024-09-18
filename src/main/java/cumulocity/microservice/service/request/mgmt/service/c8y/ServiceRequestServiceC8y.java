@@ -263,6 +263,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				eventMapper.setSyncStatus(SyncStatus.STOP);
 			}
 			
+			//With isSynchronisationActive the sync status can be set to active and overwrites the default behaviour
+			if(Boolean.TRUE.equals(srStatus.getIsSynchronisationActive())) {
+				eventMapper.setSyncStatus(SyncStatus.ACTIVE);
+			}
+
 			EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
 
 			updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
