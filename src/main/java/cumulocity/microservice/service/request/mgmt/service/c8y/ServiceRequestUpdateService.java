@@ -17,17 +17,14 @@ import com.cumulocity.rest.representation.PageStatisticsRepresentation;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
-import com.cumulocity.rest.representation.user.GroupReferenceRepresentation;
-import com.cumulocity.rest.representation.user.UserRepresentation;
 import com.cumulocity.sdk.client.QueryParam;
+import com.cumulocity.sdk.client.SDKException;
 import com.cumulocity.sdk.client.alarm.AlarmApi;
 import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
 import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
-import com.cumulocity.sdk.client.user.UserApi;
-
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
@@ -50,8 +47,6 @@ public class ServiceRequestUpdateService {
 
 	private InventoryApi inventoryApi;
 
-	private UserApi userApi;
-
 	private ServiceRequestCommentService serviceRequestCommentService;
 
 	private ContextService<MicroserviceCredentials> contextService;
@@ -59,13 +54,11 @@ public class ServiceRequestUpdateService {
 	private ContextService<UserCredentials> userContextService;
 
 	@Autowired
-	public ServiceRequestUpdateService(EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi userAlarmApi, AlarmApi serviceAlarmApi, InventoryApi inventoryApi, UserApi userApi,
-			ServiceRequestCommentService serviceRequestCommentService,
+	public ServiceRequestUpdateService(EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi userAlarmApi, AlarmApi serviceAlarmApi, InventoryApi inventoryApi, ServiceRequestCommentService serviceRequestCommentService,
 			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService) {
 		this.eventApi = eventApi;
 		this.userAlarmApi = userAlarmApi;
 		this.inventoryApi = inventoryApi;
-		this.userApi = userApi;
 		this.serviceRequestCommentService = serviceRequestCommentService;
 		this.contextService = contextService;
 		this.userContextService = userContextService;
@@ -76,29 +69,29 @@ public class ServiceRequestUpdateService {
 	@Async
 	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus, UserCredentials credentials, MicroserviceCredentials microserviceCredentials) {
 
-		UserRepresentation user = contextService.callWithinContext(microserviceCredentials, () -> {
-			UserRepresentation userRepresentation = userApi.getUser(credentials.getTenant(), credentials.getUsername());
-			return userRepresentation;
+		boolean updateSuccessful = userContextService.callWithinContext(credentials, () -> {
+			try {
+				updateAlarm(serviceRequest, alarmRef, srStatus, userAlarmApi);
+				return true;
+			} catch (SDKException e) {
+				log.warn("Error updating alarm with user credentials: {} {}", credentials.getUsername(), credentials.getTenant(), e);
+				return false;
+			}
 		});
 
-		if (hasUserAlarmAdmin(user.getGroups().getReferences())) {
-			userContextService.runWithinContext(credentials, () -> {
-				updateAlarm(serviceRequest, alarmRef, srStatus, userAlarmApi);
-			});
-		}else {
+		if (!updateSuccessful) {
 			contextService.runWithinContext(microserviceCredentials, () -> {
-				updateAlarm(serviceRequest, alarmRef, srStatus, serviceAlarmApi);
+				try {
+					updateAlarm(serviceRequest, alarmRef, srStatus, serviceAlarmApi);
+				} catch (SDKException e) {
+					log.error("Error updating alarm with microservice credentials", e);
+				}
 			});
 		}
-
-	}
-
-	private boolean hasUserAlarmAdmin(List<GroupReferenceRepresentation> groupReferences) {
-		return groupReferences.stream().flatMap(reference -> reference.getGroup().getRoles().getReferences().stream()).anyMatch(role -> role.getRole().getId().equals("ROLE_ALARM_ADMIN"));
 	}
 
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef,
-			ServiceRequestStatusConfig srStatus, AlarmApi alarmApi) {
+			ServiceRequestStatusConfig srStatus, AlarmApi alarmApi) throws SDKException {
 		if ((serviceRequest == null) || (alarmRef == null) || (srStatus == null)) {
 			log.error("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest, alarmRef,
 					srStatus);
@@ -116,12 +109,8 @@ public class ServiceRequestUpdateService {
 		}
 
 		AlarmRepresentation currentAlarm = null;
-		try {
-			currentAlarm = alarmApi.getAlarm(GId.asGId(alarmRef.getId()));
-		} catch (Exception e) {
-			log.error("Error getting alarm {} for service request: {}", alarmRef.getId(), serviceRequest.getId(), e);
-			return;
-		}
+		currentAlarm = alarmApi.getAlarm(GId.asGId(alarmRef.getId()));
+
 
 		if (CumulocityAlarmStatuses.CLEARED.name().equals(currentAlarm.getStatus())) {
 			log.info("Alarm status is already {}, no update needed!", CumulocityAlarmStatuses.CLEARED.name());
