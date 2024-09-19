@@ -80,6 +80,7 @@ public class ServiceRequestUpdateService {
 		});
 
 		if (!updateSuccessful) {
+			log.info("Try to update alarm with microservice credentials instead of user credentials...");
 			contextService.runWithinContext(microserviceCredentials, () -> {
 				try {
 					updateAlarm(serviceRequest, alarmRef, srStatus, serviceAlarmApi);
