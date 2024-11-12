@@ -243,7 +243,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			ServiceRequest originalServiceRequest = getServiceRequestById(id);
 
 			if(originalServiceRequest == null) {
-				log.error("Service Request with id {} not found!", id);
+				log.error("Can't update Service Request with id {}", id);
 				return null;
 			}
 			
@@ -309,7 +309,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			EventRepresentation event = eventApi.getEvent(GId.asGId(id));
 			return ServiceRequestEventMapper.map2(event);
 		}catch(SDKException e) {
-			log.error("Fetching service request failed!", e);
+			log.error("Fetching service request with id: " + id + " failed!", e);
 		}
 		return null;
 	}
