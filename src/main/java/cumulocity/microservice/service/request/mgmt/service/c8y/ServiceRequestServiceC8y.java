@@ -28,6 +28,7 @@ import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.cumulocity.sdk.client.PagingParam;
 import com.cumulocity.sdk.client.QueryParam;
+import com.cumulocity.sdk.client.SDKException;
 import com.cumulocity.sdk.client.alarm.AlarmApi;
 import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.event.EventCollection;
@@ -240,6 +241,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			eventMapper.setStatus(serviceRequest.getStatus());
 
 			ServiceRequest originalServiceRequest = getServiceRequestById(id);
+
+			if(originalServiceRequest == null) {
+				log.error("Can't update Service Request with id {}", id);
+				return null;
+			}
 			
 			log.info("StatusConfig: {}", srStatus.toString());
 			
@@ -299,8 +305,13 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequest getServiceRequestById(String id) {
-		EventRepresentation event = eventApi.getEvent(GId.asGId(id));
-		return ServiceRequestEventMapper.map2(event);
+		try {
+			EventRepresentation event = eventApi.getEvent(GId.asGId(id));
+			return ServiceRequestEventMapper.map2(event);
+		}catch(SDKException e) {
+			log.error("Fetching service request with id: " + id + " failed!", e);
+		}
+		return null;
 	}
 
 	@Override
