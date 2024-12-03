@@ -2,7 +2,7 @@ package cumulocity.microservice.service.request.mgmt.controller;
 
 import java.io.IOException;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

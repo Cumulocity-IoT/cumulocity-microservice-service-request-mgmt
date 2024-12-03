@@ -13,11 +13,11 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>11</java.version>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
-		<spring-boot-dependencies.version>2.5.4</spring-boot-dependencies.version>
-		<c8y.version>1018.0.356</c8y.version>
+		<java.version>17</java.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<spring-boot-dependencies.version>3.3.5</spring-boot-dependencies.version>
+        <c8y.version>1020.155.0</c8y.version>
 		<microservice.name>service-request-mgmt</microservice.name>
 		<c8y.docker.skip>false</c8y.docker.skip>
 		<lombok.version>1.18.24</lombok.version>
