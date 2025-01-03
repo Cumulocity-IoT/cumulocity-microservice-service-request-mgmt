@@ -154,9 +154,10 @@ public class ServiceRequestController {
 			byte[] fileBytes = file.getBytes();
 			
 			int responseCode = serviceRequestService.uploadAttachment(file.getResource(), file.getContentType(), fileBytes, serviceRequestId, force);
-			return new ResponseEntity<>(responseCode);
+			return new ResponseEntity<Void>(HttpStatus.valueOf(responseCode));
 		} catch (IOException e) {
 			log.error("File uploaded failed!", e);
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
