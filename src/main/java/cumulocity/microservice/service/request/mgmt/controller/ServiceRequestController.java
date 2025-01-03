@@ -146,14 +146,15 @@ public class ServiceRequestController {
 			@ApiResponse(responseCode = "404", description = "Not Found"),
 			@ApiResponse(responseCode = "409", description = "Conflict") })
 	@PostMapping(path = "/{serviceRequestId}/attachment", produces = MediaType.APPLICATION_JSON_VALUE)
-	public void uploadServiceRequestAttachment(@PathVariable String serviceRequestId,
+	public ResponseEntity<Void> uploadServiceRequestAttachment(@PathVariable String serviceRequestId,
 			@Parameter(in = ParameterIn.QUERY, description = "Mulitpart file, attachment", schema = @Schema()) @Valid @RequestParam("file") MultipartFile file,
 			@Parameter(in = ParameterIn.QUERY, description = "Controls if the attachment can be overwritten. force == true means file will be overwritten if exists, otherwise a http 409 will be returned.", schema = @Schema()) @Valid @RequestParam("force") Boolean force) {
 		
 		try {
 			byte[] fileBytes = file.getBytes();
 			
-			serviceRequestService.uploadAttachment(file.getResource(), file.getContentType(), fileBytes, serviceRequestId);
+			int responseCode = serviceRequestService.uploadAttachment(file.getResource(), file.getContentType(), fileBytes, serviceRequestId, force);
+			return new ResponseEntity<>(responseCode);
 		} catch (IOException e) {
 			log.error("File uploaded failed!", e);
 		}

@@ -40,7 +40,7 @@ public interface ServiceRequestService {
 	
 	public void deleteServiceRequest(String id);
 
-	public void uploadAttachment(Resource resource, String contentType, byte[] fileBytes, String serviceRequestId);
+	public int uploadAttachment(Resource resource, String contentType, byte[] fileBytes, String serviceRequestId, boolean overwrites);
 	
 	public EventAttachment downloadAttachment(String serviceRequestId);
 

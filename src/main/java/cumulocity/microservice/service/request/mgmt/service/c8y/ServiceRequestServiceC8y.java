@@ -608,12 +608,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 
 	@Override
-	public void uploadAttachment(Resource resource, String contentType, byte[] bytes, String serviceRequestId) {
+	public int uploadAttachment(Resource resource, String contentType, byte[] bytes, String serviceRequestId, boolean overwrites) {
 		log.info("uploadAttachment(filename: {}, ContentType: {})", resource.getFilename(), contentType);
 		BinaryInfo binaryInfo = new BinaryInfo();
 		binaryInfo.setName(resource.getFilename());
 		binaryInfo.setType(contentType);
-		eventAttachmentApi.uploadEventAttachment(binaryInfo, resource, serviceRequestId);
+		return eventAttachmentApi.uploadEventAttachment(binaryInfo, resource, serviceRequestId, overwrites);
 	}
 
 	@Override

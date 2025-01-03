@@ -182,12 +182,12 @@ public class ServiceRequestCommentServiceC8y implements ServiceRequestCommentSer
 	}
 
 	@Override
-	public void uploadAttachment(Resource resource, String contentType, byte[] bytes, String commentId) {
+	public int uploadAttachment(Resource resource, String contentType, byte[] bytes, String commentId, boolean overwrites) {
 		log.info("uploadAttachment(filename: {}, ContentType: {})", resource.getFilename(), contentType);
 		BinaryInfo binaryInfo = new BinaryInfo();
 		binaryInfo.setName(resource.getFilename());
 		binaryInfo.setType(contentType);
-		eventAttachmentApi.uploadEventAttachment(binaryInfo, resource, commentId);
+		return eventAttachmentApi.uploadEventAttachment(binaryInfo, resource, commentId, overwrites);
 	}
 
 	@Override

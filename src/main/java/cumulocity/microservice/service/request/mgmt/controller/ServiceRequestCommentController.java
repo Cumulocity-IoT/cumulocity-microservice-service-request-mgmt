@@ -124,16 +124,18 @@ public class ServiceRequestCommentController {
 			@ApiResponse(responseCode = "404", description = "Not Found"),
 			@ApiResponse(responseCode = "409", description = "Conflict") })
 	@PostMapping(path = "/comment/{commentId}/attachment", produces = MediaType.APPLICATION_JSON_VALUE)
-	public void uploadServiceRequestCommentAttachment(@PathVariable String commentId,
+	public ResponseEntity<Void> uploadServiceRequestCommentAttachment(@PathVariable String commentId,
 			@Parameter(in = ParameterIn.QUERY, description = "Mulitpart file, attachment", schema = @Schema()) @Valid @RequestParam("file") MultipartFile file,
 			@Parameter(in = ParameterIn.QUERY, description = "Controls if the attachment can be overwritten. force == true means file will be overwritten if exists, otherwise a http 409 will be returned.", schema = @Schema()) @Valid @RequestParam("force") Boolean force) {
 		
 		try {
 			byte[] fileBytes = file.getBytes();
 			
-			serviceRequestCommentService.uploadAttachment(file.getResource(), file.getContentType(), fileBytes, commentId);
+			int responseCode = serviceRequestCommentService.uploadAttachment(file.getResource(), file.getContentType(), fileBytes, commentId, force);
+			return new ResponseEntity<Void>(HttpStatus.valueOf(responseCode));
 		} catch (IOException e) {
 			log.error("File uploaded failed!", e);
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
