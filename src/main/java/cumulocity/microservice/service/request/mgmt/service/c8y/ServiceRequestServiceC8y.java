@@ -322,7 +322,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		if (sourceId != null) {
 			filter.bySource(GId.asGId(sourceId));
-			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.FALSE);
+			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
 		}
 		boolean isStatusFilter = ArrayUtils.isNotEmpty(statusList);
 		boolean isPriorityFilter = ArrayUtils.isNotEmpty(priorityList);
@@ -355,7 +355,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		filter.byFragmentValue(Boolean.TRUE.toString());
 		if (sourceId != null) {
 			filter.bySource(GId.asGId(sourceId));
-			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.FALSE);
+			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
 		}
 		
 		boolean isStatusFilter = ArrayUtils.isNotEmpty(statusList);
