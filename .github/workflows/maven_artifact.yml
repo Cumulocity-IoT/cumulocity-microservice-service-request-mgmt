@@ -38,7 +38,8 @@ jobs:
         echo "artifact_filename=$(ls | grep .zip)" >> $GITHUB_ENV
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ env.artifact_filename }}
         path: target/${{ env.artifact_filename }}
+        retention-days: 7
