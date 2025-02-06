@@ -42,10 +42,19 @@ public class EventAttachmentApi {
 	}
 	
 
-	public EventBinary uploadEventAttachment(final BinaryInfo binaryInfo, Resource resource, final String eventId) {
+	/**
+	 * Uploads an attachment to an event.
+	 * 
+	 * @param binaryInfo
+	 * @param resource
+	 * @param eventId
+	 * @param overwrites
+	 * @return response status code
+	 */
+	public int uploadEventAttachment(final BinaryInfo binaryInfo, Resource resource, final String eventId, boolean overwrites) {
 		EventRepresentation event = eventApi.getEvent(GId.asGId(eventId));
 		if(event == null) {
-			return null;
+			return 404;
 		}
 		
 		//TODO Before sending this data to cumulocity an validation should be done: file size, does the content type fit etc.
@@ -64,12 +73,18 @@ public class EventAttachmentApi {
 
 		String serverUrl = clientProperties.getBaseURL() + "/event/events/" + eventId + "/binaries";
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<EventBinary> response = restTemplate.postForEntity(serverUrl, requestEntity, EventBinary.class);
+
+		ResponseEntity<EventBinary> response;
+		if (overwrites) {
+			response = restTemplate.exchange(serverUrl, HttpMethod.PUT, requestEntity, EventBinary.class);
+		} else {
+			response = restTemplate.postForEntity(serverUrl, requestEntity, EventBinary.class);
+		}
+
 		if(response.getStatusCodeValue() >= 300) {
 			log.error("Upload event binary failed with http code {}", response.getStatusCode().toString());;
-			return null;
 		}
-		return response.getBody();
+		return response.getStatusCodeValue();
 	}
 	
 	public EventAttachment downloadEventAttachment(final String eventId) {

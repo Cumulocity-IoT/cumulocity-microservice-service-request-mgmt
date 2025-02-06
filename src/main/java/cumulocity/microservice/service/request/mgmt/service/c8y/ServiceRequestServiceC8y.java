@@ -322,7 +322,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		if (sourceId != null) {
 			filter.bySource(GId.asGId(sourceId));
-			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.FALSE);
+			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
 		}
 		boolean isStatusFilter = ArrayUtils.isNotEmpty(statusList);
 		boolean isPriorityFilter = ArrayUtils.isNotEmpty(priorityList);
@@ -355,7 +355,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		filter.byFragmentValue(Boolean.TRUE.toString());
 		if (sourceId != null) {
 			filter.bySource(GId.asGId(sourceId));
-			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.FALSE);
+			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
 		}
 		
 		boolean isStatusFilter = ArrayUtils.isNotEmpty(statusList);
@@ -608,12 +608,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 
 	@Override
-	public void uploadAttachment(Resource resource, String contentType, byte[] bytes, String serviceRequestId) {
+	public int uploadAttachment(Resource resource, String contentType, byte[] bytes, String serviceRequestId, boolean overwrites) {
 		log.info("uploadAttachment(filename: {}, ContentType: {})", resource.getFilename(), contentType);
 		BinaryInfo binaryInfo = new BinaryInfo();
 		binaryInfo.setName(resource.getFilename());
 		binaryInfo.setType(contentType);
-		eventAttachmentApi.uploadEventAttachment(binaryInfo, resource, serviceRequestId);
+		return eventAttachmentApi.uploadEventAttachment(binaryInfo, resource, serviceRequestId, overwrites);
 	}
 
 	@Override

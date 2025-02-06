@@ -24,7 +24,7 @@ public interface ServiceRequestCommentService {
 	
 	public ServiceRequestComment updateComment(String commentId, ServiceRequestCommentRqBody serviceRequestComment);
 	
-	public void uploadAttachment(Resource resource, String contentType, byte[] fileBytes, String commentId);
+	public int uploadAttachment(Resource resource, String contentType, byte[] fileBytes, String commentId, boolean overwrites);
 	
 	public EventAttachment downloadAttachment(String commentId);
 }
