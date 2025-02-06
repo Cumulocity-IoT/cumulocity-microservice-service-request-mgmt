@@ -7,15 +7,25 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
 @EnableWebSecurity
 @OpenAPIDefinition(
 	    info = @Info(
 	        title = "Cumulocity Service Request API",
 	        version = "1.0"
-	    )
-	)
+		),
+    	security = @SecurityRequirement(name = "basicAuth")
+)
+
+@SecurityScheme(
+    name = "basicAuth",
+    type = SecuritySchemeType.HTTP,
+    scheme = "basic"
+)
 @Configuration
 public class AppSpecificSecurityConfig {
 

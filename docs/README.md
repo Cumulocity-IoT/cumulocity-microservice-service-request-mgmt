@@ -57,4 +57,8 @@ All URIs are relative to *http://localhost:8080*
 <a name="documentation-for-authorization"></a>
 ## Documentation for Authorization
 
-All endpoints do not require authorization.
+<a name="basicAuth"></a>
+### basicAuth
+
+- **Type**: HTTP basic authentication
+
