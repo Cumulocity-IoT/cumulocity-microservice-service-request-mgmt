@@ -19,7 +19,7 @@ public class ServiceRequestDataRef {
 	@Schema(description = "Internal id of IoT data object", example = "18135043")
 	private String id;
 
-	@Schema(required = true, description = "uri of IoT data", example = "https://your-tenant.cumulocity.com/alarm/alarms/18135043")
+	@Schema(required = false, description = "uri of IoT data", example = "https://your-tenant.cumulocity.com/alarm/alarms/18135043")
 	@NotNull
 	@NonNull
 	private String uri;
