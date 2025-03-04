@@ -31,7 +31,7 @@ public class ServiceRequestSource {
 	@NonNull
 	private String id;
 
-	@Schema(required = true, description = "uri of IoT data", example = "https://your-tenant.cumulocity.com/alarm/alarms/18135043")
+	@Schema(required = false, description = "uri of IoT data", example = "https://your-tenant.cumulocity.com/alarm/alarms/18135043")
 	private String self;
 
 	@JsonIgnore
