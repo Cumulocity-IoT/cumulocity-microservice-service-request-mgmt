@@ -152,6 +152,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			return null;
 		}
 		
+		updateAlarmDataRef(serviceRequestRqBody.getAlarmRef());
+
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequestRqBody);
 		eventMapper.setOwner(owner);
 		eventMapper.setIsActive(Boolean.TRUE);
@@ -650,6 +652,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			return null;
 		}
 
+		updateAlarmDataRef(alarmRef);
+
 		ServiceRequestEventMapper eventMapper = new ServiceRequestEventMapper(event);
 		eventMapper.addAlarmRef(alarmRef);
 
@@ -699,6 +703,22 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	private void updateServiceRequestCounter(ServiceRequest serviceRequest, List<String> excludeList) {
 		serviceRequestUpdateService.updateServiceRequestCounter(serviceRequest, excludeList, contextService.getContext());
+	}
+
+	private void updateAlarmDataRef(ServiceRequestDataRef alarmRef) {
+		if(alarmRef == null || alarmRef.getUri() != null) {
+			return;
+		}
+		
+		AlarmRepresentation alarm = null;
+		try{
+			alarm = alarmApi.getAlarm(GId.asGId(alarmRef.getId()));
+		}catch(Exception e){
+			log.error("Fetching alarm failed!", e);
+		}
+		if(alarm != null) {
+			alarmRef.setUri(alarm.getSelf());				
+		}
 	}
 }
 

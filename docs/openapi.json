@@ -477,16 +477,6 @@
           "required" : true
         },
         "responses" : {
-          "201" : {
-            "description" : "Created",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ServiceRequest"
-                }
-              }
-            }
-          },
           "409" : {
             "description" : "Conflict, Alarm already assigned to service request!",
             "content" : {
@@ -499,6 +489,16 @@
           },
           "412" : {
             "description" : "Precondition Failed, Alarm of service request not found!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
+          "201" : {
+            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -551,16 +551,6 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
-                }
-              }
-            }
-          },
           "200" : {
             "description" : "Ok",
             "content" : {
@@ -570,6 +560,16 @@
                   "items" : {
                     "$ref" : "#/components/schemas/ServiceRequestComment"
                   }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
                 }
               }
             }
@@ -984,8 +984,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -994,8 +994,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1087,8 +1087,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not found",
+          "200" : {
+            "description" : "Ok",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1100,8 +1100,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "Ok",
+          "404" : {
+            "description" : "Not found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1339,7 +1339,7 @@
         "description" : "File attachment (binary)"
       },
       "ServiceRequestDataRef" : {
-        "required" : [ "uri" ],
+        "required" : [ "id" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -1356,7 +1356,7 @@
         "description" : "Reference to data at IoT Platform. It can contain an URI with points to a specific object using id, it could also contain a URI with query parameters to reference a list of objects."
       },
       "ServiceRequestSource" : {
-        "required" : [ "id", "self" ],
+        "required" : [ "id" ],
         "type" : "object",
         "properties" : {
           "id" : {
