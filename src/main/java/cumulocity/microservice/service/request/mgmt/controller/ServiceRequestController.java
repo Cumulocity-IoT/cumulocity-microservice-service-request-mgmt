@@ -69,7 +69,8 @@ public class ServiceRequestController {
 		@ApiResponse(responseCode = "412", description = "Precondition Failed, Alarm of service request not found!"),})
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequest> createServiceRequest(@Valid @RequestBody ServiceRequestPostRqBody serviceRequestRqBody) {
-		
+		log.info("CREATE service request: {}", serviceRequestRqBody);
+
 		ServiceRequestValidationResult validateNewServiceRequest = serviceRequestService.validateNewServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
 		if(ServiceRequestValidationResult.MISSING_ALARM_REF.equals(validateNewServiceRequest)) {
 			log.warn(validateNewServiceRequest.getMessage());
