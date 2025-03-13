@@ -52,6 +52,35 @@ jobs:
       - name: Run mvn release:prepare
         run: mvn -B release:prepare
 
+  create-released-branch-on-tag:
+    runs-on: ubuntu-latest
+    needs: mvn-release-prepare
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create released branch from tag
+        run: |
+          git fetch --tags
+          git checkout v${{ github.event.inputs.version }}
+          git checkout -b released/${{ github.event.inputs.version }}
+          git push origin released/${{ github.event.inputs.version }}
+
+  create-pull-request_to_main:
+    runs-on: ubuntu-latest
+    needs: create-released-branch-on-tag
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create pull request
+        uses: thomaseizinger/create-pull-request@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          head: refs/heads/released/${{ github.event.inputs.version }}
+          base: main
+          title: "Release ${{ github.event.inputs.version }}: Prepare for release."
+
   create-pull-request_to_dev:
     runs-on: ubuntu-latest
     needs: mvn-release-prepare
@@ -65,5 +94,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           head: refs/heads/release/${{ github.event.inputs.version }}
           base: develop
-          title: "Release: Merge release branch to develop"
-  
+          title: "Release ${{ github.event.inputs.version }}: Start new iteration."
+
