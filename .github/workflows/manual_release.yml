@@ -50,22 +50,22 @@ jobs:
           git remote set-url origin https://x-access-token:${GH_PAT}@github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git
 
       - name: Run mvn release:prepare
-        run: mvn release:prepare
+        run: mvn -B release:prepare
 
-  create-pull-request:
-    runs-on: ubuntu-latest
-    needs: mvn-release-prepare
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          ref: release/${{ github.event.inputs.version }}
-
-      - name: Create pull request
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          branch: release/${{ github.event.inputs.version }}
-          title: 'Release: Merge release branch to main'
-          body: 'This pull request merges the release branch to the main branch.'
+  #create-pull-request:
+  #  runs-on: ubuntu-latest
+  #  needs: mvn-release-prepare
+  #  steps:
+  #    - name: Checkout repository
+  #      uses: actions/checkout@v2
+  #      with:
+  #        ref: release/${{ github.event.inputs.version }}
+  #
+  #    - name: Create pull request
+  #      uses: peter-evans/create-pull-request@v7
+  #      with:
+  #        token: ${{ secrets.GITHUB_TOKEN }}
+  #        base: main
+  #        branch: release/${{ github.event.inputs.version }}
+  #        title: 'Release: Merge release branch to main'
+  #        body: 'This pull request merges the release branch to the main branch.'
