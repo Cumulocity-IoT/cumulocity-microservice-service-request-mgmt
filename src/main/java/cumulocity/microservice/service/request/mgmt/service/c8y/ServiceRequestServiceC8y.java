@@ -76,7 +76,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	
 	public enum ServiceRequestValidationResult {
-		ALARM_NOT_FOUND("Alarm doesn't exists anymore"), ALARM_ASSIGNED("Alarm already assigned to another service request!"), VALID("Service request is valid");
+		ALARM_NOT_FOUND("Alarm doesn't exists anymore"), ALARM_ASSIGNED("Alarm already assigned to another service request!"), VALID("Service request is valid"), MISSING_ALARM_REF("Alarm reference is missing");
 
 		private String message;
 
@@ -107,6 +107,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public ServiceRequestValidationResult validateNewServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
 		ServiceRequestDataRef alarmRef = serviceRequestRqBody.getAlarmRef();
+		if(alarmRef == null) {
+			return ServiceRequestValidationResult.MISSING_ALARM_REF;
+		}
 		return validateAlarm(alarmRef);
 	}
 

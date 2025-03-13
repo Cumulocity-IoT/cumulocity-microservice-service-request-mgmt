@@ -52,7 +52,8 @@ public class ManagedObjectMapper {
 		
 		for (ServiceRequest serviceRequest : serviceRequestList.getList()) {
 			if(serviceRequest.getStatus() != null && serviceRequest.getStatus().getId() != null && excludeList.contains(serviceRequest.getStatus().getId()) == false) {
-				priorityCounterMap.merge(serviceRequest.getPriority().getName().replace(" ", "_"), 1L, Long::sum);
+				String priorityName = (serviceRequest.getPriority() != null && serviceRequest.getPriority().getName() != null) ? serviceRequest.getPriority().getName() : "undefined";
+				priorityCounterMap.merge(priorityName.replace(" ", "_"), 1L, Long::sum);
 			}
 
 			//count only active (not closed) service requests with valid order
