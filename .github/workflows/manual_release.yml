@@ -50,7 +50,7 @@ jobs:
           git remote set-url origin https://x-access-token:${GH_PAT}@github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git
 
       - name: Run mvn release:prepare
-        run: mvn release:prepare -DbranchName=release/${{ github.event.inputs.version }}
+        run: mvn release:prepare
 
   create-pull-request:
     runs-on: ubuntu-latest

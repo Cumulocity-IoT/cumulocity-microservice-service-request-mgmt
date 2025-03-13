@@ -229,7 +229,6 @@
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<releaseProfiles>release</releaseProfiles>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
-					<branchName>release/v@{project.version}</branchName>
 				</configuration>
 			</plugin>
 		</plugins>
