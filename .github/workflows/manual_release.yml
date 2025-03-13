@@ -58,14 +58,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          ref: release/${{ github.event.inputs.version }}
 
       - name: Create pull request
         uses: thomaseizinger/create-pull-request@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          head: ${{ github.ref }}
+          head: refs/heads/release/${{ github.event.inputs.version }}
           base: develop
           title: "Release: Merge release branch to develop"
   
