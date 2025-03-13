@@ -59,7 +59,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          ref: develop
+          ref: release/${{ github.event.inputs.version }}
 
       - name: Create pull request
         uses: thomaseizinger/create-pull-request@master
