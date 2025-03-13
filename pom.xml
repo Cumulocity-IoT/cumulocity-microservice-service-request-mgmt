@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>cumulocity.microservice</groupId>
@@ -19,7 +17,7 @@
 		<spring-boot-dependencies.version>2.5.4</spring-boot-dependencies.version>
 		<c8y.version>1018.0.356</c8y.version>
 		<microservice.name>service-request-mgmt</microservice.name>
-		<c8y.docker.skip>false</c8y.docker.skip>
+		<c8y.docker.skip>true</c8y.docker.skip>
 		<lombok.version>1.18.24</lombok.version>
 		<springdoc-openapi.version>1.6.14</springdoc-openapi.version>
 		<openapi-generator-maven-plugin-version>6.3.0</openapi-generator-maven-plugin-version>
@@ -252,7 +250,7 @@
 		<connection>scm:git:https://github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</connection>
 		<developerConnection>scm:git:https://github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</developerConnection>
 		<url>https://github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</url>
-		<tag>HEAD</tag>
+		<tag>v1.3.14</tag>
 	</scm>
 
 </project>
