@@ -249,7 +249,7 @@
 
 	<scm>
 		<connection>scm:git:git://github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</connection>
-		<developerConnection>scm:git:ssh://github.com:Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</developerConnection>
+		<developerConnection>scm:git:ssh://git@github.com:Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</developerConnection>
 		<url>https://github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</url>
 		<tag>HEAD</tag>
 	</scm>
