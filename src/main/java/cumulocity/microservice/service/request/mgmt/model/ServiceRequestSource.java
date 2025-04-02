@@ -3,7 +3,7 @@ package cumulocity.microservice.service.request.mgmt.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.springframework.validation.annotation.Validated;
 
