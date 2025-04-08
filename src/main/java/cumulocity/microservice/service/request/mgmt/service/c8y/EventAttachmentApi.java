@@ -69,7 +69,6 @@ public class EventAttachmentApi {
 
 		ResponseEntity<EventBinary> response;
 		if (overwrites) {
-			//headers.setContentType(MediaType.TEXT_PLAIN);
 			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 			headers.setContentDisposition(ContentDisposition.builder("attachment").filename(binaryInfo.getName()).build());
 			HttpEntity<Resource> requestEntity = new HttpEntity<Resource>(resource, headers);
