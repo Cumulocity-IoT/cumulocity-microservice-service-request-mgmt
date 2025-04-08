@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -68,7 +69,9 @@ public class EventAttachmentApi {
 
 		ResponseEntity<EventBinary> response;
 		if (overwrites) {
-			headers.setContentType(MediaType.TEXT_PLAIN);
+			//headers.setContentType(MediaType.TEXT_PLAIN);
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			headers.setContentDisposition(ContentDisposition.builder("attachment").filename(binaryInfo.getName()).build());
 			HttpEntity<Resource> requestEntity = new HttpEntity<Resource>(resource, headers);
 			response = restTemplate.exchange(serverUrl, HttpMethod.PUT, requestEntity, EventBinary.class);
 		} else {
