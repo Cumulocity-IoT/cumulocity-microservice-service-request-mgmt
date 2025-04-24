@@ -30,6 +30,12 @@ public class EventFilterExtend extends EventFilter {
 	private String createdTo;
 
 	@ParamSource
+	private String lastUpdatedFrom;
+
+	@ParamSource
+	private String lastUpdatedTo;
+
+	@ParamSource
 	private String type;
 
 	@ParamSource
@@ -147,6 +153,25 @@ public class EventFilterExtend extends EventFilter {
 
 	public EventFilterExtend byFromCreationDate(Date fromDate) {
 		this.createdFrom = DateConverter.date2String(fromDate);
+		return this;
+	}
+
+	public String getLastUpdateFrom() {
+		return lastUpdatedFrom;
+	}
+
+	public String getLastUpdateTo() {
+		return lastUpdatedTo;
+	}
+
+	public EventFilterExtend byLastUpdateDate(Date fromDate, Date toDate) {
+		this.lastUpdatedFrom = DateConverter.date2String(fromDate);
+		this.lastUpdatedTo = DateConverter.date2String(toDate);
+		return this;
+	}
+
+	public EventFilterExtend byFromLastUpdateDate(Date fromDate) {
+		this.lastUpdatedFrom = DateConverter.date2String(fromDate);
 		return this;
 	}
 
