@@ -29,9 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 public class ServiceRequestAlarmValidationService {
 
 
-    private EventApi eventApi;
+    private final EventApi eventApi;
 
-    private AlarmApi alarmApi;
+    private final AlarmApi alarmApi;
 
     private final MicroserviceSubscriptionsService subscriptions;
 
@@ -43,10 +43,8 @@ public class ServiceRequestAlarmValidationService {
 
     @Scheduled(fixedDelay = 300000, initialDelay = 60000) // 1 hour
     public void validateServiceRequestAlarmStatus() {
-        log.info("Validating job is starting...");
         subscriptions.runForEachTenant(() -> {
             try {
-                log.info("** STOP ** Validating stop service requests and check if alarm is cleared!");
                 Map<String, AlarmRepresentation> invalidAlarmMap = getInvalidServiceRequestAlarmStatus(SyncStatus.STOP, CumulocityAlarmStatuses.CLEARED);
                 log.info("** STOP **  Total number of invalid alarms: {}", invalidAlarmMap.size());
                 for (Map.Entry<String, AlarmRepresentation> entry : invalidAlarmMap.entrySet()) {
@@ -54,8 +52,6 @@ public class ServiceRequestAlarmValidationService {
                     AlarmRepresentation alarm = entry.getValue();
                     log.info("** STOP **  Invalid service request Id / alarm ID: {}, Status: {}", key, alarm.getStatus());
                 }
-
-                log.info("** ACTIVE ** Validating active service requests and check if alarm is acknowledged!");
                 Map<String, AlarmRepresentation> invalidAlarmMapActive = getInvalidServiceRequestAlarmStatus(SyncStatus.ACTIVE, CumulocityAlarmStatuses.ACKNOWLEDGED);
                 log.info("** ACTIVE **  Total number of invalid alarms: {}", invalidAlarmMapActive.size());
                 for (Map.Entry<String, AlarmRepresentation> entry : invalidAlarmMapActive.entrySet()) {
@@ -63,7 +59,6 @@ public class ServiceRequestAlarmValidationService {
                     AlarmRepresentation alarm = entry.getValue();
                     log.info("** ACTIVE **  Invalid service request Id / alarm ID: {}, Status: {}", key, alarm.getStatus());
                 }
-                log.info("** Validating job has finished!");
             } catch (Exception e) {
                 log.error("Error validating service request alarm status", e);
             }
@@ -73,7 +68,7 @@ public class ServiceRequestAlarmValidationService {
     private Map<String, AlarmRepresentation> getInvalidServiceRequestAlarmStatus(SyncStatus serviceRequestSyncStatus, CumulocityAlarmStatuses expectedAlarmStatus) {
         EventFilter eventFilter = new EventFilterExtend()
             .byType(ServiceRequestEventMapper.EVENT_TYPE)
-            .byFromLastUpdateDate(new Date(System.currentTimeMillis() - 3600000)) // 1 hour ago
+            .byFromLastUpdateDate(new Date(System.currentTimeMillis() - 86400000)) // 1 day ago
             .byFragmentType(ServiceRequestEventMapper.SR_SYNC_STATUS)
             .byFragmentValue(serviceRequestSyncStatus.name()); 
 
@@ -86,14 +81,23 @@ public class ServiceRequestAlarmValidationService {
             ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
             sr.getAlarmRefList().forEach(serviceRequestDataRef -> {
                 if (serviceRequestDataRef != null) {
+                    AlarmRepresentation alarm = null;
                     try {
-                        AlarmRepresentation alarm = alarmApi.getAlarm(GId.asGId(serviceRequestDataRef.getId()));
-                        // Check if the alarm is not cleared and add it to the invalidAlarmMap if it is not
-                        if(alarm != null && alarm.getStatus() != null && !alarm.getStatus().equals(expectedAlarmStatus.name())) {
-                            invalidAlarmMap.put(sr.getId() + "/" + alarm.getId().getValue(), alarm);
-                        }
+                        alarm = alarmApi.getAlarm(GId.asGId(serviceRequestDataRef.getId()));
                     } catch (Exception e) {
                         log.error("Alarm with ID {} not found", serviceRequestDataRef.getId(), e);
+                    }
+                    // Check if the alarm is not cleared and add it to the invalidAlarmMap if it is not
+                    if(alarm != null && alarm.getStatus() != null && !alarm.getStatus().equals(expectedAlarmStatus.name())) {
+                        invalidAlarmMap.put(sr.getId() + "/" + alarm.getId().getValue(), alarm);
+                        AlarmRepresentation alarmToUpdate = new AlarmRepresentation();
+                        alarmToUpdate.setStatus(expectedAlarmStatus.name());
+                        alarmToUpdate.setId(alarm.getId());
+                        try {
+                            alarmApi.update(alarmToUpdate);
+                        } catch (Exception e) {
+                            log.error("Error updating alarm with ID {}", alarm.getId(), e);
+                        }
                     }
                 }
             });
