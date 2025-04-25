@@ -314,7 +314,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			EventRepresentation event = eventApi.getEvent(GId.asGId(id));
 			return ServiceRequestEventMapper.map2(event);
 		}catch(SDKException e) {
-			log.error("Fetching service request with id: " + id + " failed!", e);
+			log.error("Fetching service request with id: " + id + " failed!");
 		}
 		return null;
 	}
@@ -455,19 +455,21 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		log.debug("Events found for IDs: count= {}", events.size());
 
-		Predicate<EventRepresentation> filterPredicate;
 
-		if(assigned != null && assigned) {
-			filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE) && event.get(ServiceRequestEventMapper.SR_SYNC_STATUS).equals(String.valueOf(SyncStatus.ACTIVE.name()));
-		}else if(assigned != null && !assigned) {
-			filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE) && event.get(ServiceRequestEventMapper.SR_SYNC_STATUS).equals(String.valueOf(SyncStatus.NEW.name()));
-		}else {
-			filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE);
+		if(events.size() > 0 ) {
+			Predicate<EventRepresentation> filterPredicate;
+
+			if(assigned != null && assigned) {
+				filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE) && event.get(ServiceRequestEventMapper.SR_SYNC_STATUS).equals(String.valueOf(SyncStatus.ACTIVE.name()));
+			}else if(assigned != null && !assigned) {
+				filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE) && event.get(ServiceRequestEventMapper.SR_SYNC_STATUS).equals(String.valueOf(SyncStatus.NEW.name()));
+			}else {
+				filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE);
+			}
+			serviceRequestList= events.stream().filter(filterPredicate).map(event -> {
+				return ServiceRequestEventMapper.map2(event);
+			}).collect(Collectors.toSet());
 		}
-		serviceRequestList= events.stream().filter(filterPredicate).map(event -> {
-			return ServiceRequestEventMapper.map2(event);
-		}).collect(Collectors.toSet());
-
 
 		stopwatch.stop();
 		long ms = stopwatch.elapsed(TimeUnit.MILLISECONDS);
