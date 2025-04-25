@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import com.cumulocity.sdk.client.alarm.AlarmApi;
 import com.cumulocity.sdk.client.event.EventApi;
 import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
+import com.google.common.base.Stopwatch;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.service.c8y.EventFilterExtend;
@@ -49,6 +51,7 @@ public class ServiceRequestAlarmValidationService {
     @Scheduled(fixedDelayString = "${validation.job.scheduled.delay.millis:86400000}", initialDelay = 60000)
     public void validateServiceRequestAlarmStatus() {
         subscriptions.runForEachTenant(() -> {
+            Stopwatch stopwatch = Stopwatch.createStarted();
             try {
                 Map<String, AlarmRepresentation> invalidAlarmMap = getInvalidServiceRequestAlarmStatus(SyncStatus.STOP, CumulocityAlarmStatuses.CLEARED);
                 log.info("** STOP **  Total number of invalid alarms: {}", invalidAlarmMap.size());
@@ -67,6 +70,9 @@ public class ServiceRequestAlarmValidationService {
             } catch (Exception e) {
                 log.error("Error validating service request alarm status", e);
             }
+            stopwatch.stop();
+		    long ms = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+		    log.info("validation job finished in {} ms", ms);
         });
     }
 
