@@ -41,7 +41,12 @@ public class ServiceRequestAlarmValidationService {
         this.subscriptions = subscriptions;
     }
 
-    @Scheduled(fixedDelay = 300000, initialDelay = 60000) // 1 hour
+    /**
+     * Scheduled task to validate the status of service request and alarm. It is important to understand that the service request status
+     * has influence on the alarm status. The service request status is set to STOP when the service request is completed and the alarm status should be cleared. The alarm status can be changed to CLEARED via UI, so the alarm status is not always in sync with the service request status. For this reason, cleared alarms
+     * will be set back to ACKNOWLEDGED when the service request status is still ACTIVE.
+     */
+    @Scheduled(fixedDelayString = "${validation.job.scheduled.delay.millis:86400000}", initialDelay = 60000)
     public void validateServiceRequestAlarmStatus() {
         subscriptions.runForEachTenant(() -> {
             try {
