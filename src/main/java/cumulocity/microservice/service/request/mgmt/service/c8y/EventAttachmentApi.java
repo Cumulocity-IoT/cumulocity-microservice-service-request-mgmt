@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -62,22 +63,27 @@ public class EventAttachmentApi {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", contextService.getContext().toCumulocityCredentials().getAuthenticationString());
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-		
-		MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
-		multipartBodyBuilder.part("object", binaryInfo, MediaType.APPLICATION_JSON);
-		multipartBodyBuilder.part("file", resource, MediaType.TEXT_PLAIN);
-		
-		MultiValueMap<String,HttpEntity<?>> body = multipartBodyBuilder.build();
-		HttpEntity<MultiValueMap<String, HttpEntity<?>>> requestEntity = new HttpEntity<>(body, headers);
 
 		String serverUrl = clientProperties.getBaseURL() + "/event/events/" + eventId + "/binaries";
 		RestTemplate restTemplate = new RestTemplate();
 
 		ResponseEntity<EventBinary> response;
 		if (overwrites) {
+			headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			headers.setContentDisposition(ContentDisposition.builder("attachment").filename(binaryInfo.getName()).build());
+			HttpEntity<Resource> requestEntity = new HttpEntity<Resource>(resource, headers);
 			response = restTemplate.exchange(serverUrl, HttpMethod.PUT, requestEntity, EventBinary.class);
 		} else {
+			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+			MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
+			multipartBodyBuilder.part("object", binaryInfo, MediaType.APPLICATION_JSON);
+			multipartBodyBuilder.part("file", resource, MediaType.TEXT_PLAIN);
+			
+			MultiValueMap<String,HttpEntity<?>> body = multipartBodyBuilder.build();
+			HttpEntity<MultiValueMap<String, HttpEntity<?>>> requestEntity = new HttpEntity<>(body, headers);
+	
+
 			response = restTemplate.postForEntity(serverUrl, requestEntity, EventBinary.class);
 		}
 
