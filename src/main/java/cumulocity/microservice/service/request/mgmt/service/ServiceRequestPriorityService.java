@@ -9,7 +9,11 @@ public interface ServiceRequestPriorityService {
 
 	public List<ServiceRequestPriority> getPriorityList();
 
+	public ServiceRequestPriority getDefaultPriority();
+
 	public ServiceRequestPriority getPriority(Long priorityOrdinal);
+
+	public ServiceRequestPriority getPriority(String priorityName);
 
 	public void deletePriority(Long priorityOrdinal);
 
