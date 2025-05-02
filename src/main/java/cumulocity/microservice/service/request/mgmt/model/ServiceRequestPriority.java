@@ -21,6 +21,8 @@ public class ServiceRequestPriority {
 	@NonNull
 	private String name;
 	
-	@Schema(required = false, description = "Priority ordinal", example = "1")
+	@Schema(required = true, description = "Priority ordinal", example = "1")
+	@NotNull
+	@NonNull
 	private Long ordinal;
 }
