@@ -144,13 +144,13 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		List<String> excludeList = new ArrayList<>();
 
 		if(serviceRequestRqBody.getStatus() == null) {
-			for (ServiceRequestStatusConfig srStatusConfig : statusList) {
-				if (Boolean.TRUE.equals(srStatusConfig.getIsInitialStatus())) {
-					serviceRequestRqBody.setStatus(new ServiceRequestStatus(srStatusConfig.getId()));
-					break;
-				}
-			}
-			serviceRequestRqBody.setStatus(null);
+			serviceRequestRqBody.setStatus(
+				statusList.stream()
+					.filter(ServiceRequestStatusConfig::getIsInitialStatus)
+					.findFirst()
+					.map(srStatusConfig -> new ServiceRequestStatus(srStatusConfig.getId()))
+					.orElse(null)
+			);
 		}
 
 		ServiceRequestStatusConfig srStatus = null;
