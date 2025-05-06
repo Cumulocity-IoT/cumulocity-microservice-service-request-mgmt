@@ -30,9 +30,7 @@ public class ServiceRequestPostRqBody {
 	@Valid
 	private ServiceRequestType type;
 
-	@Schema(required = true, description = "Service request status")
-	@NotNull
-	@NonNull
+	@Schema(required = false, description = "Service request status")
 	@Valid
 	private ServiceRequestStatus status;
 
