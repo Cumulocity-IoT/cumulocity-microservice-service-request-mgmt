@@ -40,6 +40,9 @@ public class ServiceRequestStatusConfig {
 	
 	@Schema(required = false, description = "All active (not closed) Service Requests are counted on device manage object. However, with with parameter the status can be excluded and will not be counted!", example = "false")	
 	private Boolean isExcludeForCounter;
+
+	@Schema(required = false, description = "Marks the status as start or initial status. Which means if a service request is created and the status is not defined, this status will be selected.", example = "true")
+	private Boolean isInitialStatus;
 	
 	@Schema(required = false, description = "Icon name of the status which should be shown at the UI", example = "warning")		
 	private String icon;
