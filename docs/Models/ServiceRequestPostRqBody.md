@@ -4,7 +4,7 @@
 | Name | Type | Description | Notes |
 |------------ | ------------- | ------------- | -------------|
 | **type** | **String** | Service request type | [default to null] |
-| **status** | [**ServiceRequestStatus**](ServiceRequestStatus.md) |  | [default to null] |
+| **status** | [**ServiceRequestStatus**](ServiceRequestStatus.md) |  | [optional] [default to null] |
 | **priority** | [**ServiceRequestPriority**](ServiceRequestPriority.md) |  | [optional] [default to null] |
 | **title** | **String** | Service request title / summary | [default to null] |
 | **description** | **String** | Service request detailed description | [optional] [default to null] |
