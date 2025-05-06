@@ -148,7 +148,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				statusList.stream()
 					.filter(ServiceRequestStatusConfig::getIsInitialStatus)
 					.findFirst()
-					.map(srStatusConfig -> new ServiceRequestStatus(srStatusConfig.getId()))
+					.map(srStatusConfig -> new ServiceRequestStatus(srStatusConfig.getId(), srStatusConfig.getName()))
 					.orElse(null)
 			);
 		}
