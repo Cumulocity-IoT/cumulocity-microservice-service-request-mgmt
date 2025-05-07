@@ -85,6 +85,10 @@ public class ServiceRequestController {
 			return new ResponseEntity<ServiceRequest>(HttpStatus.CONFLICT);
 		}
 		ServiceRequest createServiceRequest = serviceRequestService.createServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
+		if(createServiceRequest == null) {
+			return new ResponseEntity<ServiceRequest>(HttpStatus.BAD_REQUEST);
+		}
+		
 		return new ResponseEntity<ServiceRequest>(createServiceRequest, HttpStatus.CREATED);
 	}
 

@@ -82,8 +82,8 @@ class ServiceRequestPriorityServiceC8yTest {
 		
 		
 		List<ServiceRequestPriority> newPriorityList = new ArrayList<>();
-		newPriorityList.add(new ServiceRequestPriority("Prio5"));
-		newPriorityList.add(new ServiceRequestPriority("Prio6"));
+		newPriorityList.add(new ServiceRequestPriority("Prio5", 5L));
+		newPriorityList.add(new ServiceRequestPriority("Prio6", 6L));
 		
 		
 		List<ServiceRequestPriority> createOrUpdatePriorityList = priorityService.createOrUpdatePriorityList(newPriorityList);

@@ -56,7 +56,7 @@ public class ServiceRequestPriorityServiceC8y implements ServiceRequestPriorityS
 	public ServiceRequestPriority getDefaultPriority() {
 		List<ServiceRequestPriority> priorityList = getPriorityList();
 		if (priorityList == null || priorityList.isEmpty()) {
-			return new ServiceRequestPriority("default");
+			return new ServiceRequestPriority("default", 0L);
 		}
 		return priorityList.get(0);
 	}

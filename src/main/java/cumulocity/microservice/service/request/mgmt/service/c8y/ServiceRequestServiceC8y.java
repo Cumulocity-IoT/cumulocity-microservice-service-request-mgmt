@@ -160,6 +160,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				excludeList.add(srStatusConfig.getId());
 			}
 			if(srStatusConfig.getId().equals(serviceRequestRqBody.getStatus().getId())) {
+				serviceRequestRqBody.getStatus().setName(srStatusConfig.getName());
 				srStatus = srStatusConfig;
 			}
 		}
