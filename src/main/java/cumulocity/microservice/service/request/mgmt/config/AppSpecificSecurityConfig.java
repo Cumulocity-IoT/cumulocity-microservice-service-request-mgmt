@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @EnableWebSecurity
 @OpenAPIDefinition(
 	    info = @Info(
@@ -31,7 +33,13 @@ public class AppSpecificSecurityConfig {
 
 	@Bean
 	public SecurityFilterChain apiFilterChanin(HttpSecurity http) throws Exception {
-		http.antMatcher("/v3/api-docs");
+		http.authorizeHttpRequests(authorizeRequests ->
+			authorizeRequests
+				.requestMatchers("/v3/api-docs").permitAll() // Exclude this path from security
+				.anyRequest().authenticated()
+		)
+		.formLogin(withDefaults());
+
 		return http.build();
 	}
 }

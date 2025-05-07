@@ -2,7 +2,7 @@ package cumulocity.microservice.service.request.mgmt.service;
 
 import java.util.Collection;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.core.io.Resource;
 

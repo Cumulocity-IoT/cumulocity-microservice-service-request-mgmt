@@ -1,6 +1,5 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
-import java.security.Provider.Service;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 
-import com.cumulocity.model.JSONBase;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
