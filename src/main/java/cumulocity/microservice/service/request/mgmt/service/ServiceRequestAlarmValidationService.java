@@ -3,8 +3,10 @@ package cumulocity.microservice.service.request.mgmt.service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import com.cumulocity.sdk.client.event.EventFilter;
 import com.google.common.base.Stopwatch;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
 import cumulocity.microservice.service.request.mgmt.service.c8y.EventFilterExtend;
 import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestEventMapper;
 import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestEventMapper.SyncStatus;
@@ -37,10 +40,13 @@ public class ServiceRequestAlarmValidationService {
 
     private final MicroserviceSubscriptionsService subscriptions;
 
-    public ServiceRequestAlarmValidationService(EventApi eventApi, AlarmApi alarmApi, MicroserviceSubscriptionsService subscriptions) {
+    private final ServiceRequestStatusConfigService serviceRequestStatusConfigService;
+
+    public ServiceRequestAlarmValidationService(EventApi eventApi, AlarmApi alarmApi, MicroserviceSubscriptionsService subscriptions, ServiceRequestStatusConfigService serviceRequestStatusConfigService) {
         this.eventApi = eventApi;
         this.alarmApi = alarmApi;
         this.subscriptions = subscriptions;
+        this.serviceRequestStatusConfigService = serviceRequestStatusConfigService;
     }
 
     /**
@@ -52,15 +58,20 @@ public class ServiceRequestAlarmValidationService {
     public void validateServiceRequestAlarmStatus() {
         subscriptions.runForEachTenant(() -> {
             Stopwatch stopwatch = Stopwatch.createStarted();
-            try {
-                Map<String, AlarmRepresentation> invalidAlarmMap = getInvalidServiceRequestAlarmStatus(SyncStatus.STOP, CumulocityAlarmStatuses.CLEARED);
+
+            List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
+            Map<String, ServiceRequestStatusConfig> statusListMap = statusList.stream()
+                .collect(Collectors.toMap(ServiceRequestStatusConfig::getId, statusConfig -> statusConfig));
+
+            try{
+                Map<String, AlarmRepresentation> invalidAlarmMap = getInvalidServiceRequestAlarmStatus(statusListMap, CumulocityAlarmStatuses.CLEARED);
                 log.info("** STOP **  Total number of invalid alarms: {}", invalidAlarmMap.size());
                 for (Map.Entry<String, AlarmRepresentation> entry : invalidAlarmMap.entrySet()) {
                     String key = entry.getKey();
                     AlarmRepresentation alarm = entry.getValue();
                     log.info("** STOP **  Invalid service request Id / alarm ID: {}, Status: {}", key, alarm.getStatus());
                 }
-                Map<String, AlarmRepresentation> invalidAlarmMapActive = getInvalidServiceRequestAlarmStatus(SyncStatus.ACTIVE, CumulocityAlarmStatuses.ACKNOWLEDGED);
+                Map<String, AlarmRepresentation> invalidAlarmMapActive = getInvalidServiceRequestAlarmStatus(statusListMap, CumulocityAlarmStatuses.ACKNOWLEDGED);
                 log.info("** ACTIVE **  Total number of invalid alarms: {}", invalidAlarmMapActive.size());
                 for (Map.Entry<String, AlarmRepresentation> entry : invalidAlarmMapActive.entrySet()) {
                     String key = entry.getKey();
@@ -76,12 +87,12 @@ public class ServiceRequestAlarmValidationService {
         });
     }
 
-    private Map<String, AlarmRepresentation> getInvalidServiceRequestAlarmStatus(SyncStatus serviceRequestSyncStatus, CumulocityAlarmStatuses expectedAlarmStatus) {
+    private Map<String, AlarmRepresentation> getInvalidServiceRequestAlarmStatus(Map<String, ServiceRequestStatusConfig> statusListMap, CumulocityAlarmStatuses expectedAlarmStatus) {
         EventFilter eventFilter = new EventFilterExtend()
             .byType(ServiceRequestEventMapper.EVENT_TYPE)
             .byFromLastUpdateDate(new Date(System.currentTimeMillis() - 86400000)) // 1 day ago
-            .byFragmentType(ServiceRequestEventMapper.SR_SYNC_STATUS)
-            .byFragmentValue(serviceRequestSyncStatus.name()); 
+            .byFragmentType(ServiceRequestEventMapper.SR_ACTIVE)
+            .byFragmentValue(Boolean.TRUE.toString()); 
 
         EventCollection eventCollection = eventApi.getEventsByFilter(eventFilter);
 
@@ -90,6 +101,7 @@ public class ServiceRequestAlarmValidationService {
         for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {
             EventRepresentation eventRepresentation = iterator.next();
             ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
+            ServiceRequestStatusConfig statusConfig = statusListMap.get(sr.getStatus().getId());
             sr.getAlarmRefList().forEach(serviceRequestDataRef -> {
                 if (serviceRequestDataRef != null) {
                     AlarmRepresentation alarm = null;
@@ -99,10 +111,10 @@ public class ServiceRequestAlarmValidationService {
                         log.error("Alarm with ID {} not found", serviceRequestDataRef.getId(), e);
                     }
                     // Check if the alarm is not cleared and add it to the invalidAlarmMap if it is not
-                    if(alarm != null && alarm.getStatus() != null && !alarm.getStatus().equals(expectedAlarmStatus.name())) {
+                    if(alarm != null && alarm.getStatus() != null && !alarm.getStatus().equals(statusConfig.getAlarmStatusTransition())) {
                         invalidAlarmMap.put(sr.getId() + "/" + alarm.getId().getValue(), alarm);
                         AlarmRepresentation alarmToUpdate = new AlarmRepresentation();
-                        alarmToUpdate.setStatus(expectedAlarmStatus.name());
+                        alarmToUpdate.setStatus(statusConfig.getAlarmStatusTransition());
                         alarmToUpdate.setId(alarm.getId());
                         try {
                             alarmApi.update(alarmToUpdate);

@@ -30,7 +30,7 @@
                 "alarmStatusTransition",
                 "isClosedTransition",
                 "isExcludeForCounter",
-                "isSynchronisationActive"
+                "isInitialStatus"
             ]
         },
         {
