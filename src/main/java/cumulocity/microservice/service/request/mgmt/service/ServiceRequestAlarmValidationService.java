@@ -26,7 +26,6 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
 import cumulocity.microservice.service.request.mgmt.service.c8y.EventFilterExtend;
 import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestEventMapper;
-import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestEventMapper.SyncStatus;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -65,18 +64,18 @@ public class ServiceRequestAlarmValidationService {
 
             try{
                 Map<String, AlarmRepresentation> invalidAlarmMap = getInvalidServiceRequestAlarmStatus(statusListMap, CumulocityAlarmStatuses.CLEARED);
-                log.info("** STOP **  Total number of invalid alarms: {}", invalidAlarmMap.size());
+                log.info("** CLEARED expected **  Total number of invalid alarms: {}", invalidAlarmMap.size());
                 for (Map.Entry<String, AlarmRepresentation> entry : invalidAlarmMap.entrySet()) {
                     String key = entry.getKey();
                     AlarmRepresentation alarm = entry.getValue();
-                    log.info("** STOP **  Invalid service request Id / alarm ID: {}, Status: {}", key, alarm.getStatus());
+                    log.info("** CLEARED expected  **  Invalid service request Id / alarm ID: {}, Status: {}", key, alarm.getStatus());
                 }
                 Map<String, AlarmRepresentation> invalidAlarmMapActive = getInvalidServiceRequestAlarmStatus(statusListMap, CumulocityAlarmStatuses.ACKNOWLEDGED);
-                log.info("** ACTIVE **  Total number of invalid alarms: {}", invalidAlarmMapActive.size());
+                log.info("** ACKNOWLEDGED expected **  Total number of invalid alarms: {}", invalidAlarmMapActive.size());
                 for (Map.Entry<String, AlarmRepresentation> entry : invalidAlarmMapActive.entrySet()) {
                     String key = entry.getKey();
                     AlarmRepresentation alarm = entry.getValue();
-                    log.info("** ACTIVE **  Invalid service request Id / alarm ID: {}, Status: {}", key, alarm.getStatus());
+                    log.info("** ACKNOWLEDGED expected **  Invalid service request Id / alarm ID: {}, Status: {}", key, alarm.getStatus());
                 }
             } catch (Exception e) {
                 log.error("Error validating service request alarm status", e);
