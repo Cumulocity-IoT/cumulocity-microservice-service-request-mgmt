@@ -63,19 +63,12 @@ public class ServiceRequestAlarmValidationService {
                 .collect(Collectors.toMap(ServiceRequestStatusConfig::getId, statusConfig -> statusConfig));
 
             try{
-                Map<String, AlarmRepresentation> invalidAlarmMap = getInvalidServiceRequestAlarmStatus(statusListMap, CumulocityAlarmStatuses.CLEARED);
-                log.info("** CLEARED expected **  Total number of invalid alarms: {}", invalidAlarmMap.size());
+                Map<String, AlarmRepresentation> invalidAlarmMap = getInvalidServiceRequestAlarmStatus(statusListMap);
+                log.info("Total number of invalid alarms: {}", invalidAlarmMap.size());
                 for (Map.Entry<String, AlarmRepresentation> entry : invalidAlarmMap.entrySet()) {
                     String key = entry.getKey();
                     AlarmRepresentation alarm = entry.getValue();
-                    log.info("** CLEARED expected  **  Invalid service request Id / alarm ID: {}, Status: {}", key, alarm.getStatus());
-                }
-                Map<String, AlarmRepresentation> invalidAlarmMapActive = getInvalidServiceRequestAlarmStatus(statusListMap, CumulocityAlarmStatuses.ACKNOWLEDGED);
-                log.info("** ACKNOWLEDGED expected **  Total number of invalid alarms: {}", invalidAlarmMapActive.size());
-                for (Map.Entry<String, AlarmRepresentation> entry : invalidAlarmMapActive.entrySet()) {
-                    String key = entry.getKey();
-                    AlarmRepresentation alarm = entry.getValue();
-                    log.info("** ACKNOWLEDGED expected **  Invalid service request Id / alarm ID: {}, Status: {}", key, alarm.getStatus());
+                    log.info("Invalid service request Id / alarm ID: {}, Status: {}", key, alarm.getStatus());
                 }
             } catch (Exception e) {
                 log.error("Error validating service request alarm status", e);
@@ -86,7 +79,7 @@ public class ServiceRequestAlarmValidationService {
         });
     }
 
-    private Map<String, AlarmRepresentation> getInvalidServiceRequestAlarmStatus(Map<String, ServiceRequestStatusConfig> statusListMap, CumulocityAlarmStatuses expectedAlarmStatus) {
+    private Map<String, AlarmRepresentation> getInvalidServiceRequestAlarmStatus(Map<String, ServiceRequestStatusConfig> statusListMap) {
         EventFilter eventFilter = new EventFilterExtend()
             .byType(ServiceRequestEventMapper.EVENT_TYPE)
             .byFromLastUpdateDate(new Date(System.currentTimeMillis() - 86400000)) // 1 day ago
