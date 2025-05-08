@@ -3,7 +3,6 @@ package cumulocity.microservice.service.request.mgmt.controller;
 import java.util.Map;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceOrder;

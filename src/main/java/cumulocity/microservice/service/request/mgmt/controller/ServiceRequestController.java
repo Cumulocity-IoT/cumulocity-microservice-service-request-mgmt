@@ -1,7 +1,5 @@
 package cumulocity.microservice.service.request.mgmt.controller;
 
-import java.io.IOException;
-
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -86,6 +84,7 @@ public class ServiceRequestController {
 		}
 		ServiceRequest createServiceRequest = serviceRequestService.createServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
 		if(createServiceRequest == null) {
+			log.warn("Service request creation failed! Data: {}", serviceRequestRqBody);
 			return new ResponseEntity<ServiceRequest>(HttpStatus.BAD_REQUEST);
 		}
 		
