@@ -1,0 +1,47 @@
+{
+    "$schema": "https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/feat/extensions-manager/tools/schema/views.json",
+    "version": "v1",
+    "definitions": [
+        {
+            "name": "serviceRequest",
+            "priority": 350,
+            "requestPath": "service/service-request-mgmt/api/service/request",
+            "requestMethod": "GET",
+            "columns": [
+                "id",
+                "title",
+                "description",
+                "type",
+                "source.id",
+                "status.id",
+                "status.name",
+                "priority.name",
+                "creationTime"
+            ]
+        },
+        {
+            "name": "serviceRequestStatus",
+            "priority": 350,
+            "requestPath": "/service/service-request-mgmt/api/service/request/status",
+            "requestMethod": "GET",
+            "columns": [
+                "id",
+                "name",
+                "alarmStatusTransition",
+                "isClosedTransition",
+                "isExcludeForCounter",
+                "isSynchronisationActive"
+            ]
+        },
+        {
+            "name": "serviceRequestPriority",
+            "priority": 350,
+            "requestPath": "/service/service-request-mgmt/api/service/request/priority",
+            "requestMethod": "GET",
+            "columns": [
+                "ordinal",
+                "name"
+            ]
+        }
+    ]
+}

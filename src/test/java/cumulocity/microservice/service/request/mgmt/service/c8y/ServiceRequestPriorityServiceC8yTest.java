@@ -56,7 +56,7 @@ class ServiceRequestPriorityServiceC8yTest {
 	@Test
 	void getPriorityListTest() {
 		ServiceRequestPriorityServiceC8y priorityService = mock(ServiceRequestPriorityServiceC8y.class);
-		ManagedObjectRepresentation priorityMo = createMo(1L, 2L, 3L);
+		ManagedObjectRepresentation priorityMo = createMo(3L, 2L, 1L);
 		
 		when(priorityService.getManagedObjectRepresentation()).thenReturn(priorityMo);
 		when(priorityService.getPriorityList()).thenCallRealMethod();
@@ -65,6 +65,7 @@ class ServiceRequestPriorityServiceC8yTest {
 		List<ServiceRequestPriority> priorityList = priorityService.getPriorityList();
 		assertNotNull(priorityList);
 		assertEquals(3, priorityList.size());
+		assertEquals(1, priorityList.get(0).getOrdinal());
 	}
 	
 	@Test

@@ -3,7 +3,6 @@ package cumulocity.microservice.service.request.mgmt.controller;
 import java.util.Map;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceOrder;
@@ -30,13 +29,11 @@ public class ServiceRequestPostRqBody {
 	@Valid
 	private ServiceRequestType type;
 
-	@Schema(required = true, description = "Service request status")
-	@NotNull
-	@NonNull
+	@Schema(required = false, description = "Service request status")
 	@Valid
 	private ServiceRequestStatus status;
 
-	@Schema(description = "Servcie request priority")
+	@Schema(required = false, description = "Service request priority")
 	@Valid
 	private ServiceRequestPriority priority;
 

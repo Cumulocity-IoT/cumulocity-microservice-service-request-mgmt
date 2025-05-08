@@ -53,6 +53,15 @@ public class ServiceRequestPriorityServiceC8y implements ServiceRequestPriorityS
 	}
 
 	@Override
+	public ServiceRequestPriority getDefaultPriority() {
+		List<ServiceRequestPriority> priorityList = getPriorityList();
+		if (priorityList == null || priorityList.isEmpty()) {
+			return new ServiceRequestPriority("default", 0L);
+		}
+		return priorityList.get(0);
+	}
+
+	@Override
 	public ServiceRequestPriority getPriority(Long priorityOrdinal) {
 		ManagedObjectRepresentation managedObject = getManagedObjectRepresentation();
 		if(managedObject == null) {
@@ -62,6 +71,19 @@ public class ServiceRequestPriorityServiceC8y implements ServiceRequestPriorityS
 
 		Optional<ServiceRequestPriority> matchingObject = serviceRequestPriority.stream()
 				.filter(sr -> sr.getOrdinal().equals(priorityOrdinal)).findFirst();
+		return matchingObject.isEmpty() ? null: matchingObject.get();
+	}
+
+	@Override
+	public ServiceRequestPriority getPriority(String priorityName) {
+		ManagedObjectRepresentation managedObject = getManagedObjectRepresentation();
+		if(managedObject == null) {
+			return null;
+		}
+		List<ServiceRequestPriority> serviceRequestPriority = ServiceRequestPriorityObjectMapper.map2(managedObject);
+
+		Optional<ServiceRequestPriority> matchingObject = serviceRequestPriority.stream()
+				.filter(sr -> sr.getName().equals(priorityName)).findFirst();
 		return matchingObject.isEmpty() ? null: matchingObject.get();
 	}
 
