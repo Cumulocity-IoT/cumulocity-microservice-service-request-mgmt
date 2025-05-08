@@ -33,7 +33,7 @@ public class ServiceRequestPostRqBody {
 	@Valid
 	private ServiceRequestStatus status;
 
-	@Schema(required = false, description = "Servcie request priority")
+	@Schema(required = false, description = "Service request priority")
 	@Valid
 	private ServiceRequestPriority priority;
 
