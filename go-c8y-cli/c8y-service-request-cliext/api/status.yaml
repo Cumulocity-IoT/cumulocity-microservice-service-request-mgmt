@@ -9,3 +9,8 @@ commands:
     description: Get List service requests
     method: GET
     path: /service/service-request-mgmt/api/service/request/status
+  - name: create
+    description: Create service request status
+    method: POST
+    path: service/service-request-mgmt/api/service/request/status
+    
