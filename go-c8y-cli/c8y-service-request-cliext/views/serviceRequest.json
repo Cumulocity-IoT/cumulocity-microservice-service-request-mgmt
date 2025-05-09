@@ -29,6 +29,7 @@
                 "name",
                 "alarmStatusTransition",
                 "isClosedTransition",
+                "isDeactivateTransition",
                 "isExcludeForCounter",
                 "isInitialStatus"
             ]

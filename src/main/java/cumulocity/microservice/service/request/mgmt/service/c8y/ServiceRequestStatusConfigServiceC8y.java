@@ -155,7 +155,7 @@ public class ServiceRequestStatusConfigServiceC8y implements ServiceRequestStatu
 		status5.setName("Closed");
 		status5.setAlarmStatusTransition(CumulocityAlarmStatuses.CLEARED.name());
 		status5.setIsClosedTransition(Boolean.TRUE);
-		status5.setIsDeactivateTransition(Boolean.FALSE);
+		status5.setIsDeactivateTransition(Boolean.TRUE);
 		status5.setIsExcludeForCounter(Boolean.TRUE);
 		status5.setIsInitialStatus(Boolean.FALSE);
 		defaultStatusList.add(status5);
