@@ -111,6 +111,30 @@ The microservice also contains a [default service implementation](src/main/java/
 
 This default classes provide a basic FSM implementation in Cumulocity which is working without connecting to any external system. The internal created objects (Events) can be used to implement an asynchronous integration mechanism, see integration option 1.
 
+## Cumulocity CLI extension
+
+If you want to use the [Cumulocity CLI](https://goc8ycli.netlify.app) to create and manage service requests, you can use the following extension:
+
+[c8y-service-request-cliext](./go-c8y-cli/c8y-service-request-cliext/)
+
+Example commands
+
+Show configured status list in a formatted table
+```console
+c8y service-request-cliext status list
+```
+
+Configure a defined status list for your tenant
+```console
+c8y service-request-cliext status create --template service-request-cliext::ecStatusList.jsonnet
+```
+
+Create service requests based on active alarms
+```console
+c8y alarms list --status ACTIVE --device iPhone` Alex | c8y service-request-cliext sr create --description "Test"
+```
+
+
 # Priority & Status Configuration
 
 Priorities and status can be configured and managed during runtime. There isn't a predefined priority or status set implemented. This flexible design decision helps to integrated with any FSM/ITS. Even this systems have a configurable priority and status set. It is also possible to implement an automatic synchronization of status and priority list between both systems.

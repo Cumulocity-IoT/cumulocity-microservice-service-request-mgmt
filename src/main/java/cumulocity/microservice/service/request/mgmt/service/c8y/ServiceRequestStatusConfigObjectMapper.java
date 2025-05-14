@@ -22,6 +22,7 @@ public class ServiceRequestStatusConfigObjectMapper {
 	public static final String SR_IS_DEACTIVATE_TRANSITON = "isDeactivateTransition";
 	public static final String SR_IS_EXCLUDE_FOR_COUNTER = "isExcludeForCounter";
 	public static final String SR_IS_SYNCHRONISATION_ACTIVE = "isSynchronisationActive";
+	public static final String SR_IS_INITIAL_STATUS = "isInitialStatus";
 	
 	private final ManagedObjectRepresentation managedObject;
 
@@ -103,6 +104,7 @@ public class ServiceRequestStatusConfigObjectMapper {
 		status.setIsDeactivateTransition((Boolean)map.get(SR_IS_DEACTIVATE_TRANSITON));
 		status.setIsExcludeForCounter((Boolean)map.get(SR_IS_EXCLUDE_FOR_COUNTER));
 		status.setIsSynchronisationActive((Boolean)map.get(SR_IS_SYNCHRONISATION_ACTIVE));
+		status.setIsInitialStatus((Boolean)map.get(SR_IS_INITIAL_STATUS));
 		return status;
 	}
 	

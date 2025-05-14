@@ -551,6 +551,16 @@
           }
         } ],
         "responses" : {
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
+                }
+              }
+            }
+          },
           "200" : {
             "description" : "Ok",
             "content" : {
@@ -560,16 +570,6 @@
                   "items" : {
                     "$ref" : "#/components/schemas/ServiceRequestComment"
                   }
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
                 }
               }
             }
@@ -984,8 +984,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -994,8 +994,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1087,8 +1087,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "Ok",
+          "404" : {
+            "description" : "Not found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1100,8 +1100,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not found",
+          "200" : {
+            "description" : "Ok",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1182,7 +1182,6 @@
         "description" : "Service Request object at Cumulocity IoT Platform. This object is the representative / proxy for external system object like ticket, issue, notification, incident etc.. It contains the life cycle information of it, IoT data references (device, alarms, events and measurement) and meta data for the service request like owner, creation time etc.. It has a flexible key & value list \"customProperties\" to add custom properties as well."
       },
       "ServiceRequestPriority" : {
-        "required" : [ "name", "ordinal" ],
         "type" : "object",
         "properties" : {
           "name" : {
@@ -1469,7 +1468,7 @@
         "description" : "Comment object of service request. Service request object can have n comments."
       },
       "ServiceRequestPostRqBody" : {
-        "required" : [ "source", "status", "title", "type" ],
+        "required" : [ "source", "title", "type" ],
         "type" : "object",
         "properties" : {
           "type" : {
@@ -1555,6 +1554,11 @@
             "type" : "boolean",
             "description" : "All active (not closed) Service Requests are counted on device manage object. However, with with parameter the status can be excluded and will not be counted!",
             "example" : false
+          },
+          "isInitialStatus" : {
+            "type" : "boolean",
+            "description" : "Marks the status as start or initial status. Which means if a service request is created and the status is not defined, this status will be selected.",
+            "example" : true
           },
           "icon" : {
             "type" : "string",

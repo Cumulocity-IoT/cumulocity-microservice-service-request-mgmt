@@ -72,6 +72,9 @@ public class ServiceRequestPriorityObjectMapper {
 			}
 		}
 
+		/* Sort by ordinal */
+		priorityList.sort((p1, p2) -> Long.compare(p1.getOrdinal(), p2.getOrdinal()));
+
 		return priorityList;
 	}
 	

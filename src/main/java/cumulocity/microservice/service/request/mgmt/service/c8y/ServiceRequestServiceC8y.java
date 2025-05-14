@@ -44,6 +44,7 @@ import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestCommentType;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
@@ -55,6 +56,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class ServiceRequestServiceC8y implements ServiceRequestService {
+
+    private final ServiceRequestPriorityServiceC8y serviceRequestPriorityServiceC8y;
 	
 	private EventApi eventApi;
 
@@ -92,7 +95,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Autowired
 	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
-			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService, ServiceRequestUpdateService serviceRequestUpdateService, ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService) {
+			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService, ServiceRequestUpdateService serviceRequestUpdateService, ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService, ServiceRequestPriorityServiceC8y serviceRequestPriorityServiceC8y) {
 		this.eventApi = eventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
@@ -102,6 +105,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		this.serviceRequestUpdateService = serviceRequestUpdateService;
 		this.contextService = contextService;
 		this.userContextService = userContextService;
+		this.serviceRequestPriorityServiceC8y = serviceRequestPriorityServiceC8y;
 	}
 
 	@Override
@@ -138,7 +142,17 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
 		List<String> excludeList = new ArrayList<>();
-		
+
+		if(serviceRequestRqBody.getStatus() == null) {
+			serviceRequestRqBody.setStatus(
+				statusList.stream()
+					.filter(ServiceRequestStatusConfig::getIsInitialStatus)
+					.findFirst()
+					.map(srStatusConfig -> new ServiceRequestStatus(srStatusConfig.getId(), srStatusConfig.getName()))
+					.orElse(null)
+			);
+		}
+
 		ServiceRequestStatusConfig srStatus = null;
 
 		for(ServiceRequestStatusConfig srStatusConfig: statusList) {
@@ -146,6 +160,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				excludeList.add(srStatusConfig.getId());
 			}
 			if(srStatusConfig.getId().equals(serviceRequestRqBody.getStatus().getId())) {
+				serviceRequestRqBody.getStatus().setName(srStatusConfig.getName());
 				srStatus = srStatusConfig;
 			}
 		}
@@ -161,6 +176,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		eventMapper.setOwner(owner);
 		eventMapper.setIsActive(Boolean.TRUE);
 		eventMapper.setSyncStatus(SyncStatus.NEW);
+		eventMapper.setPriority(findPriority(serviceRequestRqBody.getPriority()));
 		EventRepresentation createdEvent = eventApi.create(eventMapper.getEvent());
 		ServiceRequest newServiceRequest = ServiceRequestEventMapper.map2(createdEvent);
 
@@ -184,11 +200,28 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		return newServiceRequest;
 	}
 
+	private ServiceRequestPriority findPriority(ServiceRequestPriority priority) {
+		if(priority == null) {
+			return serviceRequestPriorityServiceC8y.getDefaultPriority();
+		}
+		
+		if(priority.getOrdinal() != null) {
+			return serviceRequestPriorityServiceC8y.getPriority(priority.getOrdinal());
+		}else if(priority.getName() != null) {
+			return serviceRequestPriorityServiceC8y.getPriority(priority.getName());
+		}
+		return serviceRequestPriorityServiceC8y.getDefaultPriority();
+	}
+
 	@Override
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest) {
 		log.info("updateServiceRequest(id {}, serviceRequestBody {})", id, serviceRequest.toString());
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(id, serviceRequest);
+		if(serviceRequest.getPriority() != null) {
+			eventMapper.setPriority(findPriority(serviceRequest.getPriority()));
+		}
+
 		if(serviceRequest.getExternalId() != null) {
 			// if external ID is set, the sync status changes to active
 			eventMapper.setSyncStatus(SyncStatus.ACTIVE);
@@ -314,7 +347,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			EventRepresentation event = eventApi.getEvent(GId.asGId(id));
 			return ServiceRequestEventMapper.map2(event);
 		}catch(SDKException e) {
-			log.error("Fetching service request with id: " + id + " failed!", e);
+			log.error("Fetching service request with id: " + id + " failed!");
 		}
 		return null;
 	}
@@ -455,19 +488,21 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		log.debug("Events found for IDs: count= {}", events.size());
 
-		Predicate<EventRepresentation> filterPredicate;
 
-		if(assigned != null && assigned) {
-			filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE) && event.get(ServiceRequestEventMapper.SR_SYNC_STATUS).equals(String.valueOf(SyncStatus.ACTIVE.name()));
-		}else if(assigned != null && !assigned) {
-			filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE) && event.get(ServiceRequestEventMapper.SR_SYNC_STATUS).equals(String.valueOf(SyncStatus.NEW.name()));
-		}else {
-			filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE);
+		if(events.size() > 0 ) {
+			Predicate<EventRepresentation> filterPredicate;
+
+			if(assigned != null && assigned) {
+				filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE) && event.get(ServiceRequestEventMapper.SR_SYNC_STATUS).equals(String.valueOf(SyncStatus.ACTIVE.name()));
+			}else if(assigned != null && !assigned) {
+				filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE) && event.get(ServiceRequestEventMapper.SR_SYNC_STATUS).equals(String.valueOf(SyncStatus.NEW.name()));
+			}else {
+				filterPredicate = event -> event.getType().equals(ServiceRequestEventMapper.EVENT_TYPE);
+			}
+			serviceRequestList= events.stream().filter(filterPredicate).map(event -> {
+				return ServiceRequestEventMapper.map2(event);
+			}).collect(Collectors.toSet());
 		}
-		serviceRequestList= events.stream().filter(filterPredicate).map(event -> {
-			return ServiceRequestEventMapper.map2(event);
-		}).collect(Collectors.toSet());
-
 
 		stopwatch.stop();
 		long ms = stopwatch.elapsed(TimeUnit.MILLISECONDS);
