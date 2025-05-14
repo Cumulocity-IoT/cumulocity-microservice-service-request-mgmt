@@ -117,15 +117,22 @@ If you want to use the [Cumulocity CLI](https://goc8ycli.netlify.app) to create 
 
 [c8y-service-request-cliext](./go-c8y-cli/c8y-service-request-cliext/)
 
+Example commands
+
+Show configured status list in a formatted table
 ```console
 c8y service-request-cliext status list
-
-
-
-
 ```
-# Command:
 
+Configure a defined status list for your tenant
+```console
+c8y service-request-cliext status create --template service-request-cliext::ecStatusList.jsonnet
+```
+
+Create service requests based on active alarms
+```console
+c8y alarms list --status ACTIVE --device iPhone` Alex | c8y service-request-cliext sr create --description "Test"
+```
 
 
 # Priority & Status Configuration
