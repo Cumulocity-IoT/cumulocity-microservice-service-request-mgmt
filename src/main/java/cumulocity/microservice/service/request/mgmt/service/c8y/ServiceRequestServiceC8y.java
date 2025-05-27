@@ -171,6 +171,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 		
 		updateAlarmDataRef(serviceRequestRqBody.getAlarmRef());
+		updateEventDataRef(serviceRequestRqBody.getEventRef());
 
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequestRqBody);
 		eventMapper.setOwner(owner);
@@ -188,7 +189,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			for(ServiceRequestDataRef alarmRef: newServiceRequest.getAlarmRefList()) {
 				updateAlarm(newServiceRequest, alarmRef, srStatus);
 			}
-		};
+		}
+
+		//if(newServiceRequest.getEventRef() != null) {
+		//	log.warn("Event status transition not yet implemented, maybe in future!");
+		//}
 		
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
@@ -756,6 +761,22 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 		if(alarm != null) {
 			alarmRef.setUri(alarm.getSelf());				
+		}
+	}
+
+	private void updateEventDataRef(ServiceRequestDataRef eventRef) {
+		if(eventRef == null || eventRef.getUri() != null) {
+			return;
+		}
+		
+		EventRepresentation event = null;
+		try{
+			event = eventApi.getEvent(GId.asGId(eventRef.getId()));
+		}catch(Exception e){
+			log.error("Fetching event failed!", e);
+		}
+		if(event != null) {
+			eventRef.setUri(event.getSelf());				
 		}
 	}
 }

@@ -3,9 +3,12 @@ package cumulocity.microservice.service.request.mgmt.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-
+/**
+ * ServiceRequestType represents the type of a service request in the Cumulocity IoT Platform.
+ * It can be either an ALARM or a NOTE.
+ */
 public enum ServiceRequestType {
-	ALARM("alarm");
+	ALARM("alarm"), NOTE("note");
 
 	private String value;
 

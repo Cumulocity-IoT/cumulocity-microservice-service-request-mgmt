@@ -1,6 +1,5 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
-import java.security.Provider.Service;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 
-import com.cumulocity.model.JSONBase;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
@@ -61,7 +59,7 @@ public class ServiceRequestEventMapper {
 		mapper.setAlarmRef(new HashSet<>(Set.of(serviceRequest.getAlarmRef())));
 		mapper.setDescription(serviceRequest.getDescription());
 		mapper.setSource(serviceRequest.getSource());
-		mapper.setEventRef(serviceRequest.getEventRef());
+		mapper.setEventRef(new HashSet<>(Set.of(serviceRequest.getEventRef())));
 		mapper.setPriority(serviceRequest.getPriority());
 		mapper.setSeriesRef(serviceRequest.getSeriesRef());
 		mapper.setStatus(serviceRequest.getStatus());
@@ -113,7 +111,8 @@ public class ServiceRequestEventMapper {
 		serviceRequest.setCreationTime(mapper.getCreationDateTime());
 		serviceRequest.setDescription(mapper.getDescription());
 		serviceRequest.setSource(mapper.getSource());
-		serviceRequest.setEventRef(mapper.getEventRef());
+		serviceRequest.setEventRef(mapper.getEventRefList().stream().findFirst().orElse(null));
+		serviceRequest.setEventRefList(mapper.getEventRefList());
 		serviceRequest.setId(mapper.getId());
 		serviceRequest.setLastUpdated(mapper.getLastUpdatedDateTime());
 		serviceRequest.setOwner(mapper.getOwner());
@@ -202,15 +201,34 @@ public class ServiceRequestEventMapper {
 		event.set(owner, SR_OWNER);
 	}
 	
-	public ServiceRequestDataRef getEventRef() {
-		return parseDataRef(event.get(SR_EVENT_REF));
+	public Set<ServiceRequestDataRef> getEventRefList() {
+		Object eventRefObj = event.get(SR_EVENT_REF);
+
+		if(eventRefObj == null) {
+			return null;
+		}
+
+		if(eventRefObj instanceof Collection) {
+			Collection<Object> eventRefColl = (Collection<Object>) eventRefObj;
+			Set<ServiceRequestDataRef> eventRefList = eventRefColl.stream().map(object -> parseDataRef(object)).collect(Collectors.toSet());
+			return eventRefList;
+		}
+
+		return new HashSet(Set.of(parseDataRef(eventRefObj)));
 	}
 	
-	public void setEventRef(ServiceRequestDataRef eventRef) {
-		if(eventRef == null) {
+	public void setEventRef(Set<ServiceRequestDataRef> eventRefList) {
+		if(eventRefList == null || eventRefList.isEmpty()) {
 			return;
 		}
-		event.set(eventRef, SR_EVENT_REF);
+		event.set(eventRefList, SR_EVENT_REF);
+	}
+
+	public Set<ServiceRequestDataRef> addEventRef(ServiceRequestDataRef eventRef) {
+		Set<ServiceRequestDataRef> eventRefSet = getEventRefList();
+		eventRefSet.add(eventRef);
+		setEventRef(eventRefSet);
+		return eventRefSet;
 	}
 	
 	public ServiceRequestSource getSource() {
