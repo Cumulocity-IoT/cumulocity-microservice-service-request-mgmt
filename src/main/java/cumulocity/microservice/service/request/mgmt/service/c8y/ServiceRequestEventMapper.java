@@ -56,10 +56,14 @@ public class ServiceRequestEventMapper {
 		}
 		
 		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper();
-		mapper.setAlarmRef(new HashSet<>(Set.of(serviceRequest.getAlarmRef())));
+		if(serviceRequest.getAlarmRef() != null) {
+			mapper.setAlarmRef(new HashSet<>(Set.of(serviceRequest.getAlarmRef())));
+		}
 		mapper.setDescription(serviceRequest.getDescription());
 		mapper.setSource(serviceRequest.getSource());
-		mapper.setEventRef(new HashSet<>(Set.of(serviceRequest.getEventRef())));
+		if(serviceRequest.getEventRef() != null) {
+			mapper.setEventRef(new HashSet<>(Set.of(serviceRequest.getEventRef())));
+		}
 		mapper.setPriority(serviceRequest.getPriority());
 		mapper.setSeriesRef(serviceRequest.getSeriesRef());
 		mapper.setStatus(serviceRequest.getStatus());
@@ -205,7 +209,7 @@ public class ServiceRequestEventMapper {
 		Object eventRefObj = event.get(SR_EVENT_REF);
 
 		if(eventRefObj == null) {
-			return null;
+			return new HashSet<>();
 		}
 
 		if(eventRefObj instanceof Collection) {
@@ -270,7 +274,7 @@ public class ServiceRequestEventMapper {
 		Object alarmRefObj = event.get(SR_ALARM_REF);
 
 		if(alarmRefObj == null) {
-			return null;
+			return new HashSet<>();
 		}
 
 		if(alarmRefObj instanceof Collection) {

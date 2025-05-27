@@ -47,6 +47,7 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusConfigService;
@@ -79,7 +80,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	
 	public enum ServiceRequestValidationResult {
-		ALARM_NOT_FOUND("Alarm doesn't exists anymore"), ALARM_ASSIGNED("Alarm already assigned to another service request!"), VALID("Service request is valid"), MISSING_ALARM_REF("Alarm reference is missing");
+		ALARM_NOT_FOUND("Alarm doesn't exists anymore"),
+		ALARM_ASSIGNED("Alarm already assigned to another service request!"),
+		VALID("Service request is valid"),
+		MISSING_ALARM_REF("Alarm reference is missing"),
+		MISSING_TYPE("Service Request type is missing or not supported"),
+		MISSING_EVENT_REF("Event reference is missing"),
+		MISSING_SOURCE("Source is missing, service request can't be created without source!"),
+		MISSING_STATUS("Service Request status is missing, service request can't be created without status!"),
+		MISSING_PRIORITY("Service Request priority is missing, service request can't be created without priority!");
 
 		private String message;
 
@@ -110,11 +119,26 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequestValidationResult validateNewServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
-		ServiceRequestDataRef alarmRef = serviceRequestRqBody.getAlarmRef();
-		if(alarmRef == null) {
-			return ServiceRequestValidationResult.MISSING_ALARM_REF;
+
+		if(ServiceRequestType.ALARM == serviceRequestRqBody.getType()) {
+			ServiceRequestDataRef alarmRef = serviceRequestRqBody.getAlarmRef();
+			if(alarmRef == null) {
+				return ServiceRequestValidationResult.MISSING_ALARM_REF;
+			}
+			return validateAlarm(alarmRef);
 		}
-		return validateAlarm(alarmRef);
+		
+		if (ServiceRequestType.NOTE == serviceRequestRqBody.getType()) {
+			ServiceRequestDataRef eventRef = serviceRequestRqBody.getEventRef();
+			if (eventRef == null) {
+				return ServiceRequestValidationResult.MISSING_EVENT_REF;
+			}
+
+			return validateEvent(eventRef);
+		}
+
+		return ServiceRequestValidationResult.MISSING_TYPE;
+
 	}
 
 	@Override
@@ -133,6 +157,21 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		if(srId != null) {
 			return ServiceRequestValidationResult.ALARM_ASSIGNED;
 		}
+		return ServiceRequestValidationResult.VALID;
+	}
+
+	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef eventRef) {
+		EventRepresentation event = null;
+		try{
+			event = eventApi.getEvent(GId.asGId(eventRef.getId()));
+		}catch(Exception e){
+			log.error("Fetching event failed!", e);
+		}
+		
+		if(event == null) {
+			return ServiceRequestValidationResult.MISSING_EVENT_REF;
+		}
+		
 		return ServiceRequestValidationResult.VALID;
 	}
 
