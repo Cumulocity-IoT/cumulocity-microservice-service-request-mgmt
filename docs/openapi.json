@@ -118,6 +118,74 @@
         }
       }
     },
+    "/api/service/request/{serviceRequestId}/event" : {
+      "put" : {
+        "tags" : [ "service-request-controller" ],
+        "summary" : "Add event reference to service request",
+        "description" : "Add event reference to service request",
+        "operationId" : "addEventRefToServiceRequest",
+        "parameters" : [ {
+          "name" : "serviceRequestId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ServiceRequestDataRef"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "412" : {
+            "description" : "Precondition Failed, Event of service request not found!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
+          "200" : {
+            "description" : "Ok",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict, Event already assigned to service request!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/service/request/{serviceRequestId}/alarm" : {
       "put" : {
         "tags" : [ "service-request-controller" ],
@@ -551,6 +619,16 @@
           }
         } ],
         "responses" : {
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
+                }
+              }
+            }
+          },
           "200" : {
             "description" : "Ok",
             "content" : {
@@ -560,16 +638,6 @@
                   "items" : {
                     "$ref" : "#/components/schemas/ServiceRequestComment"
                   }
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
                 }
               }
             }
@@ -925,8 +993,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -935,8 +1003,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1087,8 +1155,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "Ok",
+          "404" : {
+            "description" : "Not found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1100,8 +1168,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not found",
+          "200" : {
+            "description" : "Ok",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1228,7 +1296,7 @@
           "type" : {
             "type" : "string",
             "description" : "Service request type",
-            "enum" : [ "alarm", "note" ]
+            "enum" : [ "alarm", "note", "maintenance" ]
           },
           "status" : {
             "$ref" : "#/components/schemas/ServiceRequestStatus"
@@ -1482,7 +1550,7 @@
           "type" : {
             "type" : "string",
             "description" : "Service request type",
-            "enum" : [ "alarm", "note" ]
+            "enum" : [ "alarm", "note", "maintenance" ]
           },
           "status" : {
             "$ref" : "#/components/schemas/ServiceRequestStatus"

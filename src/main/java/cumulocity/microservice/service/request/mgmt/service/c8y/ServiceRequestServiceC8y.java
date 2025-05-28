@@ -17,6 +17,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.events.Event;
 
 import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
@@ -82,6 +83,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	public enum ServiceRequestValidationResult {
 		ALARM_NOT_FOUND("Alarm doesn't exists anymore"),
 		ALARM_ASSIGNED("Alarm already assigned to another service request!"),
+		EVENT_NOT_FOUND("Event doesn't exists anymore"),
+		EVENT_ASSIGNED("Event already assigned to another service request!"),
 		VALID("Service request is valid"),
 		MISSING_ALARM_REF("Alarm reference is missing"),
 		MISSING_TYPE("Service Request type is missing or not supported"),
@@ -137,6 +140,14 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			return validateEvent(eventRef);
 		}
 
+		if (ServiceRequestType.MAINTENANCE == serviceRequestRqBody.getType()) {
+			ServiceRequestDataRef alarmRef = serviceRequestRqBody.getAlarmRef();
+			if(alarmRef == null) {
+				return ServiceRequestValidationResult.MISSING_ALARM_REF;
+			}
+			return validateAlarm(alarmRef);
+		}
+
 		return ServiceRequestValidationResult.MISSING_TYPE;
 
 	}
@@ -160,6 +171,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		return ServiceRequestValidationResult.VALID;
 	}
 
+	@Override
 	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef eventRef) {
 		EventRepresentation event = null;
 		try{
@@ -169,9 +181,13 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 		
 		if(event == null) {
-			return ServiceRequestValidationResult.MISSING_EVENT_REF;
+			return ServiceRequestValidationResult.EVENT_NOT_FOUND;
 		}
-		
+		Object srId = event.get(EventMapper.SR_EVENT_ID);
+		if (srId != null) {
+			return ServiceRequestValidationResult.EVENT_ASSIGNED;
+			
+		}
 		return ServiceRequestValidationResult.VALID;
 	}
 
@@ -230,9 +246,11 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			}
 		}
 
-		//if(newServiceRequest.getEventRef() != null) {
-		//	log.warn("Event status transition not yet implemented, maybe in future!");
-		//}
+		if(newServiceRequest.getEventRefList() != null) {
+			for(ServiceRequestDataRef eventRef: newServiceRequest.getEventRefList()) {
+				updateEvent(newServiceRequest.getId(), eventRef);
+			}
+		}
 		
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
@@ -760,8 +778,40 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		return updatedServiceRequest;
 	}
 	
+	@Override
+	public ServiceRequest addEventRefToServiceRequest(String serviceRequestId, @Valid ServiceRequestDataRef eventRef) {
+		log.debug("addEventRefToServiceRequest(serviceRequestId: {}, eventRef: {})", serviceRequestId, eventRef);
+		EventRepresentation event = eventApi.getEvent(GId.asGId(serviceRequestId));
+		if( event == null) {
+			log.error("Service Request with id {} not found!", serviceRequestId);
+			return null;
+		}
+
+		updateEventDataRef(eventRef);
+
+		// Update service request with event reference
+		ServiceRequestEventMapper eventMapper = new ServiceRequestEventMapper(event);
+		eventMapper.addEventRef(eventRef);
+
+		ServiceRequestEventMapper updateEventMapper = ServiceRequestEventMapper.map2(serviceRequestId, eventMapper.getEventRefList());
+		EventRepresentation updatedEvent = eventApi.update(updateEventMapper.getEvent());
+		ServiceRequest updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
+
+		createSystemComment("Event " + eventRef.getId() + " reference added", updatedServiceRequest);
+
+		// Update Event
+		updateEvent(serviceRequestId, eventRef);
+
+		return updatedServiceRequest;
+	}
+	
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus) {
 		serviceRequestUpdateService.updateAlarm(serviceRequest, alarmRef, srStatus, userContextService.getContext(), contextService.getContext());
+	}
+
+	private void updateEvent(String serviceRequestId, ServiceRequestDataRef eventRef) {
+		EventMapper eventMapper2 = EventMapper.map2(serviceRequestId, eventRef);
+		eventApi.update(eventMapper2.getEvent());
 	}
 
 	private void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest) {

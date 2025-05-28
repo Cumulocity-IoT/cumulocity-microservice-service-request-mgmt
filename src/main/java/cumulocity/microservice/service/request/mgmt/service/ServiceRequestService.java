@@ -20,6 +20,8 @@ public interface ServiceRequestService {
 
 	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef);
 
+	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef eventRef);
+
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequest, String owner);
 	
 	public ServiceRequest updateServiceRequest(String id, ServiceRequestPatchRqBody serviceRequest);
@@ -41,8 +43,9 @@ public interface ServiceRequestService {
 	public void deleteServiceRequest(String id);
 
 	public int uploadAttachment(Resource resource, String contentType, byte[] fileBytes, String serviceRequestId, boolean overwrites);
-	
-	public EventAttachment downloadAttachment(String serviceRequestId);
+		public EventAttachment downloadAttachment(String serviceRequestId);
 
     public ServiceRequest addAlarmRefToServiceRequest(String serviceRequestId, @Valid ServiceRequestDataRef alarmRef);
+
+    public ServiceRequest addEventRefToServiceRequest(String serviceRequestId, @Valid ServiceRequestDataRef eventRef);
 }

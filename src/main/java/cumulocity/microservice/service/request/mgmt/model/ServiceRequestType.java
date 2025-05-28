@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * It can be either an ALARM or a NOTE.
  */
 public enum ServiceRequestType {
-	ALARM("alarm"), NOTE("note");
+	ALARM("alarm"), NOTE("note"), MAINTENANCE("maintenance");
 
 	private String value;
 

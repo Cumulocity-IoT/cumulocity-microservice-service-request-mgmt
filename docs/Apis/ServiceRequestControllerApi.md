@@ -5,6 +5,7 @@ All URIs are relative to *http://localhost:8080*
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
 | [**addAlarmRefToServiceRequest**](ServiceRequestControllerApi.md#addAlarmRefToServiceRequest) | **PUT** /api/service/request/{serviceRequestId}/alarm | Add alarm reference to service request |
+| [**addEventRefToServiceRequest**](ServiceRequestControllerApi.md#addEventRefToServiceRequest) | **PUT** /api/service/request/{serviceRequestId}/event | Add event reference to service request |
 | [**createServiceRequest**](ServiceRequestControllerApi.md#createServiceRequest) | **POST** /api/service/request | CREATE service request |
 | [**deleteServiceRequestById**](ServiceRequestControllerApi.md#deleteServiceRequestById) | **DELETE** /api/service/request/{serviceRequestId} | DELETE service request by Id |
 | [**downloadServiceRequestAttachment**](ServiceRequestControllerApi.md#downloadServiceRequestAttachment) | **GET** /api/service/request/{serviceRequestId}/attachment | DOWNLOAD attachment for specific service request |
@@ -21,6 +22,34 @@ All URIs are relative to *http://localhost:8080*
 Add alarm reference to service request
 
     Add alarm reference to service request
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **serviceRequestId** | **String**|  | [default to null] |
+| **ServiceRequestDataRef** | [**ServiceRequestDataRef**](../Models/ServiceRequestDataRef.md)|  | |
+
+### Return type
+
+[**ServiceRequest**](../Models/ServiceRequest.md)
+
+### Authorization
+
+[basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+<a name="addEventRefToServiceRequest"></a>
+# **addEventRefToServiceRequest**
+> ServiceRequest addEventRefToServiceRequest(serviceRequestId, ServiceRequestDataRef)
+
+Add event reference to service request
+
+    Add event reference to service request
 
 ### Parameters
 

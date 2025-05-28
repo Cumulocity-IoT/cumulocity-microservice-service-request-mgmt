@@ -82,6 +82,18 @@ public class ServiceRequestController {
 			log.warn(validateNewServiceRequest.getMessage());
 			return new ResponseEntity<ServiceRequest>(HttpStatus.CONFLICT);
 		}
+		if (ServiceRequestValidationResult.MISSING_EVENT_REF.equals(validateNewServiceRequest)) {
+			log.warn(validateNewServiceRequest.getMessage());
+			return new ResponseEntity<ServiceRequest>(HttpStatus.BAD_REQUEST);
+		}
+		if (ServiceRequestValidationResult.EVENT_NOT_FOUND.equals(validateNewServiceRequest)) {
+			log.warn(validateNewServiceRequest.getMessage());
+			return new ResponseEntity<ServiceRequest>(HttpStatus.PRECONDITION_FAILED);
+		}
+		if (ServiceRequestValidationResult.EVENT_ASSIGNED.equals(validateNewServiceRequest)) {
+			log.warn(validateNewServiceRequest.getMessage());
+			return new ResponseEntity<ServiceRequest>(HttpStatus.CONFLICT);
+		}
 		ServiceRequest createServiceRequest = serviceRequestService.createServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
 		if(createServiceRequest == null) {
 			log.warn("Service request creation failed! Data: {}", serviceRequestRqBody);
@@ -205,6 +217,31 @@ public class ServiceRequestController {
 			return new ResponseEntity<ServiceRequest>(HttpStatus.CONFLICT);
 		}
 		ServiceRequest serviceRequest = serviceRequestService.addAlarmRefToServiceRequest(serviceRequestId, alarmRef);
+		if(serviceRequest == null) {
+			return new ResponseEntity<ServiceRequest>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<ServiceRequest>(serviceRequest, HttpStatus.OK);
+	}
+
+	@Operation(summary = "Add event reference to service request", description = "Add event reference to service request", tags = {})
+	@ApiResponses(value = { 
+		@ApiResponse(responseCode = "200", description = "Ok"),
+		@ApiResponse(responseCode = "404", description = "Not Found"),
+		@ApiResponse(responseCode = "409", description = "Conflict, Event already assigned to service request!"),
+		@ApiResponse(responseCode = "412", description = "Precondition Failed, Event of service request not found!")})
+	@PutMapping(path = "/{serviceRequestId}/event", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ServiceRequest> addEventRefToServiceRequest(@PathVariable String serviceRequestId,
+			@Valid @RequestBody ServiceRequestDataRef eventRef) {
+		ServiceRequestValidationResult validateEvent = serviceRequestService.validateEvent(eventRef);
+		if(ServiceRequestValidationResult.EVENT_NOT_FOUND.equals(validateEvent)) {
+			log.warn(validateEvent.getMessage());
+			return new ResponseEntity<ServiceRequest>(HttpStatus.PRECONDITION_FAILED);
+		}
+		if(ServiceRequestValidationResult.EVENT_ASSIGNED.equals(validateEvent)) {
+			log.warn(validateEvent.getMessage());
+			return new ResponseEntity<ServiceRequest>(HttpStatus.CONFLICT);
+		}
+		ServiceRequest serviceRequest = serviceRequestService.addEventRefToServiceRequest(serviceRequestId, eventRef);
 		if(serviceRequest == null) {
 			return new ResponseEntity<ServiceRequest>(HttpStatus.NOT_FOUND);
 		}
