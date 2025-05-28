@@ -757,7 +757,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequestEventMapper eventMapper = new ServiceRequestEventMapper(event);
 		eventMapper.addAlarmRef(alarmRef);
 
-		ServiceRequestEventMapper updateEventMapper = ServiceRequestEventMapper.map2(serviceRequestId, eventMapper.getAlarmRefList());
+		ServiceRequestEventMapper updateEventMapper = ServiceRequestEventMapper.map2Alarm(serviceRequestId, eventMapper.getAlarmRefList());
 		EventRepresentation updatedEvent = eventApi.update(updateEventMapper.getEvent());
 		ServiceRequest updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
 
@@ -793,7 +793,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequestEventMapper eventMapper = new ServiceRequestEventMapper(event);
 		eventMapper.addEventRef(eventRef);
 
-		ServiceRequestEventMapper updateEventMapper = ServiceRequestEventMapper.map2(serviceRequestId, eventMapper.getEventRefList());
+		ServiceRequestEventMapper updateEventMapper = ServiceRequestEventMapper.map2Event(serviceRequestId, eventMapper.getEventRefList());
 		EventRepresentation updatedEvent = eventApi.update(updateEventMapper.getEvent());
 		ServiceRequest updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
 

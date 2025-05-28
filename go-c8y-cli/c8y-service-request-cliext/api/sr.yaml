@@ -252,5 +252,85 @@ commands:
     bodyTemplates:
       - type: jsonnet
         template: "{eventRef: {id: std.get(std.get(input, 'value', {}), 'id')}, title: std.get(std.get(input, 'value', {}), 'text')}"
-
-
+  - name: addAlarm
+    description: Add alarm to service request by ID
+    method: PUT
+    path: service/service-request-mgmt/api/service/request/{id}/alarm
+    pathParameters:
+      - name: id
+        type: string
+        description: Service Request ID
+        pipeline: true
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - sr 
+            - list
+            - --select 
+            - id,title 
+            - --output 
+            - completion
+    body:
+      - name: alarm
+        type: string
+        property: id
+        description: ID of the alarm to be added to the service request
+        required: true
+        pipeline: true
+        pipelineAliases:
+          - id
+        completion:
+          type: external
+          command: 
+            - c8y
+            - alarms 
+            - list
+            - --status
+            - ACTIVE
+            - --select 
+            - id,text 
+            - --output 
+            - completion
+  - name: addEvent
+    description: Add event to service request by ID
+    method: PUT
+    path: service/service-request-mgmt/api/service/request/{id}/event
+    pathParameters:
+      - name: id
+        type: string
+        description: Service Request ID
+        pipeline: true
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - sr 
+            - list
+            - --select 
+            - id,title 
+            - --output 
+            - completion
+    body:
+      - name: event
+        type: string
+        property: id
+        description: ID of the event to be added to the service request
+        required: true
+        pipeline: true
+        pipelineAliases:
+          - id
+        completion:
+          type: external
+          command: 
+            - c8y
+            - events
+            - list
+            - --status
+            - ACTIVE
+            - --select 
+            - id,text
+            - --output
+            - completion

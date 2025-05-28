@@ -92,7 +92,7 @@ public class ServiceRequestEventMapper {
 		
 	}
 
-	public static ServiceRequestEventMapper map2(String id, Set<ServiceRequestDataRef> alarmDataRefs) {
+	public static ServiceRequestEventMapper map2Alarm(String id, Set<ServiceRequestDataRef> alarmDataRefs) {
 		if(alarmDataRefs == null) {
 			return null;
 		}
@@ -102,6 +102,16 @@ public class ServiceRequestEventMapper {
 		return mapper;
 	}
 	
+	public static ServiceRequestEventMapper map2Event(String id, Set<ServiceRequestDataRef> eventDataRefs) {
+		if(eventDataRefs == null) {
+			return null;
+		}
+
+		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper(id);
+		mapper.setEventRef(eventDataRefs);
+		return mapper;
+	}
+
 	public static ServiceRequest map2(EventRepresentation event) {
 		if(event == null) {
 			return null;
