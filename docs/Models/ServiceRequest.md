@@ -13,6 +13,7 @@
 | **alarmRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
 | **alarmRefList** | [**Set**](ServiceRequestDataRef.md) | Cumulocity Alarm reference list | [optional] [default to null] |
 | **eventRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
+| **eventRefList** | [**Set**](ServiceRequestDataRef.md) | Cumulocity Event reference list | [optional] [default to null] |
 | **seriesRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
 | **creationTime** | **Date** | Creation date time | [default to null] |
 | **lastUpdated** | **Date** | Update date time | [default to null] |

@@ -551,16 +551,6 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
-                }
-              }
-            }
-          },
           "200" : {
             "description" : "Ok",
             "content" : {
@@ -570,6 +560,16 @@
                   "items" : {
                     "$ref" : "#/components/schemas/ServiceRequestComment"
                   }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
                 }
               }
             }
@@ -984,8 +984,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -994,8 +994,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1087,8 +1087,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not found",
+          "200" : {
+            "description" : "Ok",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1100,8 +1100,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "Ok",
+          "404" : {
+            "description" : "Not found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1228,7 +1228,7 @@
           "type" : {
             "type" : "string",
             "description" : "Service request type",
-            "enum" : [ "alarm" ]
+            "enum" : [ "alarm", "note" ]
           },
           "status" : {
             "$ref" : "#/components/schemas/ServiceRequestStatus"
@@ -1262,6 +1262,14 @@
           },
           "eventRef" : {
             "$ref" : "#/components/schemas/ServiceRequestDataRef"
+          },
+          "eventRefList" : {
+            "uniqueItems" : true,
+            "type" : "array",
+            "description" : "Cumulocity Event reference list",
+            "items" : {
+              "$ref" : "#/components/schemas/ServiceRequestDataRef"
+            }
           },
           "seriesRef" : {
             "$ref" : "#/components/schemas/ServiceRequestDataRef"
@@ -1474,7 +1482,7 @@
           "type" : {
             "type" : "string",
             "description" : "Service request type",
-            "enum" : [ "alarm" ]
+            "enum" : [ "alarm", "note" ]
           },
           "status" : {
             "$ref" : "#/components/schemas/ServiceRequestStatus"
