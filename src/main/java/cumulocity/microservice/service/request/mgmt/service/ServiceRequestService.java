@@ -12,6 +12,7 @@ import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
 import cumulocity.microservice.service.request.mgmt.service.c8y.EventAttachment;
 import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestServiceC8y.ServiceRequestValidationResult;
 
@@ -32,9 +33,9 @@ public interface ServiceRequestService {
 	
 	public ServiceRequest getServiceRequestById(String id);
 	
-	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy);
+	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type);
 	
-	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy);
+	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type);
 	
 	public Collection<ServiceRequest> getAllServiceRequestBySyncStatus(Boolean assigned);
 

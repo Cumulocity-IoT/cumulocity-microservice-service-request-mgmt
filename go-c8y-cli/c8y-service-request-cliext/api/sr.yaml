@@ -13,10 +13,15 @@ commands:
       - name: sourceId
         description: will filter by device ID
         type: string
+      - name: type
+        type: string
+        description: Type of the service request, e.g. alarm, note
+        default: alarm
       - name: statusList
         description: this query parameter will filter in service request by status, this can take a while
         type: stringcsv[]
       - name: priorityList
+        description: this query parameter will filter in service request by priority, this can take a while
         type: stringcsv[]
   - name: get
     description: Get service request by ID

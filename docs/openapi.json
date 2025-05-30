@@ -73,8 +73,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -83,8 +83,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -362,8 +362,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -372,8 +372,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -410,8 +410,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -420,8 +420,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -515,6 +515,14 @@
           "schema" : {
             "type" : "boolean"
           }
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "description" : "Filter, returns all service request of the type defined. Current supported types are: alarm, note, maintenance, downtime, other",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -545,16 +553,6 @@
           "required" : true
         },
         "responses" : {
-          "201" : {
-            "description" : "Created",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ServiceRequest"
-                }
-              }
-            }
-          },
           "409" : {
             "description" : "Conflict, Alarm already assigned to service request!",
             "content" : {
@@ -567,6 +565,16 @@
           },
           "412" : {
             "description" : "Precondition Failed, Alarm of service request not found!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
+          "201" : {
+            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -619,6 +627,16 @@
           }
         } ],
         "responses" : {
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
+                }
+              }
+            }
+          },
           "200" : {
             "description" : "Ok",
             "content" : {
@@ -628,16 +646,6 @@
                   "items" : {
                     "$ref" : "#/components/schemas/ServiceRequestComment"
                   }
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
                 }
               }
             }
@@ -993,8 +1001,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1003,8 +1011,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1155,8 +1163,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "Ok",
+          "404" : {
+            "description" : "Not found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1168,8 +1176,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not found",
+          "200" : {
+            "description" : "Ok",
             "content" : {
               "application/json" : {
                 "schema" : {

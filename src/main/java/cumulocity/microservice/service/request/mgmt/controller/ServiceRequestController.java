@@ -1,5 +1,7 @@
 package cumulocity.microservice.service.request.mgmt.controller;
 
+import java.util.Arrays;
+
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -27,6 +29,7 @@ import com.cumulocity.microservice.context.credentials.UserCredentials;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
 import cumulocity.microservice.service.request.mgmt.service.c8y.EventAttachment;
 import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestServiceC8y.ServiceRequestValidationResult;
@@ -115,13 +118,13 @@ public class ServiceRequestController {
 			@Parameter(in = ParameterIn.QUERY, description = "Indicates how many entries of the collection shall be returned. The upper limit for one page is 2,000 objects.", schema = @Schema()) @Valid @RequestParam(value = "pageSize", required = false) Integer pageSize,
 			@Parameter(in = ParameterIn.QUERY, description = "The current page of the paginated results.", schema = @Schema()) @Valid @RequestParam(value = "currentPage", required = false) Integer currentPage,
 			@Parameter(in = ParameterIn.QUERY, description = "OrderBy, orders list by status and/or priority and/or timestamp.", schema = @Schema()) @Valid @RequestParam(value = "orderBy", required = false) String[] orderBy,
-			@Parameter(in = ParameterIn.QUERY, description = "When set to true, the returned result will contain in the statistics object the total number of pages. Only applicable on range queries." , schema = @Schema()) @Valid @RequestParam(value = "withTotalPages", required = false) Boolean withTotalPages) {
-		
+			@Parameter(in = ParameterIn.QUERY, description = "When set to true, the returned result will contain in the statistics object the total number of pages. Only applicable on range queries." , schema = @Schema()) @Valid @RequestParam(value = "withTotalPages", required = false) Boolean withTotalPages,
+			@Parameter(in = ParameterIn.QUERY, description = "Filter, returns all service request of the type defined. Current supported types are: alarm, note, maintenance, downtime, other", schema = @Schema()) @Valid @RequestParam(value = "type", required = false) String type) {
 		RequestList<ServiceRequest> serviceRequestByFilter = new RequestList<>();
 		if(all != null && all) {
-			serviceRequestByFilter = serviceRequestService.getAllServiceRequestByFilter(sourceId, pageSize, currentPage, withTotalPages, statusList, priorityList, orderBy);
+			serviceRequestByFilter = serviceRequestService.getAllServiceRequestByFilter(sourceId, pageSize, currentPage, withTotalPages, statusList, priorityList, orderBy, ServiceRequestType.fromValue(type));
 		}else {
-			serviceRequestByFilter = serviceRequestService.getActiveServiceRequestByFilter(sourceId, pageSize, currentPage, withTotalPages, statusList, priorityList, orderBy);
+			serviceRequestByFilter = serviceRequestService.getActiveServiceRequestByFilter(sourceId, pageSize, currentPage, withTotalPages, statusList, priorityList, orderBy, ServiceRequestType.fromValue(type));
 		}
 
 		return new ResponseEntity<RequestList<ServiceRequest>>(serviceRequestByFilter, HttpStatus.OK);
