@@ -16,7 +16,6 @@ commands:
       - name: type
         type: string
         description: Type of the service request, e.g. alarm, note
-        default: alarm
       - name: statusList
         description: this query parameter will filter in service request by status, this can take a while
         type: stringcsv[]
