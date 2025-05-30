@@ -18,9 +18,9 @@ import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestSe
 public interface ServiceRequestService {
 	public ServiceRequestValidationResult validateNewServiceRequest(ServiceRequestPostRqBody serviceRequest, String owner);
 
-	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef);
+	public ServiceRequestValidationResult validateAlarm(ServiceRequestPostRqBody serviceRequestRqBody);
 
-	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef eventRef);
+	public ServiceRequestValidationResult validateEvent(ServiceRequestPostRqBody serviceRequestRqBody);
 
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequest, String owner);
 	

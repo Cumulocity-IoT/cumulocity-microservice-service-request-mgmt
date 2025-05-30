@@ -122,38 +122,46 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequestValidationResult validateNewServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
-
-		if(ServiceRequestType.ALARM == serviceRequestRqBody.getType()) {
-			ServiceRequestDataRef alarmRef = serviceRequestRqBody.getAlarmRef();
-			if(alarmRef == null) {
-				return ServiceRequestValidationResult.MISSING_ALARM_REF;
-			}
-			return validateAlarm(alarmRef);
+		ServiceRequestType type = serviceRequestRqBody.getType();
+		
+		if (type == null) {
+			return ServiceRequestValidationResult.MISSING_TYPE;
 		}
 		
-		if (ServiceRequestType.NOTE == serviceRequestRqBody.getType()) {
-			ServiceRequestDataRef eventRef = serviceRequestRqBody.getEventRef();
-			if (eventRef == null) {
-				return ServiceRequestValidationResult.MISSING_EVENT_REF;
-			}
-
-			return validateEvent(eventRef);
+		switch (type) {
+			case ALARM:
+				return validateAlarm(serviceRequestRqBody);
+			case MAINTENANCE:
+				return validateAlarm(serviceRequestRqBody);
+			case DOWNTIME:
+				return validateAlarm(serviceRequestRqBody);
+			case NOTE:
+				return validateEvent(serviceRequestRqBody);
+			case OTHER:
+				return ServiceRequestValidationResult.VALID;
+			default:
+				return ServiceRequestValidationResult.MISSING_TYPE;
 		}
-
-		if (ServiceRequestType.MAINTENANCE == serviceRequestRqBody.getType()) {
-			ServiceRequestDataRef alarmRef = serviceRequestRqBody.getAlarmRef();
-			if(alarmRef == null) {
-				return ServiceRequestValidationResult.MISSING_ALARM_REF;
-			}
-			return validateAlarm(alarmRef);
-		}
-
-		return ServiceRequestValidationResult.MISSING_TYPE;
-
 	}
 
+	/**
+	 * Validates the alarm reference provided in the service request body.
+	 * Checks if the alarm exists and whether it is already assigned to another service request.
+	 *
+	 * @param serviceRequestRqBody The service request body containing the alarm reference.
+	 * @return A {@link ServiceRequestValidationResult} indicating the validation outcome:
+	 *         - {@code MISSING_ALARM_REF} if the alarm reference is missing.
+	 *         - {@code ALARM_NOT_FOUND} if the alarm does not exist.
+	 *         - {@code ALARM_ASSIGNED} if the alarm is already assigned to another service request.
+	 *         - {@code VALID} if the alarm is valid and not assigned.
+	 */
 	@Override
-	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef) {
+	public ServiceRequestValidationResult validateAlarm(ServiceRequestPostRqBody serviceRequestRqBody) {
+		ServiceRequestDataRef alarmRef = serviceRequestRqBody.getAlarmRef();
+		if(alarmRef == null) {
+			return ServiceRequestValidationResult.MISSING_ALARM_REF;
+		}
+
 		AlarmRepresentation alarm = null;
 		try{
 			alarm = alarmApi.getAlarm(GId.asGId(alarmRef.getId()));
@@ -164,15 +172,23 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		if(alarm == null) {
 			return ServiceRequestValidationResult.ALARM_NOT_FOUND;
 		}
+		// Check if the alarm already has a service request ID associated with it.
+		// If `srId` is not null, it means the alarm is already assigned to another service request.
 		Object srId = alarm.get(AlarmMapper.SR_EVENT_ID);
 		if(srId != null) {
+			// Return validation result indicating the alarm is already assigned.
 			return ServiceRequestValidationResult.ALARM_ASSIGNED;
 		}
 		return ServiceRequestValidationResult.VALID;
 	}
 
 	@Override
-	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef eventRef) {
+	public ServiceRequestValidationResult validateEvent(ServiceRequestPostRqBody serviceRequestRqBody) {
+		ServiceRequestDataRef eventRef = serviceRequestRqBody.getEventRef();
+		if (eventRef == null) {
+			return ServiceRequestValidationResult.MISSING_EVENT_REF;
+		}
+		
 		EventRepresentation event = null;
 		try{
 			event = eventApi.getEvent(GId.asGId(eventRef.getId()));
