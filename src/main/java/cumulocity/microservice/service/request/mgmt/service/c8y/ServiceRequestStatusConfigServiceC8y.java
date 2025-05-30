@@ -166,7 +166,7 @@ public class ServiceRequestStatusConfigServiceC8y implements ServiceRequestStatu
 		status7.setAlarmStatusTransition(CumulocityAlarmStatuses.ACKNOWLEDGED.name());
 		status7.setIsClosedTransition(Boolean.FALSE);
 		status7.setIsDeactivateTransition(Boolean.FALSE);
-		status7.setIsExcludeForCounter(Boolean.TRUE);
+		status7.setIsExcludeForCounter(Boolean.FALSE);
 		status7.setIsInitialStatus(Boolean.FALSE);
 		defaultStatusList.add(status7);
 
@@ -176,7 +176,7 @@ public class ServiceRequestStatusConfigServiceC8y implements ServiceRequestStatu
 		status8.setAlarmStatusTransition(CumulocityAlarmStatuses.ACKNOWLEDGED.name());
 		status8.setIsClosedTransition(Boolean.FALSE);
 		status8.setIsDeactivateTransition(Boolean.FALSE);
-		status8.setIsExcludeForCounter(Boolean.TRUE);
+		status8.setIsExcludeForCounter(Boolean.FALSE);
 		status8.setIsInitialStatus(Boolean.FALSE);
 		defaultStatusList.add(status8);
 

@@ -1,6 +1,5 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
-import java.security.Provider.Service;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 
-import com.cumulocity.model.JSONBase;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
@@ -58,10 +56,14 @@ public class ServiceRequestEventMapper {
 		}
 		
 		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper();
-		mapper.setAlarmRef(new HashSet<>(Set.of(serviceRequest.getAlarmRef())));
+		if(serviceRequest.getAlarmRef() != null) {
+			mapper.setAlarmRef(new HashSet<>(Set.of(serviceRequest.getAlarmRef())));
+		}
 		mapper.setDescription(serviceRequest.getDescription());
 		mapper.setSource(serviceRequest.getSource());
-		mapper.setEventRef(serviceRequest.getEventRef());
+		if(serviceRequest.getEventRef() != null) {
+			mapper.setEventRef(new HashSet<>(Set.of(serviceRequest.getEventRef())));
+		}
 		mapper.setPriority(serviceRequest.getPriority());
 		mapper.setSeriesRef(serviceRequest.getSeriesRef());
 		mapper.setStatus(serviceRequest.getStatus());
@@ -90,7 +92,7 @@ public class ServiceRequestEventMapper {
 		
 	}
 
-	public static ServiceRequestEventMapper map2(String id, Set<ServiceRequestDataRef> alarmDataRefs) {
+	public static ServiceRequestEventMapper map2Alarm(String id, Set<ServiceRequestDataRef> alarmDataRefs) {
 		if(alarmDataRefs == null) {
 			return null;
 		}
@@ -100,6 +102,16 @@ public class ServiceRequestEventMapper {
 		return mapper;
 	}
 	
+	public static ServiceRequestEventMapper map2Event(String id, Set<ServiceRequestDataRef> eventDataRefs) {
+		if(eventDataRefs == null) {
+			return null;
+		}
+
+		ServiceRequestEventMapper mapper = new ServiceRequestEventMapper(id);
+		mapper.setEventRef(eventDataRefs);
+		return mapper;
+	}
+
 	public static ServiceRequest map2(EventRepresentation event) {
 		if(event == null) {
 			return null;
@@ -113,7 +125,8 @@ public class ServiceRequestEventMapper {
 		serviceRequest.setCreationTime(mapper.getCreationDateTime());
 		serviceRequest.setDescription(mapper.getDescription());
 		serviceRequest.setSource(mapper.getSource());
-		serviceRequest.setEventRef(mapper.getEventRef());
+		serviceRequest.setEventRef(mapper.getEventRefList().stream().findFirst().orElse(null));
+		serviceRequest.setEventRefList(mapper.getEventRefList());
 		serviceRequest.setId(mapper.getId());
 		serviceRequest.setLastUpdated(mapper.getLastUpdatedDateTime());
 		serviceRequest.setOwner(mapper.getOwner());
@@ -202,15 +215,34 @@ public class ServiceRequestEventMapper {
 		event.set(owner, SR_OWNER);
 	}
 	
-	public ServiceRequestDataRef getEventRef() {
-		return parseDataRef(event.get(SR_EVENT_REF));
+	public Set<ServiceRequestDataRef> getEventRefList() {
+		Object eventRefObj = event.get(SR_EVENT_REF);
+
+		if(eventRefObj == null) {
+			return new HashSet<>();
+		}
+
+		if(eventRefObj instanceof Collection) {
+			Collection<Object> eventRefColl = (Collection<Object>) eventRefObj;
+			Set<ServiceRequestDataRef> eventRefList = eventRefColl.stream().map(object -> parseDataRef(object)).collect(Collectors.toSet());
+			return eventRefList;
+		}
+
+		return new HashSet(Set.of(parseDataRef(eventRefObj)));
 	}
 	
-	public void setEventRef(ServiceRequestDataRef eventRef) {
-		if(eventRef == null) {
+	public void setEventRef(Set<ServiceRequestDataRef> eventRefList) {
+		if(eventRefList == null || eventRefList.isEmpty()) {
 			return;
 		}
-		event.set(eventRef, SR_EVENT_REF);
+		event.set(eventRefList, SR_EVENT_REF);
+	}
+
+	public Set<ServiceRequestDataRef> addEventRef(ServiceRequestDataRef eventRef) {
+		Set<ServiceRequestDataRef> eventRefSet = getEventRefList();
+		eventRefSet.add(eventRef);
+		setEventRef(eventRefSet);
+		return eventRefSet;
 	}
 	
 	public ServiceRequestSource getSource() {
@@ -252,7 +284,7 @@ public class ServiceRequestEventMapper {
 		Object alarmRefObj = event.get(SR_ALARM_REF);
 
 		if(alarmRefObj == null) {
-			return null;
+			return new HashSet<>();
 		}
 
 		if(alarmRefObj instanceof Collection) {

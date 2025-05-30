@@ -73,8 +73,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -83,8 +83,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -114,6 +114,74 @@
           },
           "404" : {
             "description" : "Not Found"
+          }
+        }
+      }
+    },
+    "/api/service/request/{serviceRequestId}/event" : {
+      "put" : {
+        "tags" : [ "service-request-controller" ],
+        "summary" : "Add event reference to service request",
+        "description" : "Add event reference to service request",
+        "operationId" : "addEventRefToServiceRequest",
+        "parameters" : [ {
+          "name" : "serviceRequestId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ServiceRequestDataRef"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "412" : {
+            "description" : "Precondition Failed, Event of service request not found!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
+          "200" : {
+            "description" : "Ok",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict, Event already assigned to service request!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
           }
         }
       }
@@ -294,8 +362,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -304,8 +372,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -342,8 +410,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -352,8 +420,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -446,6 +514,14 @@
           "required" : false,
           "schema" : {
             "type" : "boolean"
+          }
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "description" : "Filter, returns all service request of the type defined. Current supported types are: alarm, note, maintenance, downtime, other",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -925,8 +1001,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -935,8 +1011,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1228,7 +1304,7 @@
           "type" : {
             "type" : "string",
             "description" : "Service request type",
-            "enum" : [ "alarm" ]
+            "enum" : [ "alarm", "note", "maintenance", "downtime", "other" ]
           },
           "status" : {
             "$ref" : "#/components/schemas/ServiceRequestStatus"
@@ -1262,6 +1338,14 @@
           },
           "eventRef" : {
             "$ref" : "#/components/schemas/ServiceRequestDataRef"
+          },
+          "eventRefList" : {
+            "uniqueItems" : true,
+            "type" : "array",
+            "description" : "Cumulocity Event reference list",
+            "items" : {
+              "$ref" : "#/components/schemas/ServiceRequestDataRef"
+            }
           },
           "seriesRef" : {
             "$ref" : "#/components/schemas/ServiceRequestDataRef"
@@ -1474,7 +1558,7 @@
           "type" : {
             "type" : "string",
             "description" : "Service request type",
-            "enum" : [ "alarm" ]
+            "enum" : [ "alarm", "note", "maintenance", "downtime", "other" ]
           },
           "status" : {
             "$ref" : "#/components/schemas/ServiceRequestStatus"

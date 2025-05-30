@@ -60,7 +60,12 @@ public class ServiceRequest {
 
 	@Schema(description = "Cumulocity Event reference")
 	@Valid
+	@Deprecated(since = "1.4.0", forRemoval = true)
 	private ServiceRequestDataRef eventRef;
+
+	@Schema(description = "Cumulocity Event reference list")
+	@Valid
+	private Set<ServiceRequestDataRef> eventRefList;
 
 	@Schema(description = "Cumulocity Measurement series reference")
 	@Valid

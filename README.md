@@ -131,9 +131,13 @@ c8y service-request-cliext status create --template service-request-cliext::ecSt
 
 Create service requests based on active alarms
 ```console
-c8y alarms list --status ACTIVE --device iPhone` Alex | c8y service-request-cliext sr create --description "Test"
+c8y alarms list --status ACTIVE --device iPhone` Alex | c8y service-request-cliext sr createAlarm --description "Test"
 ```
 
+Create service request based on an event of type note
+```console
+c8y events list --type c8y_SomeEventType --device iPhone` Alex | c8y service-request-cliext sr createNote --description "Test"
+```
 
 # Priority & Status Configuration
 

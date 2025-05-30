@@ -13,10 +13,14 @@ commands:
       - name: sourceId
         description: will filter by device ID
         type: string
+      - name: type
+        type: string
+        description: Type of the service request, e.g. alarm, note
       - name: statusList
         description: this query parameter will filter in service request by status, this can take a while
         type: stringcsv[]
       - name: priorityList
+        description: this query parameter will filter in service request by priority, this can take a while
         type: stringcsv[]
   - name: get
     description: Get service request by ID
@@ -38,7 +42,7 @@ commands:
             - id,title 
             - --output 
             - completion
-  - name: create
+  - name: createAlarm
     description: Create service request
     method: POST
     path: service/service-request-mgmt/api/service/request
@@ -146,5 +150,191 @@ commands:
     bodyTemplates:
       - type: jsonnet
         template: "{alarmRef: {id: std.get(std.get(input, 'value', {}), 'id')}, title: std.get(std.get(input, 'value', {}), 'text')}"
-
-
+  - name: createNote
+    description: Create service request of type note
+    method: POST
+    path: service/service-request-mgmt/api/service/request
+    body:
+      - name: event
+        type: string
+        property: eventRef.id
+        description: ID of the event associated with the service request
+        required: true
+        pipeline: true
+        pipelineAliases:
+          - id
+        completion:
+          type: external
+          command: 
+            - c8y
+            - events
+            - list
+            - --select 
+            - id,text 
+            - --output 
+            - completion
+      - name: device
+        type: string
+        property: source.id
+        pipeline: true
+        pipelineAliases:
+          - source.id
+        description: ID of the source device
+      - name: title
+        type: string
+        property: title
+        description: Title of the service request
+      - name: type
+        type: string
+        property: type
+        default: note
+        description: Type of the service request
+      - name: description
+        type: string
+        property: description
+        description: Description of the service request
+      - name: priorityName
+        type: string
+        property: priority.name
+        description: Priority of the service request
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - priority 
+            - list
+            - --select 
+            - name,ordinal 
+            - --output 
+            - completion
+      - name: priorityOrdinal
+        type: integer
+        property: priority.ordinal
+        description: Priority of the service request
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - priority 
+            - list
+            - --select 
+            - ordinal,name 
+            - --output 
+            - completion
+      - name: statusId
+        type: string
+        property: status.id
+        description: Status of the service request
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - status 
+            - list
+            - --select 
+            - id,name 
+            - --output 
+            - completion
+      - name: statusName
+        type: string
+        property: status.name
+        description: Status of the service request
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - status 
+            - list
+            - --select 
+            - name 
+            - --output 
+            - completion
+    bodyTemplates:
+      - type: jsonnet
+        template: "{eventRef: {id: std.get(std.get(input, 'value', {}), 'id')}, title: std.get(std.get(input, 'value', {}), 'text')}"
+  - name: addAlarm
+    description: Add alarm to service request by ID
+    method: PUT
+    path: service/service-request-mgmt/api/service/request/{id}/alarm
+    pathParameters:
+      - name: id
+        type: string
+        description: Service Request ID
+        pipeline: true
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - sr 
+            - list
+            - --select 
+            - id,title 
+            - --output 
+            - completion
+    body:
+      - name: alarm
+        type: string
+        property: id
+        description: ID of the alarm to be added to the service request
+        required: true
+        pipeline: true
+        pipelineAliases:
+          - id
+        completion:
+          type: external
+          command: 
+            - c8y
+            - alarms 
+            - list
+            - --status
+            - ACTIVE
+            - --select 
+            - id,text 
+            - --output 
+            - completion
+  - name: addEvent
+    description: Add event to service request by ID
+    method: PUT
+    path: service/service-request-mgmt/api/service/request/{id}/event
+    pathParameters:
+      - name: id
+        type: string
+        description: Service Request ID
+        pipeline: true
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - sr 
+            - list
+            - --select 
+            - id,title 
+            - --output 
+            - completion
+    body:
+      - name: event
+        type: string
+        property: id
+        description: ID of the event to be added to the service request
+        required: true
+        pipeline: true
+        pipelineAliases:
+          - id
+        completion:
+          type: external
+          command: 
+            - c8y
+            - events
+            - list
+            - --status
+            - ACTIVE
+            - --select 
+            - id,text
+            - --output
+            - completion
