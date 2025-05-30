@@ -129,13 +129,13 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		
 		switch (type) {
 			case ALARM:
-				return validateAlarm(serviceRequestRqBody);
+				return validateAlarm(serviceRequestRqBody.getAlarmRef());
 			case MAINTENANCE:
-				return validateAlarm(serviceRequestRqBody);
+				return validateAlarm(serviceRequestRqBody.getAlarmRef());
 			case DOWNTIME:
-				return validateAlarm(serviceRequestRqBody);
+				return validateAlarm(serviceRequestRqBody.getAlarmRef());
 			case NOTE:
-				return validateEvent(serviceRequestRqBody);
+				return validateEvent(serviceRequestRqBody.getEventRef());
 			case OTHER:
 				return ServiceRequestValidationResult.VALID;
 			default:
@@ -155,8 +155,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	 *         - {@code VALID} if the alarm is valid and not assigned.
 	 */
 	@Override
-	public ServiceRequestValidationResult validateAlarm(ServiceRequestPostRqBody serviceRequestRqBody) {
-		ServiceRequestDataRef alarmRef = serviceRequestRqBody.getAlarmRef();
+	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef) {
 		if(alarmRef == null) {
 			return ServiceRequestValidationResult.MISSING_ALARM_REF;
 		}
@@ -182,8 +181,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 
 	@Override
-	public ServiceRequestValidationResult validateEvent(ServiceRequestPostRqBody serviceRequestRqBody) {
-		ServiceRequestDataRef eventRef = serviceRequestRqBody.getEventRef();
+	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef eventRef ) {
 		if (eventRef == null) {
 			return ServiceRequestValidationResult.MISSING_EVENT_REF;
 		}
