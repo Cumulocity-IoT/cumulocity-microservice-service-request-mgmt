@@ -73,8 +73,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -83,8 +83,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -362,8 +362,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -372,8 +372,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -410,8 +410,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -420,8 +420,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -545,6 +545,16 @@
           "required" : true
         },
         "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
           "409" : {
             "description" : "Conflict, Alarm already assigned to service request!",
             "content" : {
@@ -557,16 +567,6 @@
           },
           "412" : {
             "description" : "Precondition Failed, Alarm of service request not found!",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ServiceRequest"
-                }
-              }
-            }
-          },
-          "201" : {
-            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1296,7 +1296,7 @@
           "type" : {
             "type" : "string",
             "description" : "Service request type",
-            "enum" : [ "alarm", "note", "maintenance" ]
+            "enum" : [ "alarm", "note", "maintenance", "downtime", "other" ]
           },
           "status" : {
             "$ref" : "#/components/schemas/ServiceRequestStatus"
@@ -1550,7 +1550,7 @@
           "type" : {
             "type" : "string",
             "description" : "Service request type",
-            "enum" : [ "alarm", "note", "maintenance" ]
+            "enum" : [ "alarm", "note", "maintenance", "downtime", "other" ]
           },
           "status" : {
             "$ref" : "#/components/schemas/ServiceRequestStatus"
