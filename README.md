@@ -22,15 +22,15 @@ Following class diagram shows the data model which is implemented by this Micros
 
 ```mermaid
 classDiagram
-    ServiceRequest "*" -- "1" ServiceRequestStatus
-    ServiceRequest "*" -- "1" ServiceRequestPriority
-    ServiceRequest "1" -- "1" ServiceRequestAttachment
-    ServiceRequest "*" -- "1" ServiceRequestSource
-    ServiceRequest "1" -- "*" ServiceRequestComment
-    ServiceRequest -- ServiceRequestDataRef
-    ServiceRequest "1" -- "1" ServiceOrder
-    ServiceRequestComment "*" -- "1" ServiceRequestSource
-    ServiceRequestComment "1" -- "1" ServiceRequestAttachment
+    ServiceRequest "*" --> "1" ServiceRequestStatus
+    ServiceRequest "*" --> "1" ServiceRequestPriority
+    ServiceRequest "1" --> "1" ServiceRequestAttachment
+    ServiceRequest "*" --> "1" ServiceRequestSource
+    ServiceRequest "1" --> "*" ServiceRequestComment
+    ServiceRequest --> ServiceRequestDataRef
+    ServiceRequest "1" --> "1" ServiceOrder
+    ServiceRequestComment "*" --> "1" ServiceRequestSource
+    ServiceRequestComment "1" --> "1" ServiceRequestAttachment
      
     class ServiceRequest{
         +String id
@@ -52,7 +52,6 @@ classDiagram
         +ServiceRequestAttachment attachment
         +ServiceOrder order
         +Map~String,String~ customProperties
-        
     }
 
     class ServiceRequestStatus{
@@ -63,19 +62,23 @@ classDiagram
         +Boolean isClosedTransition
         +Boolean excludeForCounter
     }
+    
     class ServiceRequestPriority{
         +String name
         +Long ordinal
     }
+    
     class ServiceRequestAttachment{
         +String name
         +Long length
         +String type
     }
+    
     class ServiceRequestSource{
         +String id
         +String self
     }
+    
     class ServiceRequestComment{
         +String id
         +String owner
@@ -87,10 +90,12 @@ classDiagram
         +String serviceRequestId
         +ServiceRequestAttachment attachment
     }
+    
     class ServiceRequestDataRef{
         +String id
         +String uri
     }
+    
     class ServiceOrder{
         +String id
         +String priority
