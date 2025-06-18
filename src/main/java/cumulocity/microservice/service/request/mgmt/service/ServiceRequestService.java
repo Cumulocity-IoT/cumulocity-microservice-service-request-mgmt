@@ -12,13 +12,16 @@ import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
 import cumulocity.microservice.service.request.mgmt.service.c8y.EventAttachment;
 import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestServiceC8y.ServiceRequestValidationResult;
 
 public interface ServiceRequestService {
 	public ServiceRequestValidationResult validateNewServiceRequest(ServiceRequestPostRqBody serviceRequest, String owner);
 
-	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef);
+	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef serviceRequestDataRef);
+
+	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef serviceRequestDataRef);
 
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequest, String owner);
 	
@@ -30,9 +33,9 @@ public interface ServiceRequestService {
 	
 	public ServiceRequest getServiceRequestById(String id);
 	
-	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy);
+	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type);
 	
-	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy);
+	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type);
 	
 	public Collection<ServiceRequest> getAllServiceRequestBySyncStatus(Boolean assigned);
 
@@ -41,8 +44,9 @@ public interface ServiceRequestService {
 	public void deleteServiceRequest(String id);
 
 	public int uploadAttachment(Resource resource, String contentType, byte[] fileBytes, String serviceRequestId, boolean overwrites);
-	
-	public EventAttachment downloadAttachment(String serviceRequestId);
+		public EventAttachment downloadAttachment(String serviceRequestId);
 
     public ServiceRequest addAlarmRefToServiceRequest(String serviceRequestId, @Valid ServiceRequestDataRef alarmRef);
+
+    public ServiceRequest addEventRefToServiceRequest(String serviceRequestId, @Valid ServiceRequestDataRef eventRef);
 }

@@ -47,6 +47,7 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusConfigService;
@@ -79,7 +80,17 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	
 	public enum ServiceRequestValidationResult {
-		ALARM_NOT_FOUND("Alarm doesn't exists anymore"), ALARM_ASSIGNED("Alarm already assigned to another service request!"), VALID("Service request is valid"), MISSING_ALARM_REF("Alarm reference is missing");
+		ALARM_NOT_FOUND("Alarm doesn't exists anymore"),
+		ALARM_ASSIGNED("Alarm already assigned to another service request!"),
+		EVENT_NOT_FOUND("Event doesn't exists anymore"),
+		EVENT_ASSIGNED("Event already assigned to another service request!"),
+		VALID("Service request is valid"),
+		MISSING_ALARM_REF("Alarm reference is missing"),
+		MISSING_TYPE("Service Request type is missing or not supported"),
+		MISSING_EVENT_REF("Event reference is missing"),
+		MISSING_SOURCE("Source is missing, service request can't be created without source!"),
+		MISSING_STATUS("Service Request status is missing, service request can't be created without status!"),
+		MISSING_PRIORITY("Service Request priority is missing, service request can't be created without priority!");
 
 		private String message;
 
@@ -110,15 +121,45 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public ServiceRequestValidationResult validateNewServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
-		ServiceRequestDataRef alarmRef = serviceRequestRqBody.getAlarmRef();
+		ServiceRequestType type = serviceRequestRqBody.getType();
+		
+		if (type == null) {
+			return ServiceRequestValidationResult.MISSING_TYPE;
+		}
+		
+		switch (type) {
+			case ALARM:
+				return validateAlarm(serviceRequestRqBody.getAlarmRef());
+			case MAINTENANCE:
+				return validateAlarm(serviceRequestRqBody.getAlarmRef());
+			case DOWNTIME:
+				return validateAlarm(serviceRequestRqBody.getAlarmRef());
+			case NOTE:
+				return validateEvent(serviceRequestRqBody.getEventRef());
+			case OTHER:
+				return ServiceRequestValidationResult.VALID;
+			default:
+				return ServiceRequestValidationResult.MISSING_TYPE;
+		}
+	}
+
+	/**
+	 * Validates the alarm reference provided in the service request body.
+	 * Checks if the alarm exists and whether it is already assigned to another service request.
+	 *
+	 * @param serviceRequestRqBody The service request body containing the alarm reference.
+	 * @return A {@link ServiceRequestValidationResult} indicating the validation outcome:
+	 *         - {@code MISSING_ALARM_REF} if the alarm reference is missing.
+	 *         - {@code ALARM_NOT_FOUND} if the alarm does not exist.
+	 *         - {@code ALARM_ASSIGNED} if the alarm is already assigned to another service request.
+	 *         - {@code VALID} if the alarm is valid and not assigned.
+	 */
+	@Override
+	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef) {
 		if(alarmRef == null) {
 			return ServiceRequestValidationResult.MISSING_ALARM_REF;
 		}
-		return validateAlarm(alarmRef);
-	}
 
-	@Override
-	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef) {
 		AlarmRepresentation alarm = null;
 		try{
 			alarm = alarmApi.getAlarm(GId.asGId(alarmRef.getId()));
@@ -129,9 +170,36 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		if(alarm == null) {
 			return ServiceRequestValidationResult.ALARM_NOT_FOUND;
 		}
+		// Check if the alarm already has a service request ID associated with it.
+		// If `srId` is not null, it means the alarm is already assigned to another service request.
 		Object srId = alarm.get(AlarmMapper.SR_EVENT_ID);
 		if(srId != null) {
+			// Return validation result indicating the alarm is already assigned.
 			return ServiceRequestValidationResult.ALARM_ASSIGNED;
+		}
+		return ServiceRequestValidationResult.VALID;
+	}
+
+	@Override
+	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef eventRef ) {
+		if (eventRef == null) {
+			return ServiceRequestValidationResult.MISSING_EVENT_REF;
+		}
+		
+		EventRepresentation event = null;
+		try{
+			event = eventApi.getEvent(GId.asGId(eventRef.getId()));
+		}catch(Exception e){
+			log.error("Fetching event failed!", e);
+		}
+		
+		if(event == null) {
+			return ServiceRequestValidationResult.EVENT_NOT_FOUND;
+		}
+		Object srId = event.get(EventMapper.SR_EVENT_ID);
+		if (srId != null) {
+			return ServiceRequestValidationResult.EVENT_ASSIGNED;
+			
 		}
 		return ServiceRequestValidationResult.VALID;
 	}
@@ -171,6 +239,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 		
 		updateAlarmDataRef(serviceRequestRqBody.getAlarmRef());
+		updateEventDataRef(serviceRequestRqBody.getEventRef());
 
 		ServiceRequestEventMapper eventMapper = ServiceRequestEventMapper.map2(serviceRequestRqBody);
 		eventMapper.setOwner(owner);
@@ -188,7 +257,13 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			for(ServiceRequestDataRef alarmRef: newServiceRequest.getAlarmRefList()) {
 				updateAlarm(newServiceRequest, alarmRef, srStatus);
 			}
-		};
+		}
+
+		if(newServiceRequest.getEventRefList() != null) {
+			for(ServiceRequestDataRef eventRef: newServiceRequest.getEventRefList()) {
+				updateEvent(newServiceRequest.getId(), eventRef);
+			}
+		}
 		
 		// Update Managed Object
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
@@ -354,10 +429,14 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String sourceId, Integer pageSize,
-			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy) {
+			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type) {
 		log.info("getAllServiceRequestByFilter(sourceId: {}, pageSize: {}, pageNumber: {}, withTotalPages: {}, statusList: {}, priorityList: {}, orderBy: {})", sourceId, pageSize, pageNumber, withTotalPages, statusList, priorityList, orderBy);
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
+		if(type != null) {
+			filter.byFragmentType(ServiceRequestEventMapper.SR_TYPE);
+			filter.byFragmentValue(type.toString());
+		}
 		if (sourceId != null) {
 			filter.bySource(GId.asGId(sourceId));
 			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
@@ -385,7 +464,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String sourceId, Integer pageSize,
-			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy) {
+			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type) {
 		log.info("getActiveServiceRequestByFilter(sourceId: {}, pageSize: {}, pageNumber: {}, withTotalPages: {}, statusList: {}, priorityList: {}, orderBy: {})", sourceId, pageSize, pageNumber, withTotalPages, statusList, priorityList, orderBy);
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
@@ -398,7 +477,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		
 		boolean isStatusFilter = ArrayUtils.isNotEmpty(statusList);
 		boolean isPriorityFilter = ArrayUtils.isNotEmpty(priorityList);
-		if(isStatusFilter || isPriorityFilter) {
+		boolean isTypeFilter = type != null;
+		if(isStatusFilter || isPriorityFilter || isTypeFilter) {
 			Predicate<ServiceRequest> filterPredicate = sr -> sr.getStatus() != null && sr.getPriority() != null;
 			
 			if(isStatusFilter) {
@@ -407,6 +487,10 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			
 			if(isPriorityFilter) {
 				filterPredicate = filterPredicate.and(sr -> ArrayUtils.contains(priorityList, sr.getPriority().getOrdinal()));
+			}
+
+			if(isTypeFilter) {
+				filterPredicate = filterPredicate.and(sr -> sr.getType() != null && sr.getType().equals(type));
 			}
 						
 			return getServiceRequestByFilterAndInternalFilter(filter, filterPredicate, pageSize, pageNumber, withTotalPages, orderBy);
@@ -695,7 +779,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequestEventMapper eventMapper = new ServiceRequestEventMapper(event);
 		eventMapper.addAlarmRef(alarmRef);
 
-		ServiceRequestEventMapper updateEventMapper = ServiceRequestEventMapper.map2(serviceRequestId, eventMapper.getAlarmRefList());
+		ServiceRequestEventMapper updateEventMapper = ServiceRequestEventMapper.map2Alarm(serviceRequestId, eventMapper.getAlarmRefList());
 		EventRepresentation updatedEvent = eventApi.update(updateEventMapper.getEvent());
 		ServiceRequest updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
 
@@ -716,8 +800,40 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		return updatedServiceRequest;
 	}
 	
+	@Override
+	public ServiceRequest addEventRefToServiceRequest(String serviceRequestId, @Valid ServiceRequestDataRef eventRef) {
+		log.debug("addEventRefToServiceRequest(serviceRequestId: {}, eventRef: {})", serviceRequestId, eventRef);
+		EventRepresentation event = eventApi.getEvent(GId.asGId(serviceRequestId));
+		if( event == null) {
+			log.error("Service Request with id {} not found!", serviceRequestId);
+			return null;
+		}
+
+		updateEventDataRef(eventRef);
+
+		// Update service request with event reference
+		ServiceRequestEventMapper eventMapper = new ServiceRequestEventMapper(event);
+		eventMapper.addEventRef(eventRef);
+
+		ServiceRequestEventMapper updateEventMapper = ServiceRequestEventMapper.map2Event(serviceRequestId, eventMapper.getEventRefList());
+		EventRepresentation updatedEvent = eventApi.update(updateEventMapper.getEvent());
+		ServiceRequest updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
+
+		createSystemComment("Event " + eventRef.getId() + " reference added", updatedServiceRequest);
+
+		// Update Event
+		updateEvent(serviceRequestId, eventRef);
+
+		return updatedServiceRequest;
+	}
+	
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus) {
 		serviceRequestUpdateService.updateAlarm(serviceRequest, alarmRef, srStatus, userContextService.getContext(), contextService.getContext());
+	}
+
+	private void updateEvent(String serviceRequestId, ServiceRequestDataRef eventRef) {
+		EventMapper eventMapper2 = EventMapper.map2(serviceRequestId, eventRef);
+		eventApi.update(eventMapper2.getEvent());
 	}
 
 	private void createCommentForStatusChange(String prefix, ServiceRequest serviceRequest) {
@@ -756,6 +872,22 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 		if(alarm != null) {
 			alarmRef.setUri(alarm.getSelf());				
+		}
+	}
+
+	private void updateEventDataRef(ServiceRequestDataRef eventRef) {
+		if(eventRef == null || eventRef.getUri() != null) {
+			return;
+		}
+		
+		EventRepresentation event = null;
+		try{
+			event = eventApi.getEvent(GId.asGId(eventRef.getId()));
+		}catch(Exception e){
+			log.error("Fetching event failed!", e);
+		}
+		if(event != null) {
+			eventRef.setUri(event.getSelf());				
 		}
 	}
 }
