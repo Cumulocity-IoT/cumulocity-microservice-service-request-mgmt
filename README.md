@@ -18,7 +18,7 @@ The device IoT data needed for smart field service use cases varies significantl
 
 This microservice provides a domain-specific API & Model for service requests.
 
-The following class diagram shows the data model implemented by this Microservice. These classes and identifiers are inspired by FSM but can also be used for an ITS—in that case, handle ServiceRequest as Issue or Ticket.
+The following class diagram shows the data model implemented by this Microservice. These classes and identifiers are inspired by FSM System but can also be perfectly used for an ITS, in that case, handle ServiceRequest as Issue or Ticket.
 
 ```mermaid
 classDiagram
@@ -230,7 +230,7 @@ The property `isSynchronisationActive` defines whether the service request gets 
 
 ## Option 1: Proxy Object Implementation (asynchronous)
 
-As mentioned above, all objects like Service Request, Comments, etc., are stored and managed in Cumulocity IoT. Synchronization of this data to FSM/ITS data must be implemented in an additional component. This can be done with a frequently running job (polling) or event-based using the Cumulocity notification API. All IoT data needed for FSM/ITS systems is requested via the Cumulocity standard API. Which IoT data is needed is highly dependent on the use case and must be implemented in the Adapter. If the FSM/ITS also provides an event-based mechanism, this should be used for updating Service Request status, etc..
+As mentioned above, all objects like Service Request, Comments, etc., are stored as Events in Cumulocity IoT. Synchronization of this data to FSM/ITS data must be implemented in an additional component. This can be done with a frequently running job (polling) or event-based using the Cumulocity notification API. All IoT data needed for FSM/ITS systems is requested via the Cumulocity standard API. Which IoT data is needed is highly dependent on the use case and must be implemented in the Adapter. If the FSM/ITS also provides an event-based mechanism, this should be used for updating Service Request status, etc..
 
 ![Service Request Component Diagram](./docs/service-request-component-diagram.png)
 
