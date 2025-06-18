@@ -22,15 +22,15 @@ The following class diagram shows the data model implemented by this Microservic
 
 ```mermaid
 classDiagram
-    ServiceRequest "*" --> "1" ServiceRequestStatus
-    ServiceRequest "*" --> "1" ServiceRequestPriority
-    ServiceRequest "1" --> "1" ServiceRequestAttachment
-    ServiceRequest "*" --> "1" ServiceRequestSource
-    ServiceRequest "1" --> "*" ServiceRequestComment
-    ServiceRequest --> ServiceRequestDataRef
-    ServiceRequest "1" --> "1" ServiceOrder
-    ServiceRequestComment "*" --> "1" ServiceRequestSource
-    ServiceRequestComment "1" --> "1" ServiceRequestAttachment
+    ServiceRequest "*" *-- "1" ServiceRequestStatus
+    ServiceRequest "*" *-- "1" ServiceRequestPriority
+    ServiceRequest "1" *-- "1" ServiceRequestAttachment
+    ServiceRequest "*" *-- "1" ServiceRequestSource
+    ServiceRequest "1" *-- "*" ServiceRequestComment
+    ServiceRequest *-- ServiceRequestDataRef
+    ServiceRequest "1" *-- "1" ServiceOrder
+    ServiceRequestComment "*" *-- "1" ServiceRequestSource
+    ServiceRequestComment "1" *-- "1" ServiceRequestAttachment
      
     class ServiceRequest{
         +String id
