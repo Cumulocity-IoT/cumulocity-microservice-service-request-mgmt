@@ -119,12 +119,19 @@ public class ServiceRequestController {
 			@Parameter(in = ParameterIn.QUERY, description = "The current page of the paginated results.", schema = @Schema()) @Valid @RequestParam(value = "currentPage", required = false) Integer currentPage,
 			@Parameter(in = ParameterIn.QUERY, description = "OrderBy, orders list by status and/or priority and/or timestamp.", schema = @Schema()) @Valid @RequestParam(value = "orderBy", required = false) String[] orderBy,
 			@Parameter(in = ParameterIn.QUERY, description = "When set to true, the returned result will contain in the statistics object the total number of pages. Only applicable on range queries." , schema = @Schema()) @Valid @RequestParam(value = "withTotalPages", required = false) Boolean withTotalPages,
-			@Parameter(in = ParameterIn.QUERY, description = "Filter, returns all service request of the type defined. Current supported types are: alarm, note, maintenance, downtime, other", schema = @Schema()) @Valid @RequestParam(value = "type", required = false) String type) {
+			@Parameter(in = ParameterIn.QUERY, description = "Filter, returns all service request of the type defined. Current supported types are: alarm, note, maintenance, downtime, other", schema = @Schema()) @Valid @RequestParam(value = "type", required = false) String type,
+			@Parameter(in = ParameterIn.QUERY, description = "Filter, returns all service request with source assets", schema = @Schema()) @Valid @RequestParam(value = "withSourceAssets", required = false) Boolean withSourceAssets,
+			@Parameter(in = ParameterIn.QUERY, description = "Filter, returns all service request with source devices", schema = @Schema()) @Valid @RequestParam(value = "withSourceDevices", required = false) Boolean withSourceDevices) {
 		RequestList<ServiceRequest> serviceRequestByFilter = new RequestList<>();
+
+		// set default values for withSourceAssets and withSourceDevices, default behavior is to return service requests with source assets and devices
+		withSourceAssets = withSourceAssets == null ? true : withSourceAssets;
+		withSourceDevices = withSourceDevices == null ? true : withSourceDevices;
+
 		if(all != null && all) {
-			serviceRequestByFilter = serviceRequestService.getAllServiceRequestByFilter(sourceId, pageSize, currentPage, withTotalPages, statusList, priorityList, orderBy, ServiceRequestType.fromValue(type));
+			serviceRequestByFilter = serviceRequestService.getAllServiceRequestByFilter(sourceId, pageSize, currentPage, withTotalPages, statusList, priorityList, orderBy, ServiceRequestType.fromValue(type), withSourceAssets, withSourceDevices);
 		}else {
-			serviceRequestByFilter = serviceRequestService.getActiveServiceRequestByFilter(sourceId, pageSize, currentPage, withTotalPages, statusList, priorityList, orderBy, ServiceRequestType.fromValue(type));
+			serviceRequestByFilter = serviceRequestService.getActiveServiceRequestByFilter(sourceId, pageSize, currentPage, withTotalPages, statusList, priorityList, orderBy, ServiceRequestType.fromValue(type), withSourceAssets, withSourceDevices);
 		}
 
 		return new ResponseEntity<RequestList<ServiceRequest>>(serviceRequestByFilter, HttpStatus.OK);

@@ -523,6 +523,22 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "name" : "withSourceAssets",
+          "in" : "query",
+          "description" : "Filter, returns all service request with source assets",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "withSourceDevices",
+          "in" : "query",
+          "description" : "Filter, returns all service request with source devices",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -563,8 +579,8 @@
               }
             }
           },
-          "412" : {
-            "description" : "Precondition Failed, Alarm of service request not found!",
+          "201" : {
+            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -573,8 +589,8 @@
               }
             }
           },
-          "201" : {
-            "description" : "Created",
+          "412" : {
+            "description" : "Precondition Failed, Alarm of service request not found!",
             "content" : {
               "application/json" : {
                 "schema" : {

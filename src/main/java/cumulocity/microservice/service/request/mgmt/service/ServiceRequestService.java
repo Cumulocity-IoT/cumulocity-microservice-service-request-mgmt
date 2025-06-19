@@ -33,10 +33,10 @@ public interface ServiceRequestService {
 	
 	public ServiceRequest getServiceRequestById(String id);
 	
-	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type);
-	
-	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type);
-	
+	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type, Boolean withSourceAssets, Boolean withSourceDevices);
+
+	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String deviceId, Integer pageSize, Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type, Boolean withSourceAssets, Boolean withSourceDevices);
+
 	public Collection<ServiceRequest> getAllServiceRequestBySyncStatus(Boolean assigned);
 
 	public Collection<ServiceRequest> getAllServiceRequestBySyncStatus(Boolean assigned, String[] serviceRequestIds);

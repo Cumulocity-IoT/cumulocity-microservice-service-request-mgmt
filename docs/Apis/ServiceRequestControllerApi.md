@@ -181,7 +181,7 @@ GET service request by Id
 
 <a name="getServiceRequestList"></a>
 # **getServiceRequestList**
-> RequestListServiceRequest getServiceRequestList(sourceId, statusList, priorityList, all, pageSize, currentPage, orderBy, withTotalPages, type)
+> RequestListServiceRequest getServiceRequestList(sourceId, statusList, priorityList, all, pageSize, currentPage, orderBy, withTotalPages, type, withSourceAssets, withSourceDevices)
 
 GET service request list
 
@@ -200,6 +200,8 @@ GET service request list
 | **orderBy** | [**List**](../Models/String.md)| OrderBy, orders list by status and/or priority and/or timestamp. | [optional] [default to null] |
 | **withTotalPages** | **Boolean**| When set to true, the returned result will contain in the statistics object the total number of pages. Only applicable on range queries. | [optional] [default to null] |
 | **type** | **String**| Filter, returns all service request of the type defined. Current supported types are: alarm, note, maintenance, downtime, other | [optional] [default to null] |
+| **withSourceAssets** | **Boolean**| Filter, returns all service request with source assets | [optional] [default to null] |
+| **withSourceDevices** | **Boolean**| Filter, returns all service request with source devices | [optional] [default to null] |
 
 ### Return type
 
