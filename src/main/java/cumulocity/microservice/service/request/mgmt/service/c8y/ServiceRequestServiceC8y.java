@@ -429,8 +429,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public RequestList<ServiceRequest> getAllServiceRequestByFilter(String sourceId, Integer pageSize,
-			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type) {
-		log.info("getAllServiceRequestByFilter(sourceId: {}, pageSize: {}, pageNumber: {}, withTotalPages: {}, statusList: {}, priorityList: {}, orderBy: {})", sourceId, pageSize, pageNumber, withTotalPages, statusList, priorityList, orderBy);
+			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type, Boolean withSourceAssets, Boolean withSourceDevices) {
+		log.info("getAllServiceRequestByFilter(sourceId: {}, pageSize: {}, pageNumber: {}, withTotalPages: {}, statusList: {}, priorityList: {}, orderBy: {}, withSourceAssets: {}, withSourceDevices: {})", sourceId, pageSize, pageNumber, withTotalPages, statusList, priorityList, orderBy, withSourceAssets, withSourceDevices);
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		if(type != null) {
@@ -439,7 +439,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 		if (sourceId != null) {
 			filter.bySource(GId.asGId(sourceId));
-			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
+			filter.setWithSourceAssets(withSourceAssets).setWithSourceDevices(withSourceDevices);
 		}
 		boolean isStatusFilter = ArrayUtils.isNotEmpty(statusList);
 		boolean isPriorityFilter = ArrayUtils.isNotEmpty(priorityList);
@@ -464,15 +464,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Override
 	public RequestList<ServiceRequest> getActiveServiceRequestByFilter(String sourceId, Integer pageSize,
-			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type) {
-		log.info("getActiveServiceRequestByFilter(sourceId: {}, pageSize: {}, pageNumber: {}, withTotalPages: {}, statusList: {}, priorityList: {}, orderBy: {})", sourceId, pageSize, pageNumber, withTotalPages, statusList, priorityList, orderBy);
+			Integer pageNumber, Boolean withTotalPages, String[] statusList, Long[] priorityList, String[] orderBy, ServiceRequestType type, Boolean withSourceAssets, Boolean withSourceDevices) {
+		log.info("getActiveServiceRequestByFilter(sourceId: {}, pageSize: {}, pageNumber: {}, withTotalPages: {}, statusList: {}, priorityList: {}, orderBy: {}, withSourceAssets: {}, withSourceDevices: {})", sourceId, pageSize, pageNumber, withTotalPages, statusList, priorityList, orderBy, withSourceAssets, withSourceDevices);
 		EventFilterExtend filter = new EventFilterExtend();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE);
 		filter.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE);
 		filter.byFragmentValue(Boolean.TRUE.toString());
 		if (sourceId != null) {
 			filter.bySource(GId.asGId(sourceId));
-			filter.setWithSourceAssets(Boolean.TRUE).setWithSourceDevices(Boolean.TRUE);
+			filter.setWithSourceAssets(withSourceAssets).setWithSourceDevices(withSourceDevices);
 		}
 		
 		boolean isStatusFilter = ArrayUtils.isNotEmpty(statusList);
