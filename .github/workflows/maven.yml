@@ -17,11 +17,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-      C8Y_HOST: '${{ secrets.C8Y_HOST }}'
-      C8Y_USER: '${{ secrets.C8Y_USER }}'
-      C8Y_PASSWORD: '${{ secrets.C8Y_PASSWORD }}'
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
@@ -32,14 +27,6 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-    - name: Set artifact filename
-      run: |
-        cd target
-        echo "artifact_filename=$(ls | grep .zip)" >> $GITHUB_ENV
-    - name: Deploy to test environment
-      uses: reubenmiller/setup-go-c8y-cli@main
-    - run: |
-        c8y microservice create --file target/${{ env.artifact_filename }}
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
