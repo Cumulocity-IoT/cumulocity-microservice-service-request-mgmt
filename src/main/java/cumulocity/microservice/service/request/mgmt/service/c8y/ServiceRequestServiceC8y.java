@@ -133,7 +133,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			case MAINTENANCE:
 				return validateAlarm(serviceRequestRqBody.getAlarmRef());
 			case DOWNTIME:
-				return validateAlarm(serviceRequestRqBody.getAlarmRef());
+				// Decision to use no reference for downtime service requests!
+				return ServiceRequestValidationResult.VALID;
 			case NOTE:
 				return validateEvent(serviceRequestRqBody.getEventRef());
 			case OTHER:
