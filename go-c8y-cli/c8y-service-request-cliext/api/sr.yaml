@@ -22,6 +22,9 @@ commands:
       - name: priorityList
         description: this query parameter will filter in service request by priority, this can take a while
         type: stringcsv[]
+      - name: all
+        description: if set to true, it will return all service requests, otherwise it will return only active service requests
+        type: boolean
   - name: get
     description: Get service request by ID
     method: GET
