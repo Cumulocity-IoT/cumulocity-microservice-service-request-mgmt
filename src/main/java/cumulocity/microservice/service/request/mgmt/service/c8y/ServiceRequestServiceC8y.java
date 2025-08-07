@@ -396,12 +396,14 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				//track status changes as system comment
 				createCommentForStatusChange("Updated Status", updatedServiceRequest);
 
-				// Alarm status transition, udate all alarms
-				for (ServiceRequestDataRef alarmRef : updatedServiceRequest.getAlarmRefList()) {
-					updateAlarm(updatedServiceRequest, alarmRef, srStatus);
+				// Alarm status transition, update all alarms
+				if(updatedServiceRequest.getAlarmRefList() != null) {
+					for (ServiceRequestDataRef alarmRef : updatedServiceRequest.getAlarmRefList()) {
+						updateAlarm(updatedServiceRequest, alarmRef, srStatus);
+					}
 				}
 			}
-			
+
 			//if service request is closed all comments must also be set to closed
 			if(updatedServiceRequest.getIsClosed()) {
 				updateAllCommentsToClosed(updatedServiceRequest);
