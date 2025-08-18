@@ -426,3 +426,39 @@ commands:
             - id,text
             - --output
             - completion
+  - name: updateStatus
+    description: Update status of service request by ID
+    method: PUT
+    path: service/service-request-mgmt/api/adapter/service/request/{serviceRequestId}/status
+    pathParameters:
+      - name: serviceRequestId
+        type: string
+        description: Service Request ID
+        pipeline: true
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - sr 
+            - list
+            - --select 
+            - id,title 
+            - --output 
+            - completion
+    body:
+      - name: id
+        type: string
+        description: New status of the service request
+        required: true
+        completion:
+          type: external
+          command:
+            - c8y
+            - service-request-cliext
+            - status
+            - list
+            - --select
+            - id,name
+            - --output
+            - completion
