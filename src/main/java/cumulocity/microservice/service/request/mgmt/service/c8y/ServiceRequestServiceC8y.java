@@ -643,7 +643,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			Predicate<ServiceRequest> serviceRequestFilter, Integer pageSize, Integer pageNumber,
 			Boolean withTotalPages, final String[] orderBy) {
 		
-		pageNumber = pageNumber != null ? pageNumber : 0;
+		pageNumber = pageNumber != null ? pageNumber : 1;
 		pageSize = pageSize != null ? pageSize : 5;
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
 
@@ -676,17 +676,19 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			return requestList;
 		}
 
+		int totalPages = pages.size()-1;// -1 because page 0 is dummy page
+
 		if(pages.size() > pageNumber) {
 			currentPage = pages.get(pageNumber);
 		}else {
-			log.warn("Page number {} exceeds pages {} !", pageNumber, pages.size());
+			log.warn("Page number {} exceeds pages {} !", pageNumber, totalPages);
 		}
 		
 		RequestList<ServiceRequest> requestList = new RequestList<>();
 		requestList.setCurrentPage(pageNumber);
 		requestList.setList(currentPage);
 		requestList.setPageSize(pageSize);
-		requestList.setTotalPages(pages.size());
+		requestList.setTotalPages(totalPages);
 		requestList.setTotalElements(Long.valueOf(serviceRequestList.size()));
 		return requestList;
 	}
