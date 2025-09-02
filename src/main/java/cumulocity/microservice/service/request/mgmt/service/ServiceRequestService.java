@@ -6,6 +6,8 @@ import javax.validation.Valid;
 
 import org.springframework.core.io.Resource;
 
+import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
+
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
@@ -19,7 +21,7 @@ import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestSe
 public interface ServiceRequestService {
 	public ServiceRequestValidationResult validateNewServiceRequest(ServiceRequestPostRqBody serviceRequest, String owner);
 
-	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef serviceRequestDataRef);
+	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef serviceRequestDataRef, String alarmJsonString);
 
 	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef serviceRequestDataRef);
 

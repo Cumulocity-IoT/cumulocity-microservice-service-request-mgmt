@@ -28,6 +28,7 @@ import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.cumulocity.sdk.client.PagingParam;
 import com.cumulocity.sdk.client.QueryParam;
+import com.cumulocity.sdk.client.RestConnector;
 import com.cumulocity.sdk.client.SDKException;
 import com.cumulocity.sdk.client.alarm.AlarmApi;
 import com.cumulocity.sdk.client.event.EventApi;
@@ -78,6 +79,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	private ContextService<UserCredentials> userContextService;
 
+	private RawTextApi rawTextApi;
+
 	
 	public enum ServiceRequestValidationResult {
 		ALARM_NOT_FOUND("Alarm doesn't exists anymore"),
@@ -106,7 +109,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Autowired
 	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
-			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService, ServiceRequestUpdateService serviceRequestUpdateService, ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService, ServiceRequestPriorityServiceC8y serviceRequestPriorityServiceC8y) {
+			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService, ServiceRequestUpdateService serviceRequestUpdateService, ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService, ServiceRequestPriorityServiceC8y serviceRequestPriorityServiceC8y, RawTextApi rawTextApi) {
 		this.eventApi = eventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
@@ -117,6 +120,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		this.contextService = contextService;
 		this.userContextService = userContextService;
 		this.serviceRequestPriorityServiceC8y = serviceRequestPriorityServiceC8y;
+		this.rawTextApi = rawTextApi;
 	}
 
 	@Override
@@ -129,9 +133,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		
 		switch (type) {
 			case ALARM:
-				return validateAlarm(serviceRequestRqBody.getAlarmRef());
+				return validateAlarm(serviceRequestRqBody.getAlarmRef(), serviceRequestRqBody.getAlarm());
 			case MAINTENANCE:
-				return validateAlarm(serviceRequestRqBody.getAlarmRef());
+				return validateAlarm(serviceRequestRqBody.getAlarmRef(), serviceRequestRqBody.getAlarm());
 			case DOWNTIME:
 				// Decision to use no reference for downtime service requests!
 				return ServiceRequestValidationResult.VALID;
@@ -156,17 +160,23 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	 *         - {@code VALID} if the alarm is valid and not assigned.
 	 */
 	@Override
-	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef) {
-		if(alarmRef == null) {
+	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef, String alarmJsonString) {
+		if(alarmRef == null && alarmJsonString == null) {
 			return ServiceRequestValidationResult.MISSING_ALARM_REF;
 		}
 
+		if(alarmJsonString != null) {
+			return ServiceRequestValidationResult.VALID;
+		}
+
 		AlarmRepresentation alarm = null;
+
 		try{
 			alarm = alarmApi.getAlarm(GId.asGId(alarmRef.getId()));
 		}catch(Exception e){
 			log.error("Fetching alarm failed!", e);
 		}
+
 		
 		if(alarm == null) {
 			return ServiceRequestValidationResult.ALARM_NOT_FOUND;
@@ -208,6 +218,12 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	@Override
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequestRqBody, String owner) {
 		log.info("createServiceRequest(serviceRequestRqBody {}, owner {})", serviceRequestRqBody.toString(), owner);
+
+		if(serviceRequestRqBody.getAlarm() != null)	{
+			AlarmRepresentation createdAlarm = rawTextApi.createAlarm(serviceRequestRqBody.getAlarm());
+			serviceRequestRqBody.setAlarmRef(new ServiceRequestDataRef(createdAlarm.getId().getValue()));
+			serviceRequestRqBody.setAlarm(null);
+		}
 
 		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
 		List<String> excludeList = new ArrayList<>();

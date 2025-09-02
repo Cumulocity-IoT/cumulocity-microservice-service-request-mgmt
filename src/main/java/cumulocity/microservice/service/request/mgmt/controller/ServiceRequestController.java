@@ -217,7 +217,7 @@ public class ServiceRequestController {
 	@PutMapping(path = "/{serviceRequestId}/alarm", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequest> addAlarmRefToServiceRequest(@PathVariable String serviceRequestId,
 			@Valid @RequestBody ServiceRequestDataRef alarmRef) {
-		ServiceRequestValidationResult validateAlarm = serviceRequestService.validateAlarm(alarmRef);
+		ServiceRequestValidationResult validateAlarm = serviceRequestService.validateAlarm(alarmRef, null);
 		if(ServiceRequestValidationResult.ALARM_NOT_FOUND.equals(validateAlarm)) {
 			log.warn(validateAlarm.getMessage());
 			return new ResponseEntity<ServiceRequest>(HttpStatus.PRECONDITION_FAILED);
