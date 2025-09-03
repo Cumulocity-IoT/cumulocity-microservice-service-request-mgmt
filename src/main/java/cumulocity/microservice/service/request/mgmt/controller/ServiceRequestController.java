@@ -99,7 +99,7 @@ public class ServiceRequestController {
 		}
 		ServiceRequest createServiceRequest = serviceRequestService.createServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
 		if(createServiceRequest == null) {
-			log.warn("Service request creation failed! Data: {}", serviceRequestRqBody);
+			log.warn("Service request creation failed! Request body can't be processed: {}", serviceRequestRqBody);
 			return new ResponseEntity<ServiceRequest>(HttpStatus.BAD_REQUEST);
 		}
 		

@@ -93,7 +93,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		MISSING_EVENT_REF("Event reference is missing"),
 		MISSING_SOURCE("Source is missing, service request can't be created without source!"),
 		MISSING_STATUS("Service Request status is missing, service request can't be created without status!"),
-		MISSING_PRIORITY("Service Request priority is missing, service request can't be created without priority!");
+		MISSING_PRIORITY("Service Request priority is missing, service request can't be created without priority!"),
+		ALARM_MUTUALLY_EXCLUSIVE("Alarm reference must be mutually exclusive. Set alarm or alarm reference, not both!"),
+		EVENT_MUTUALLY_EXCLUSIVE("Event reference must be mutually exclusive. Set event or event reference, not both!");
 
 		private String message;
 
@@ -140,7 +142,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				// Decision to use no reference for downtime service requests!
 				return ServiceRequestValidationResult.VALID;
 			case NOTE:
-				return validateEvent(serviceRequestRqBody.getEventRef());
+				return validateEvent(serviceRequestRqBody.getEventRef(), serviceRequestRqBody.getEvent());
 			case OTHER:
 				return ServiceRequestValidationResult.VALID;
 			default:
@@ -163,6 +165,10 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef alarmRef, String alarmJsonString) {
 		if(alarmRef == null && alarmJsonString == null) {
 			return ServiceRequestValidationResult.MISSING_ALARM_REF;
+		}
+
+		if(alarmRef != null && alarmJsonString != null) {
+			return ServiceRequestValidationResult.ALARM_MUTUALLY_EXCLUSIVE;
 		}
 
 		if(alarmJsonString != null) {
@@ -192,9 +198,17 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 
 	@Override
-	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef eventRef ) {
-		if (eventRef == null) {
+	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef eventRef, String eventJsonString) {
+		if (eventRef == null && eventJsonString == null) {
 			return ServiceRequestValidationResult.MISSING_EVENT_REF;
+		}
+
+		if (eventRef != null && eventJsonString != null) {
+			return ServiceRequestValidationResult.EVENT_MUTUALLY_EXCLUSIVE;
+		}
+
+		if(eventJsonString != null) {
+			return ServiceRequestValidationResult.VALID;
 		}
 		
 		EventRepresentation event = null;
@@ -221,8 +235,22 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		if(serviceRequestRqBody.getAlarm() != null)	{
 			AlarmRepresentation createdAlarm = rawTextApi.createAlarm(serviceRequestRqBody.getAlarm());
+			if(createdAlarm == null) {
+				log.debug("Creating alarm from json failed! Service Request can't be created!");
+				return null;
+			}
 			serviceRequestRqBody.setAlarmRef(new ServiceRequestDataRef(createdAlarm.getId().getValue()));
 			serviceRequestRqBody.setAlarm(null);
+		}
+
+		if(serviceRequestRqBody.getEvent() != null) {
+			EventRepresentation createdEvent = rawTextApi.createEvent(serviceRequestRqBody.getEvent());
+			if(createdEvent == null) {
+				log.debug("Creating event from json failed! Service Request can't be created!");
+				return null;
+			}
+			serviceRequestRqBody.setEventRef(new ServiceRequestDataRef(createdEvent.getId().getValue()));
+			serviceRequestRqBody.setEvent(null);
 		}
 
 		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();

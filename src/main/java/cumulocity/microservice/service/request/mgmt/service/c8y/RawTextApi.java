@@ -14,21 +14,20 @@ import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 import com.cumulocity.rest.representation.event.EventRepresentation;
-import com.cumulocity.sdk.client.RestConnector;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class RawTextApi {
 	private ContextService<MicroserviceCredentials> contextService;
 
-    private final CumulocityClientProperties clientProperties;
+    private final String alarmPath;
 
-    private String alarmPath;
-
-    private String eventPath;
+    private final String eventPath;
 
     public RawTextApi(ContextService<MicroserviceCredentials> contextService, CumulocityClientProperties clientProperties) {
         this.contextService = contextService;
-        this.clientProperties = clientProperties;
         this.alarmPath = clientProperties.getBaseURL() + "/alarm/alarms";
         this.eventPath = clientProperties.getBaseURL() + "/event/events";
     }
@@ -44,6 +43,10 @@ public class RawTextApi {
 		RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<AlarmRepresentation> response = restTemplate.postForEntity(alarmPath, request, AlarmRepresentation.class);
+        if(response.getStatusCodeValue() > 299) {
+            log.error("Creating alarm failed! json: {}", jsonContent);
+            return null;
+        }
 
         return response.getBody();
     }
@@ -59,6 +62,10 @@ public class RawTextApi {
         RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<EventRepresentation> response = restTemplate.postForEntity(eventPath, request, EventRepresentation.class);
+        if (response.getStatusCodeValue() > 299) {
+            log.error("Creating event failed! json: {}", jsonContent);
+            return null;
+        }
 
         return response.getBody();
     }
