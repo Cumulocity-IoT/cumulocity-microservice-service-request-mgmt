@@ -242,7 +242,7 @@ public class ServiceRequestController {
 	@PutMapping(path = "/{serviceRequestId}/event", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ServiceRequest> addEventRefToServiceRequest(@PathVariable String serviceRequestId,
 			@Valid @RequestBody ServiceRequestDataRef eventRef) {
-		ServiceRequestValidationResult validateEvent = serviceRequestService.validateEvent(eventRef);
+		ServiceRequestValidationResult validateEvent = serviceRequestService.validateEvent(eventRef, null);
 		if(ServiceRequestValidationResult.EVENT_NOT_FOUND.equals(validateEvent)) {
 			log.warn(validateEvent.getMessage());
 			return new ResponseEntity<ServiceRequest>(HttpStatus.PRECONDITION_FAILED);
