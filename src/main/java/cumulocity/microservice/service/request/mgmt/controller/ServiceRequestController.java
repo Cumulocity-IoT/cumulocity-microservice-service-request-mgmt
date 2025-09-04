@@ -66,41 +66,41 @@ public class ServiceRequestController {
 	@Operation(summary = "CREATE service request", description = "Creates a new service request object at Cumulocity IoT Platform.", tags={  })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))),
-		@ApiResponse(responseCode = "409", description = "Conflict, Alarm already assigned to service request!"),
-		@ApiResponse(responseCode = "412", description = "Precondition Failed, Alarm of service request not found!"),})
+		@ApiResponse(responseCode = "400", description = "Bad Request, Service request body is invalid!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseBody.class))),
+		@ApiResponse(responseCode = "409", description = "Conflict, Alarm already assigned to service request!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseBody.class))),
+		@ApiResponse(responseCode = "412", description = "Precondition Failed, Alarm of service request not found!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseBody.class))),})
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ServiceRequest> createServiceRequest(@Valid @RequestBody ServiceRequestPostRqBody serviceRequestRqBody) {
+	public ResponseEntity<?> createServiceRequest(@Valid @RequestBody ServiceRequestPostRqBody serviceRequestRqBody) {
 		log.info("CREATE service request: {}", serviceRequestRqBody);
 
 		ServiceRequestValidationResult validateNewServiceRequest = serviceRequestService.validateNewServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
-		if(ServiceRequestValidationResult.MISSING_ALARM_REF.equals(validateNewServiceRequest)) {
-			log.warn(validateNewServiceRequest.getMessage());
-			return new ResponseEntity<ServiceRequest>(HttpStatus.BAD_REQUEST);
+		if(!ServiceRequestValidationResult.VALID.equals(validateNewServiceRequest))
+			log.error(validateNewServiceRequest.getMessage());
+		switch(validateNewServiceRequest) {
+			case MISSING_ALARM_REF:
+				return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody(validateNewServiceRequest), HttpStatus.BAD_REQUEST);
+			case ALARM_NOT_FOUND:
+				return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody(validateNewServiceRequest), HttpStatus.PRECONDITION_FAILED);
+			case ALARM_ASSIGNED:
+				return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody(validateNewServiceRequest), HttpStatus.CONFLICT);
+			case ALARM_MUTUALLY_EXCLUSIVE:
+				return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody(validateNewServiceRequest), HttpStatus.BAD_REQUEST);
+			case MISSING_EVENT_REF:
+				return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody(validateNewServiceRequest), HttpStatus.BAD_REQUEST);
+			case EVENT_NOT_FOUND:
+				return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody(validateNewServiceRequest), HttpStatus.PRECONDITION_FAILED);
+			case EVENT_ASSIGNED:
+				return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody(validateNewServiceRequest), HttpStatus.CONFLICT);
+			case EVENT_MUTUALLY_EXCLUSIVE:
+				return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody(validateNewServiceRequest), HttpStatus.BAD_REQUEST);
+			default:
+				break;
 		}
-		if(ServiceRequestValidationResult.ALARM_NOT_FOUND.equals(validateNewServiceRequest)) {
-			log.warn(validateNewServiceRequest.getMessage());
-			return new ResponseEntity<ServiceRequest>(HttpStatus.PRECONDITION_FAILED);
-		}
-		if(ServiceRequestValidationResult.ALARM_ASSIGNED.equals(validateNewServiceRequest)) {
-			log.warn(validateNewServiceRequest.getMessage());
-			return new ResponseEntity<ServiceRequest>(HttpStatus.CONFLICT);
-		}
-		if (ServiceRequestValidationResult.MISSING_EVENT_REF.equals(validateNewServiceRequest)) {
-			log.warn(validateNewServiceRequest.getMessage());
-			return new ResponseEntity<ServiceRequest>(HttpStatus.BAD_REQUEST);
-		}
-		if (ServiceRequestValidationResult.EVENT_NOT_FOUND.equals(validateNewServiceRequest)) {
-			log.warn(validateNewServiceRequest.getMessage());
-			return new ResponseEntity<ServiceRequest>(HttpStatus.PRECONDITION_FAILED);
-		}
-		if (ServiceRequestValidationResult.EVENT_ASSIGNED.equals(validateNewServiceRequest)) {
-			log.warn(validateNewServiceRequest.getMessage());
-			return new ResponseEntity<ServiceRequest>(HttpStatus.CONFLICT);
-		}
+		
 		ServiceRequest createServiceRequest = serviceRequestService.createServiceRequest(serviceRequestRqBody, contextService.getContext().getUsername());
 		if(createServiceRequest == null) {
 			log.warn("Service request creation failed! Request body can't be processed: {}", serviceRequestRqBody);
-			return new ResponseEntity<ServiceRequest>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody("Service request creation failed!", "SERVICE_REQUEST_CREATION_FAILED"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		return new ResponseEntity<ServiceRequest>(createServiceRequest, HttpStatus.CREATED);

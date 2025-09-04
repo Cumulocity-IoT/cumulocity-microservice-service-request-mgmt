@@ -42,12 +42,15 @@ public class RawTextApi {
 
 		RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<AlarmRepresentation> response = restTemplate.postForEntity(alarmPath, request, AlarmRepresentation.class);
-        if(response.getStatusCodeValue() > 299) {
-            log.error("Creating alarm failed! json: {}", jsonContent);
+        ResponseEntity<AlarmRepresentation> response;
+        try {
+            response = restTemplate.postForEntity(alarmPath, request, AlarmRepresentation.class);
+        } catch (Exception e) {
+            log.error("Creating alarm failed! json: {}", jsonContent, e);
             return null;
         }
 
+        log.debug("Creating alarm returns status code: {}", response.getStatusCodeValue());
         return response.getBody();
     }
 
@@ -61,12 +64,16 @@ public class RawTextApi {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<EventRepresentation> response = restTemplate.postForEntity(eventPath, request, EventRepresentation.class);
-        if (response.getStatusCodeValue() > 299) {
-            log.error("Creating event failed! json: {}", jsonContent);
+        ResponseEntity<EventRepresentation> response;
+        try {
+            response = restTemplate.postForEntity(eventPath, request, EventRepresentation.class);
+        } catch (Exception e) {
+            log.error("Creating event failed! json: {}", jsonContent, e);
             return null;
         }
 
+
+        log.debug("Creating event returns status code: {}", response.getStatusCodeValue());
         return response.getBody();
     }
 

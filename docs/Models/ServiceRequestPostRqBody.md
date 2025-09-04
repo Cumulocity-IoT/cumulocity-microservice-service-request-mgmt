@@ -10,7 +10,9 @@
 | **description** | **String** | Service request detailed description | [optional] [default to null] |
 | **source** | [**ServiceRequestSource**](ServiceRequestSource.md) |  | [default to null] |
 | **alarmRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
+| **alarm** | **String** | Alarm representation. Mutually exclusive with &#39;alarmRef&#39;. | [optional] [default to null] |
 | **eventRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
+| **event** | **String** | Event representation. Mutually exclusive with &#39;eventRef&#39;. | [optional] [default to null] |
 | **seriesRef** | [**ServiceRequestDataRef**](ServiceRequestDataRef.md) |  | [optional] [default to null] |
 | **order** | [**ServiceOrder**](ServiceOrder.md) |  | [optional] [default to null] |
 | **customProperties** | **Map** | Custom specific properties | [optional] [default to null] |
