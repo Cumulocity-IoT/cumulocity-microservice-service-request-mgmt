@@ -83,9 +83,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	
 	public enum ServiceRequestValidationResult {
-		ALARM_NOT_FOUND("Alarm doesn't exists anymore"),
+		ALARM_NOT_FOUND("Alarm doesn't exist!"),
 		ALARM_ASSIGNED("Alarm already assigned to another service request!"),
-		EVENT_NOT_FOUND("Event doesn't exists anymore"),
+		EVENT_NOT_FOUND("Event doesn't exist!"),
 		EVENT_ASSIGNED("Event already assigned to another service request!"),
 		VALID("Service request is valid"),
 		MISSING_ALARM_REF("Alarm reference is missing"),

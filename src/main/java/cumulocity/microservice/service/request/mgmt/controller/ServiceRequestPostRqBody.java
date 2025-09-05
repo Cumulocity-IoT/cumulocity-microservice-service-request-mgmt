@@ -77,6 +77,7 @@ public class ServiceRequestPostRqBody {
 	@Schema(description = "Event representation. Mutually exclusive with 'eventRef'.")
 	@Valid
 	@JsonRawValue
+	@JsonDeserialize(using = RawJsonDeserializer.class)
 	private String event;
 
 	@Schema(description = "Cumulocity Measurement series reference")
