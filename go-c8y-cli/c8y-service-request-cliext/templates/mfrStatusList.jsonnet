@@ -6,7 +6,7 @@
     isDeactivateTransition: false,
     isExcludeForCounter: false,
     isInitialStatus: true,
-    name: "Created",
+    name: "Created"
   },
   {
     alarmStatusTransition: "ACKNOWLEDGED",
@@ -15,7 +15,7 @@
     isDeactivateTransition: false,
     isExcludeForCounter: false,
     isInitialStatus: false,
-    name: "Released",
+    name: "Released"
   },
   {
     alarmStatusTransition: "ACKNOWLEDGED",
@@ -24,7 +24,7 @@
     isDeactivateTransition: false,
     isExcludeForCounter: false,
     isInitialStatus: false,
-    name: "InProgress",
+    name: "InProgress"
   },
   {
     alarmStatusTransition: "CLEARED",
@@ -33,7 +33,7 @@
     isDeactivateTransition: false,
     isExcludeForCounter: true,
     isInitialStatus: false,
-    name: "IsWorkDone",
+    name: "IsWorkDone"
   },
   {
     alarmStatusTransition: "CLEARED",
@@ -42,7 +42,7 @@
     isDeactivateTransition: false,
     isExcludeForCounter: true,
     isInitialStatus: false,
-    name: "Rejected",
+    name: "Rejected"
   },
   {
     alarmStatusTransition: "CLEARED",
@@ -51,7 +51,7 @@
     isDeactivateTransition: true,
     isExcludeForCounter: true,
     isInitialStatus: false,
-    name: "Closed",
+    name: "Closed"
   },
   {
     alarmStatusTransition: "ACKNOWLEDGED",
@@ -60,7 +60,7 @@
     isDeactivateTransition: false,
     isExcludeForCounter: false,
     isInitialStatus: false,
-    name: "Scheduled",
+    name: "Scheduled"
   },
   {
     alarmStatusTransition: "ACKNOWLEDGED",
@@ -69,6 +69,6 @@
     isDeactivateTransition: false,
     isExcludeForCounter: false,
     isInitialStatus: false,
-    name: "ReadyForScheduling",
-  },
+    name: "ReadyForScheduling"
+  }
 ]
