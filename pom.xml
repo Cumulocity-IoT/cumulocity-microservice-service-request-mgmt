@@ -5,7 +5,7 @@
 
 	<groupId>cumulocity.microservice</groupId>
 	<artifactId>cumulocity-microservice-service-request-mgmt</artifactId>
-	<version>1.4.4-SNAPSHOT</version>
+	<version>1.4.5-SNAPSHOT</version>
 
 
 	<properties>
