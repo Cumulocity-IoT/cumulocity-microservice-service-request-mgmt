@@ -5,7 +5,7 @@
 
 	<groupId>cumulocity.microservice</groupId>
 	<artifactId>cumulocity-microservice-service-request-mgmt</artifactId>
-	<version>1.4.3</version>
+	<version>1.4.4</version>
 
 
 	<properties>
@@ -250,7 +250,7 @@
 		<connection>scm:git:https://github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</connection>
 		<developerConnection>scm:git:https://github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</developerConnection>
 		<url>https://github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</url>
-		<tag>v1.4.3</tag>
+		<tag>v1.4.4</tag>
 	</scm>
 
 </project>

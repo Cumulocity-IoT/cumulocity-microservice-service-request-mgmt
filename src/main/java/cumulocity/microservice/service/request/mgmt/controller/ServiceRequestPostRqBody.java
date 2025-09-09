@@ -1,9 +1,18 @@
 package cumulocity.microservice.service.request.mgmt.controller;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
+import com.cumulocity.rest.representation.event.EventRepresentation;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceOrder;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
@@ -51,13 +60,25 @@ public class ServiceRequestPostRqBody {
 	@Valid
 	private ServiceRequestSource source;
 
-	@Schema(description = "Cumulocity Alarm reference")
+	@Schema(description = "Cumulocity Alarm reference. Mutually exclusive with 'alarm'.")
 	@Valid
 	private ServiceRequestDataRef alarmRef;
 
-	@Schema(description = "Cumulocity Event reference")
+	@Schema(description = "Alarm representation. Mutually exclusive with 'alarmRef'.")
+	@Valid
+	@JsonRawValue
+	@JsonDeserialize(using = RawJsonDeserializer.class)
+	private String alarm;
+
+	@Schema(description = "Cumulocity Event reference. Mutually exclusive with 'event'.")
 	@Valid
 	private ServiceRequestDataRef eventRef;
+
+	@Schema(description = "Event representation. Mutually exclusive with 'eventRef'.")
+	@Valid
+	@JsonRawValue
+	@JsonDeserialize(using = RawJsonDeserializer.class)
+	private String event;
 
 	@Schema(description = "Cumulocity Measurement series reference")
 	@Valid
@@ -70,4 +91,12 @@ public class ServiceRequestPostRqBody {
 	@Schema(description = "Custom specific properties")
 	@Valid
 	private Map<String, String> customProperties;
+
+}
+
+class RawJsonDeserializer extends JsonDeserializer<String> {
+    @Override
+    public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+        return p.readValueAsTree().toString();
+    }
 }
