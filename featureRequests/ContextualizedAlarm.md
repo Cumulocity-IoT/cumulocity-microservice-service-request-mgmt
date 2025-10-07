@@ -1,6 +1,6 @@
-# **Feature Request: Alarm/Event Data Context for Data Explorer**
+# **Feature Request: Contextualized Alarm for Data Explorer**
 
-Feature: Alarm Data Context for Data Explorer  
+Feature: Contextualized Alarm  
 Status: New Request  
 Date: September 19, 2025  
 Requester: Alexander Pester  
@@ -16,7 +16,7 @@ so that I can quickly recall the exact context and data surrounding that alarm f
 
 #### **2.1. Core Concept**
 
-This feature introduces the concept of a "Data Context" for the Data Explorer. A Context is a saved, immutable configuration of the Data Explorer's state that is tied to a specific alarm instance. When the device or Cumulocity creates a significant alarm, the user should be able to create an alarm context. This context captures the complete analytical view relevant to that alarm.
+This feature introduces the concept of a "Contextualized Alarm" for the Data Explorer. A Context is a saved, immutable configuration of the Data Explorer's state that is tied to a specific alarm instance. When the device or Cumulocity creates a significant alarm, the user or a system should be able to create an alarm context. This context captures the complete analytical view relevant to that alarm.
 
 Side note:
 
@@ -46,8 +46,8 @@ Example Context Configuration:
             "fragment": "ec_ControlSoftware",
             "equals": "CS82"
         }
-    ]
-    "meaPredicate": [
+    ],
+    "alarmPredicate": [
         { 
             "fragment": "type",
             "equals": "ec_S:242/232"
@@ -57,7 +57,7 @@ Example Context Configuration:
   "config": {
     "dateFrom": "-1d",
     "dateTo": "0d",
-    "datapoints": ["MHAI1.H1RMSA1", "MHAI1.H1RMSA2"]
+    "datapoints": ["MHAI1.H1RMSA1", "MHAI1.H1RMSA2"],
     "events": ["ec_S:242/232", "ec_S:66/11"]
     }
   }
@@ -75,7 +75,7 @@ The context will be stored at the alarm and must carry the following configurati
 * **Alarm Types:** The exact list of alarms that are relevant for the context at the time of creation of the alarm.  
 * **Custom Time Window:** The relevant time window of the context. This is a time range calculated from the timestamp of the associated alarm and the relative time configuration.
 
-The Alarm Context is used later for the Data Explorer to initialize the queries. The concept is similar to the Data Explorer Configuration.
+The contextualized alarm is used later for the Data Explorer to initialize the queries. The concept is similar to the Data Explorer Configuration.
 
 
 Example Alarm with Context:
