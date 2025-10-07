@@ -16,13 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ContextConfigObjectMapper {
-    public static final String MANAGEDOBJECT_TYPE = "ctx_ContextConfig";
+    public static final String MANAGEDOBJECT_TYPE = "ctx_Config";
     
     public static final String CTX_ID = "id";
-    public static final String CTX_DESCRIPTION = "description";
-    public static final String CTX_APPLY = "apply";
-    public static final String CTX_CONFIG = "config";
-    public static final String CTX_IS_ACTIVE = "isActive";
+    public static final String CTX_DESCRIPTION = "ctx_Description";
+    public static final String CTX_APPLY = "ctx_Apply";
+    public static final String CTX_CONFIG = "ctx_Config";
+    public static final String CTX_IS_ACTIVE = "ctx_IsActive";
     
     // Apply rules fields
     public static final String CTX_DEVICE_PREDICATE = "devicePredicate";

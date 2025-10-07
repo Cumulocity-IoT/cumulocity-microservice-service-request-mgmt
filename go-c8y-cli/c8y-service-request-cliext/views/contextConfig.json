@@ -1,0 +1,25 @@
+{
+    "$schema": "https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/feat/extensions-manager/tools/schema/views.json",
+    "version": "v1",
+    "definitions": [
+        {
+            "name": "contextConfig",
+            "priority": 350,
+            "requestPath": "service/service-request-mgmt/api/context/config",
+            "requestMethod": "GET",
+            "columns": [
+                "id",
+                "description",
+                "apply.devicePredicate",
+                "apply.alarmPredicate",
+                "config.dateFrom",
+                "config.dateTo",
+                "config.datapoints",
+                "config.events",
+                "config.alarms",
+                "isActive",
+                "creationTime"
+            ]
+        }
+    ]
+}

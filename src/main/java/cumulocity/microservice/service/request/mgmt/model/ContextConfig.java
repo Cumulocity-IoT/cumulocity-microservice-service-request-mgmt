@@ -18,9 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class ContextConfig {
 
     @Schema(required = true, accessMode = Schema.AccessMode.READ_ONLY, description = "Internal ID, set by Cumulocity", example = "123456789")
-    @NotNull
     private String id;
-
 
     @Schema(description = "Description of what this context configuration is used for", example = "Context configuration for CS82 control software connection errors")
     private String description;
