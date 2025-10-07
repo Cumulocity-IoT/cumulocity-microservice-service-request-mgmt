@@ -7,6 +7,11 @@ All URIs are relative to *http://localhost:8080*
 
 | Class | Method | HTTP request | Description |
 |------------ | ------------- | ------------- | -------------|
+| *ContextConfigControllerApi* | [**createContextConfig**](Apis/ContextConfigControllerApi.md#createcontextconfig) | **POST** /api/context/config | CREATE context configuration |
+*ContextConfigControllerApi* | [**deleteContextConfigById**](Apis/ContextConfigControllerApi.md#deletecontextconfigbyid) | **DELETE** /api/context/config/{configId} | DELETE context configuration by Id |
+*ContextConfigControllerApi* | [**getContextConfigById**](Apis/ContextConfigControllerApi.md#getcontextconfigbyid) | **GET** /api/context/config/{configId} | GET context configuration by Id |
+*ContextConfigControllerApi* | [**getContextConfigList**](Apis/ContextConfigControllerApi.md#getcontextconfiglist) | **GET** /api/context/config | GET all context configurations |
+*ContextConfigControllerApi* | [**updateContextConfig**](Apis/ContextConfigControllerApi.md#updatecontextconfig) | **PUT** /api/context/config/{configId} | UPDATE context configuration |
 | *ServiceRequestCommentControllerApi* | [**createServiceRequestComment**](Apis/ServiceRequestCommentControllerApi.md#createservicerequestcomment) | **POST** /api/service/request/{serviceRequestId}/comment | Add new service request comment to specific service request. |
 *ServiceRequestCommentControllerApi* | [**deleteServiceRequestCommentById**](Apis/ServiceRequestCommentControllerApi.md#deleteservicerequestcommentbyid) | **DELETE** /api/service/request/comment/{commentId} | DELETE service request comment by Id |
 *ServiceRequestCommentControllerApi* | [**downloadServiceRequestCommentAttachment**](Apis/ServiceRequestCommentControllerApi.md#downloadservicerequestcommentattachment) | **GET** /api/service/request/comment/{commentId}/attachment | DOWNLOAD attachment for specific comment |
@@ -39,6 +44,10 @@ All URIs are relative to *http://localhost:8080*
 <a name="documentation-for-models"></a>
 ## Documentation for Models
 
+ - [ContextApplyRules](./Models/ContextApplyRules.md)
+ - [ContextConfig](./Models/ContextConfig.md)
+ - [ContextPredicate](./Models/ContextPredicate.md)
+ - [ContextSettings](./Models/ContextSettings.md)
  - [ErrorResponseBody](./Models/ErrorResponseBody.md)
  - [RequestListServiceRequest](./Models/RequestListServiceRequest.md)
  - [RequestListServiceRequestComment](./Models/RequestListServiceRequestComment.md)

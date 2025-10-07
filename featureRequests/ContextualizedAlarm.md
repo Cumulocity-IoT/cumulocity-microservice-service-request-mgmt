@@ -64,7 +64,7 @@ Example Context Configuration:
 }
 ```
 
-#### 
+In the MVP we will only support on `alarmPredicate`. In future releases we will support `eventPredicate` and `measurementPredicate`.
 
 #### **2.3. Alarm Context**
 
@@ -99,13 +99,21 @@ Example Alarm with Context:
 
 #### **2.4. User Workflow**
 
-**Creating a Context at Enercon:**
+**Manual Creating a Context at Enercon:**
 
 1. A service user is analyzing alarms in the Cockpit.  
 2. The user selects the specific alarm from an alarm list.  
 3. A new UI option, such as a "Create Context" or "Save View for Alarm" button, becomes available.  
 4. Upon clicking this button, the system will store the context by applying the context configuration at the selected alarm.  
 5. After storing the context element in the alarm, the user can directly jump to Data Explorer with a preloaded Alarm Context.
+
+**Automatic Creating a Context:**
+
+1. A service user is analyzing alarms in the Cockpit.  
+2. The user selects the specific alarm from an alarm list. 
+3. The user creates a service request for the alarm.
+4. The system automatically applies the context configuration at the selected alarm and stores the context in the alarm.
+
 
 **Loading a Context:**
 

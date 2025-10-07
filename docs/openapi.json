@@ -73,8 +73,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -83,8 +83,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -337,6 +337,122 @@
         }
       }
     },
+    "/api/context/config/{configId}" : {
+      "get" : {
+        "tags" : [ "context-config-controller" ],
+        "summary" : "GET context configuration by Id",
+        "description" : "Returns specific context configuration by Id",
+        "operationId" : "getContextConfigById",
+        "parameters" : [ {
+          "name" : "configId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContextConfig"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContextConfig"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "context-config-controller" ],
+        "summary" : "UPDATE context configuration",
+        "description" : "Updates an existing context configuration.",
+        "operationId" : "updateContextConfig",
+        "parameters" : [ {
+          "name" : "configId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ContextConfig"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContextConfig"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContextConfig"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContextConfig"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "context-config-controller" ],
+        "summary" : "DELETE context configuration by Id",
+        "description" : "Deletes a context configuration by Id",
+        "operationId" : "deleteContextConfigById",
+        "parameters" : [ {
+          "name" : "configId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        }
+      }
+    },
     "/api/adapter/service/request/{serviceRequestId}/status" : {
       "put" : {
         "tags" : [ "service-request-external-controller" ],
@@ -362,8 +478,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -372,8 +488,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -410,8 +526,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -420,8 +536,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -569,6 +685,16 @@
           "required" : true
         },
         "responses" : {
+          "400" : {
+            "description" : "Bad Request, Service request body is invalid!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          },
           "201" : {
             "description" : "Created",
             "content" : {
@@ -581,16 +707,6 @@
           },
           "409" : {
             "description" : "Conflict, Alarm already assigned to service request!",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponseBody"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Bad Request, Service request body is invalid!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1012,6 +1128,67 @@
         }
       }
     },
+    "/api/context/config" : {
+      "get" : {
+        "tags" : [ "context-config-controller" ],
+        "summary" : "GET all context configurations",
+        "description" : "Returns complete list of context configurations",
+        "operationId" : "getContextConfigList",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ContextConfig"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "context-config-controller" ],
+        "summary" : "CREATE context configuration",
+        "description" : "Creates a new context configuration for alarm data context.",
+        "operationId" : "createContextConfig",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ContextConfig"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContextConfig"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContextConfig"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/service/request/status/{statusId}" : {
       "get" : {
         "tags" : [ "service-request-status-config-controller" ],
@@ -1027,8 +1204,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1037,8 +1214,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1086,8 +1263,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1096,8 +1273,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1576,6 +1753,119 @@
           }
         },
         "description" : "Comment object of service request. Service request object can have n comments."
+      },
+      "ContextApplyRules" : {
+        "type" : "object",
+        "properties" : {
+          "devicePredicate" : {
+            "type" : "array",
+            "description" : "Device predicates that must match for this context to be applied",
+            "items" : {
+              "$ref" : "#/components/schemas/ContextPredicate"
+            }
+          },
+          "alarmPredicate" : {
+            "type" : "array",
+            "description" : "Alarm predicates that must match for this context to be applied",
+            "items" : {
+              "$ref" : "#/components/schemas/ContextPredicate"
+            }
+          }
+        },
+        "description" : "Rules that define when this context configuration should be applied to an alarm"
+      },
+      "ContextConfig" : {
+        "required" : [ "apply", "config", "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "Internal ID, set by Cumulocity",
+            "readOnly" : true,
+            "example" : "123456789"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "Description of what this context configuration is used for",
+            "example" : "Context configuration for CS82 control software connection errors"
+          },
+          "apply" : {
+            "$ref" : "#/components/schemas/ContextApplyRules"
+          },
+          "config" : {
+            "$ref" : "#/components/schemas/ContextSettings"
+          },
+          "isActive" : {
+            "type" : "boolean",
+            "description" : "Whether this context configuration is active and should be used",
+            "example" : true
+          }
+        },
+        "description" : "Context Configuration object that defines rules and settings for creating contextualized alarms. Contains device and alarm predicates to determine when to apply the configuration."
+      },
+      "ContextPredicate" : {
+        "required" : [ "fragment" ],
+        "type" : "object",
+        "properties" : {
+          "fragment" : {
+            "type" : "string",
+            "description" : "Fragment name to check",
+            "example" : "ec_ControlSoftware"
+          },
+          "regex" : {
+            "type" : "string",
+            "description" : "Regular expression that the fragment value must match",
+            "example" : "^CS82$"
+          }
+        },
+        "description" : "Predicate for matching objects based on fragment values"
+      },
+      "ContextSettings" : {
+        "required" : [ "dateFrom", "dateTo" ],
+        "type" : "object",
+        "properties" : {
+          "dateFrom" : {
+            "type" : "string",
+            "description" : "Relative start time for the context window",
+            "example" : "-1d"
+          },
+          "dateTo" : {
+            "type" : "string",
+            "description" : "Relative end time for the context window",
+            "example" : "0d"
+          },
+          "datapoints" : {
+            "type" : "array",
+            "description" : "List of measurement data points to include in the context",
+            "example" : [ "MHAI1.H1RMSA1", "MHAI1.H1RMSA2" ],
+            "items" : {
+              "type" : "string",
+              "description" : "List of measurement data points to include in the context",
+              "example" : "[\"MHAI1.H1RMSA1\",\"MHAI1.H1RMSA2\"]"
+            }
+          },
+          "events" : {
+            "type" : "array",
+            "description" : "List of event types to include in the context",
+            "example" : [ "ec_S:242/232", "ec_S:66/11" ],
+            "items" : {
+              "type" : "string",
+              "description" : "List of event types to include in the context",
+              "example" : "[\"ec_S:242/232\",\"ec_S:66/11\"]"
+            }
+          },
+          "alarms" : {
+            "type" : "array",
+            "description" : "List of alarm types to include in the context",
+            "example" : [ "ec_S:242/232" ],
+            "items" : {
+              "type" : "string",
+              "description" : "List of alarm types to include in the context",
+              "example" : "[\"ec_S:242/232\"]"
+            }
+          }
+        },
+        "description" : "Context configuration settings that define the data and time window"
       },
       "ServiceRequestPostRqBody" : {
         "required" : [ "source", "title", "type" ],

@@ -1,7 +1,6 @@
 package cumulocity.microservice.service.request.mgmt.model;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -14,17 +13,14 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-@Schema(description = "Context Configuration object that defines rules and settings for creating alarm contexts in Data Explorer. Contains device and measurement predicates to determine when to apply the configuration, and the actual context settings including time windows and data points.")
+@Schema(description = "Context Configuration object that defines rules and settings for creating contextualized alarms. Contains device and alarm predicates to determine when to apply the configuration.")
 @Validated
 public class ContextConfig {
 
-    @Schema(required = true, description = "Unique identifier for the context configuration", example = "wind-turbine-connection-error-context")
+    @Schema(required = true, accessMode = Schema.AccessMode.READ_ONLY, description = "Internal ID, set by Cumulocity", example = "123456789")
     @NotNull
     private String id;
 
-    @Schema(required = true, description = "Human readable name for the context configuration", example = "Wind Turbine Connection Error Context")
-    @NotNull
-    private String name;
 
     @Schema(description = "Description of what this context configuration is used for", example = "Context configuration for CS82 control software connection errors")
     private String description;
@@ -50,10 +46,6 @@ public class ContextConfig {
         @Valid
         private List<ContextPredicate> devicePredicate;
 
-        @Schema(description = "Measurement predicates that must match for this context to be applied")
-        @Valid
-        private List<ContextPredicate> meaPredicate;
-
         @Schema(description = "Alarm predicates that must match for this context to be applied")
         @Valid
         private List<ContextPredicate> alarmPredicate;
@@ -67,14 +59,9 @@ public class ContextConfig {
         @NotNull
         private String fragment;
 
-        @Schema(description = "Value that the fragment must equal", example = "CS82")
-        private String equals;
-
-        @Schema(description = "Value that the fragment must contain")
-        private String contains;
-
-        @Schema(description = "Regular expression that the fragment must match")
+        @Schema(description = "Regular expression that the fragment value must match", example = "^CS82$")
         private String regex;
+
     }
 
     @Data
