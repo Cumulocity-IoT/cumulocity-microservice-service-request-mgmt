@@ -67,4 +67,13 @@ public interface ContextConfigService {
      * @return list of active context configurations
      */
     List<ContextConfig> getActiveContextConfigList();
+
+    /**
+     * Applies all matching context configurations to a specific alarm
+     * 
+     * @param alarmId the ID of the alarm to apply context configurations to
+     * @throws IllegalArgumentException if alarmId is null or empty
+     * @throws RuntimeException if alarm is not found or if there's an error during processing
+     */
+    void applyContextConfigsToAlarm(@NotNull String alarmId);
 }

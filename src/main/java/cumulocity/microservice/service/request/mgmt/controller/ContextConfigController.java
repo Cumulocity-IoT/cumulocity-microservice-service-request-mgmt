@@ -3,7 +3,6 @@ package cumulocity.microservice.service.request.mgmt.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +30,6 @@ public class ContextConfigController {
 
     private ContextConfigService contextConfigService;
 
-    @Autowired
     public ContextConfigController(ContextConfigService contextConfigService) {
         this.contextConfigService = contextConfigService;
     }
@@ -52,7 +50,8 @@ public class ContextConfigController {
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "400", description = "Bad Request") })
     @PutMapping(path = "/{configId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ContextConfig> updateContextConfig(@PathVariable String configId, @RequestBody ContextConfig contextConfig) {
+    public ResponseEntity<ContextConfig> updateContextConfig(@PathVariable String configId,
+            @RequestBody ContextConfig contextConfig) {
         Optional<ContextConfig> existingConfig = contextConfigService.getContextConfig(configId);
         if (existingConfig.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -85,7 +84,7 @@ public class ContextConfigController {
     }
 
     @Operation(summary = "DELETE context configuration by Id", description = "Deletes a context configuration by Id", tags = {})
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "404", description = "Not Found") })
     @DeleteMapping(path = "/{configId}")
@@ -96,5 +95,20 @@ public class ContextConfigController {
         }
         contextConfigService.deleteContextConfig(configId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Operation(summary = "APPLY context configurations to alarm", description = "Applies all matching context configurations to a specific alarm by alarm ID.", tags = {})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK - Context configurations applied successfully"),
+            @ApiResponse(responseCode = "404", description = "Not Found - Alarm not found"),
+            @ApiResponse(responseCode = "400", description = "Bad Request") })
+    @PostMapping(path = "/apply/alarm/{alarmId}")
+    public ResponseEntity<Void> applyContextConfigsToAlarm(@PathVariable String alarmId) {
+        try {
+            contextConfigService.applyContextConfigsToAlarm(alarmId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }
