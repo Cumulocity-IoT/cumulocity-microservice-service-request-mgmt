@@ -24,6 +24,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
+import com.cumulocity.sdk.client.alarm.AlarmApi;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
 
 import cumulocity.microservice.service.request.mgmt.model.ContextConfig;
@@ -36,12 +37,15 @@ class ContextConfigServiceC8yTest {
     @Mock
     private InventoryApi inventoryApi;
 
+    @Mock
+    private AlarmApi alarmApi;
+
     private ContextConfigServiceC8y contextConfigService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        contextConfigService = new ContextConfigServiceC8y(inventoryApi);
+        contextConfigService = new ContextConfigServiceC8y(inventoryApi, alarmApi);
     }
 
     @Test
