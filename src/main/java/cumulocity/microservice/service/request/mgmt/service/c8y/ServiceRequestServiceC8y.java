@@ -300,7 +300,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		// Alarm status transition
 		if(newServiceRequest.getAlarmRefList() != null) {
 			for(ServiceRequestDataRef alarmRef: newServiceRequest.getAlarmRefList()) {
-				updateAlarm(newServiceRequest, alarmRef, srStatus);
+				updateAlarm(newServiceRequest, alarmRef, srStatus, Boolean.TRUE);
 			}
 		}
 
@@ -443,7 +443,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				// Alarm status transition, update all alarms
 				if(updatedServiceRequest.getAlarmRefList() != null) {
 					for (ServiceRequestDataRef alarmRef : updatedServiceRequest.getAlarmRefList()) {
-						updateAlarm(updatedServiceRequest, alarmRef, srStatus);
+						updateAlarm(updatedServiceRequest, alarmRef, srStatus, Boolean.FALSE);
 					}
 				}
 			}
@@ -844,7 +844,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			}
 		}
 
-		updateAlarm(updatedServiceRequest, alarmRef, srStatus);
+		updateAlarm(updatedServiceRequest, alarmRef, srStatus, Boolean.TRUE);
 
 		return updatedServiceRequest;
 	}
@@ -876,8 +876,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		return updatedServiceRequest;
 	}
 	
-	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus) {
-		serviceRequestUpdateService.updateAlarm(serviceRequest, alarmRef, srStatus, userContextService.getContext(), contextService.getContext());
+	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus, Boolean isServiceRequestNew) {
+		serviceRequestUpdateService.updateAlarm(serviceRequest, alarmRef, srStatus, userContextService.getContext(), contextService.getContext(), isServiceRequestNew);
 	}
 
 	private void updateEvent(String serviceRequestId, ServiceRequestDataRef eventRef) {

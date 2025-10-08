@@ -26,6 +26,7 @@ import com.cumulocity.sdk.client.event.EventFilter;
 import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
+import cumulocity.microservice.service.request.mgmt.model.ContextConfig;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
@@ -53,9 +54,11 @@ public class ServiceRequestUpdateService {
 
 	private ContextService<UserCredentials> userContextService;
 
+	private ContextConfigServiceC8y contextConfigService;
+
 	@Autowired
 	public ServiceRequestUpdateService(EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi userAlarmApi, AlarmApi serviceAlarmApi, InventoryApi inventoryApi, ServiceRequestCommentService serviceRequestCommentService,
-			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService) {
+			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService, ContextConfigServiceC8y contextConfigService) {
 		this.eventApi = eventApi;
 		this.userAlarmApi = userAlarmApi;
 		this.inventoryApi = inventoryApi;
@@ -64,14 +67,15 @@ public class ServiceRequestUpdateService {
 		this.userContextService = userContextService;
 		this.serviceAlarmApi = serviceAlarmApi;
 		this.userAlarmApi = userAlarmApi;
+		this.contextConfigService = contextConfigService;
 	}
 
 	@Async
-	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus, UserCredentials credentials, MicroserviceCredentials microserviceCredentials) {
+	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus, UserCredentials credentials, MicroserviceCredentials microserviceCredentials, Boolean isServiceRequestNew) {
 
 		boolean updateSuccessful = userContextService.callWithinContext(credentials, () -> {
 			try {
-				updateAlarm(serviceRequest, alarmRef, srStatus, userAlarmApi);
+				updateAlarm(serviceRequest, alarmRef, srStatus, userAlarmApi, isServiceRequestNew);
 				return true;
 			} catch (SDKException e) {
 				log.warn("Error updating alarm with user credentials: {} {}", credentials.getUsername(), credentials.getTenant(), e);
@@ -83,7 +87,7 @@ public class ServiceRequestUpdateService {
 			log.info("Try to update alarm with microservice credentials instead of user credentials...");
 			contextService.runWithinContext(microserviceCredentials, () -> {
 				try {
-					updateAlarm(serviceRequest, alarmRef, srStatus, serviceAlarmApi);
+					updateAlarm(serviceRequest, alarmRef, srStatus, serviceAlarmApi, isServiceRequestNew);
 				} catch (SDKException e) {
 					log.error("Error updating alarm with microservice credentials", e);
 				}
@@ -92,7 +96,7 @@ public class ServiceRequestUpdateService {
 	}
 
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef,
-			ServiceRequestStatusConfig srStatus, AlarmApi alarmApi) throws SDKException {
+			ServiceRequestStatusConfig srStatus, AlarmApi alarmApi, Boolean isServiceRequestNew) throws SDKException {
 		if ((serviceRequest == null) || (alarmRef == null) || (srStatus == null)) {
 			log.error("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest, alarmRef,
 					srStatus);
@@ -122,9 +126,10 @@ public class ServiceRequestUpdateService {
 		if (alarmMapper != null) {
 			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
 
-			// TODO update the alarm context
-			
-
+			//if service request is created for alarm, automatically apply context configs
+			if (isServiceRequestNew != null && isServiceRequestNew) {
+				contextConfigService.applyContextConfigsToAlarm(alarmRepresentation);
+			}
 			log.info("update Alarm {}", alarmRepresentation.getId().getValue());
 			alarmApi.update(alarmRepresentation);
 		}

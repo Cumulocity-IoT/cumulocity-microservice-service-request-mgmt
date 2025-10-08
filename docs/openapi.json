@@ -352,8 +352,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -362,8 +362,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -398,8 +398,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -408,8 +408,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -685,16 +685,6 @@
           "required" : true
         },
         "responses" : {
-          "201" : {
-            "description" : "Created",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ServiceRequest"
-                }
-              }
-            }
-          },
           "400" : {
             "description" : "Bad Request, Service request body is invalid!",
             "content" : {
@@ -721,6 +711,16 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          },
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
                 }
               }
             }
@@ -769,16 +769,6 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
-                }
-              }
-            }
-          },
           "200" : {
             "description" : "Ok",
             "content" : {
@@ -788,6 +778,16 @@
                   "items" : {
                     "$ref" : "#/components/schemas/ServiceRequestComment"
                   }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
                 }
               }
             }
@@ -1393,8 +1393,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not found",
+          "200" : {
+            "description" : "Ok",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1406,8 +1406,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "Ok",
+          "404" : {
+            "description" : "Not found",
             "content" : {
               "application/json" : {
                 "schema" : {

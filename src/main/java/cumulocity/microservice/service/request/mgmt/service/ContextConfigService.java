@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
+
 import cumulocity.microservice.service.request.mgmt.model.ContextConfig;
 
 import javax.validation.Valid;
@@ -76,4 +78,13 @@ public interface ContextConfigService {
      * @throws RuntimeException if alarm is not found or if there's an error during processing
      */
     void applyContextConfigsToAlarm(@NotNull String alarmId);
+
+    /**
+     * Applies all matching context configurations to a specific alarm. The alarm will not be updated in that method, it will only add this to the alarm given as parameter.
+     * 
+     * @param alarm the alarm representation to apply context configurations to
+     * @throws IllegalArgumentException if alarm is null or has no ID
+     * @throws RuntimeException if alarm is not found or if there's an error during processing
+     */
+    void applyContextConfigsToAlarm(AlarmRepresentation alarm);
 }
