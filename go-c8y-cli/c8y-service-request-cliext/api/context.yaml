@@ -13,3 +13,23 @@ commands:
     description: Create context configuration
     method: POST
     path: /service/service-request-mgmt/api/context/config
+  - name: applyAlarm
+    description: Apply context configuration to all existing service requests
+    method: POST
+    path: /service/service-request-mgmt/api/context/config/apply/alarm/{id}
+    pathParameters:
+      - name: id
+        type: string
+        description: Alarm ID
+        pipeline: true
+        completion:
+          type: external
+          command: 
+            - c8y
+            - alarms
+            - sr 
+            - list
+            - --select 
+            - id,type,text 
+            - --output 
+            - completion

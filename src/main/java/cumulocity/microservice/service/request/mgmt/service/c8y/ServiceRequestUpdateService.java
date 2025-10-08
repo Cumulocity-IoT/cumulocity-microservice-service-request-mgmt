@@ -121,6 +121,10 @@ public class ServiceRequestUpdateService {
 		AlarmMapper alarmMapper = AlarmMapper.map2(serviceRequest.getId(), alarmRef, alarmStatus);
 		if (alarmMapper != null) {
 			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
+
+			// TODO update the alarm context
+			
+
 			log.info("update Alarm {}", alarmRepresentation.getId().getValue());
 			alarmApi.update(alarmRepresentation);
 		}

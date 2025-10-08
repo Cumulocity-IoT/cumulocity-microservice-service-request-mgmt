@@ -7,7 +7,8 @@ All URIs are relative to *http://localhost:8080*
 
 | Class | Method | HTTP request | Description |
 |------------ | ------------- | ------------- | -------------|
-| *ContextConfigControllerApi* | [**createContextConfig**](Apis/ContextConfigControllerApi.md#createcontextconfig) | **POST** /api/context/config | CREATE context configuration |
+| *ContextConfigControllerApi* | [**applyContextConfigsToAlarm**](Apis/ContextConfigControllerApi.md#applycontextconfigstoalarm) | **POST** /api/context/config/apply/alarm/{alarmId} | APPLY context configurations to alarm |
+*ContextConfigControllerApi* | [**createContextConfig**](Apis/ContextConfigControllerApi.md#createcontextconfig) | **POST** /api/context/config | CREATE context configuration |
 *ContextConfigControllerApi* | [**deleteContextConfigById**](Apis/ContextConfigControllerApi.md#deletecontextconfigbyid) | **DELETE** /api/context/config/{configId} | DELETE context configuration by Id |
 *ContextConfigControllerApi* | [**getContextConfigById**](Apis/ContextConfigControllerApi.md#getcontextconfigbyid) | **GET** /api/context/config/{configId} | GET context configuration by Id |
 *ContextConfigControllerApi* | [**getContextConfigList**](Apis/ContextConfigControllerApi.md#getcontextconfiglist) | **GET** /api/context/config | GET all context configurations |

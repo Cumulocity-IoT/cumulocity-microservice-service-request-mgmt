@@ -240,10 +240,41 @@ public class ContextConfigServiceC8y implements ContextConfigService {
         Object fragmentValue = null;
         if (object instanceof ManagedObjectRepresentation) {
             ManagedObjectRepresentation managedObject = (ManagedObjectRepresentation) object;
-            fragmentValue = managedObject.get(predicate.getFragment());
+            
+            switch (predicate.getFragment()) {
+                case "id":
+                    fragmentValue = managedObject.getId().getValue();
+                    break;
+                case "name":
+                    fragmentValue = managedObject.getName();
+                    break;
+                case "type":
+                    fragmentValue = managedObject.getType();
+                    break;
+                default:
+                    fragmentValue = managedObject.get(predicate.getFragment());
+                    break;
+            }
+
         } else if (object instanceof AlarmRepresentation) {
             AlarmRepresentation alarm = (AlarmRepresentation) object;
-            fragmentValue = alarm.get(predicate.getFragment());
+            switch (predicate.getFragment()) {
+                case "id":
+                    fragmentValue = alarm.getId().getValue();
+                    break;
+                case "type":
+                    fragmentValue = alarm.getType();
+                    break;
+                case "status":
+                    fragmentValue = alarm.getStatus();
+                    break;
+                case "severity":
+                    fragmentValue = alarm.getSeverity();
+                    break;
+                default:
+                    fragmentValue = alarm.get(predicate.getFragment());
+                    break;
+            }
         }
         
         if (fragmentValue == null) {

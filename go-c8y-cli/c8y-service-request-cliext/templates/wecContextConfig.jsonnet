@@ -1,24 +1,23 @@
 {
-    description: "WEC CS82 context config",
+    description: "Microservice Template alarm context",
     apply: {
         devicePredicate: [
             { 
-                fragment: "ec_ControlSoftware",
-                regex: "^CS82$"
+                fragment: "type",
+                regex: "^c8y_MQTTDevice$"
             }
         ],
         alarmPredicate: [
             { 
                 fragment: "type",
-                regex: "^ec_S:242\\/232$"
+                regex: "^my_TestAlarm1$"
             }
         ]
     },
     config: {
         dateFrom: "-1d",
         dateTo: "0d",
-        datapoints: ["MHAI1.H1RMSA1", "MHAI1.H1RMSA2"],
-        events: ["ec_S:242/232", "ec_S:66/11"]
+        datapoints: ["Gn1.RotSpd"]
     },
     isActive: true
 }
