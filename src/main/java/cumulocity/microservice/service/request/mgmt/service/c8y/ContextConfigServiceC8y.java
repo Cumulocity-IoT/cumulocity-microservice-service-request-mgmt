@@ -171,14 +171,12 @@ public class ContextConfigServiceC8y implements ContextConfigService {
         try {
             // Update the alarm with the context data
             alarmApi.update(alarm);
-            LOG.debug("Successfully updated alarm {} with context data from configuration {}", alarm.getId(), config.getId());
+            LOG.debug("Successfully updated alarm {} with context data", alarm.getId());
         } catch (SDKException e) {
-            LOG.error("Failed to update alarm {} with context data from configuration {}: {}", 
-            alarm.getId(), config.getId(), e.getMessage(), e);
+            LOG.error("Failed to update alarm {} with context data: {}", alarm.getId(), e.getMessage(), e);
             throw new RuntimeException("Failed to update alarm with context data", e);
         }
 
-        LOG.info("Applied {} context configurations to alarm {}", appliedCount, alarmId);
     }
 
     @Override
