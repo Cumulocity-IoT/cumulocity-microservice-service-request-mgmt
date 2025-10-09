@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import cumulocity.microservice.service.request.mgmt.model.ContextConfig;
+import cumulocity.microservice.service.request.mgmt.model.ContextData;
+import cumulocity.microservice.service.request.mgmt.model.ContextDataApply;
 import cumulocity.microservice.service.request.mgmt.service.ContextConfigService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -99,16 +101,25 @@ public class ContextConfigController {
 
     @Operation(summary = "APPLY context configurations to alarm", description = "Applies all matching context configurations to a specific alarm by alarm ID.", tags = {})
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK - Context configurations applied successfully"),
-            @ApiResponse(responseCode = "404", description = "Not Found - Alarm not found"),
-            @ApiResponse(responseCode = "400", description = "Bad Request") })
+            @ApiResponse(responseCode = "200", description = "OK - Context configurations applied successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ContextData.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found - Alarm not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseBody.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseBody.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error - Context configuration is not valid", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseBody.class))) })
     @PostMapping(path = "/apply/alarm/{alarmId}")
-    public ResponseEntity<Void> applyContextConfigsToAlarm(@PathVariable String alarmId) {
-        try {
-            contextConfigService.applyContextConfigsToAlarm(alarmId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> applyContextConfigsToAlarm(@PathVariable String alarmId) {
+         ContextDataApply applyContextConfigsToAlarm = contextConfigService.applyContextConfigsToAlarm(alarmId);
+
+        switch (applyContextConfigsToAlarm.getError()) {
+            case ALARM_NOT_DEFINED:
+                return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody(applyContextConfigsToAlarm.getError()), HttpStatus.BAD_REQUEST);
+            case ALARM_NOT_FOUND:
+                return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody(applyContextConfigsToAlarm.getError()), HttpStatus.NOT_FOUND);
+            case CONTEXT_CONFIG_NOT_VALID:
+                return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody(applyContextConfigsToAlarm.getError()), HttpStatus.INTERNAL_SERVER_ERROR);
+            default:
+                break;
         }
+
+        return new ResponseEntity<>(applyContextConfigsToAlarm.getContextData(), HttpStatus.OK);
     }
 }

@@ -14,7 +14,7 @@ All URIs are relative to *http://localhost:8080*
 
 <a name="applyContextConfigsToAlarm"></a>
 # **applyContextConfigsToAlarm**
-> applyContextConfigsToAlarm(alarmId)
+> ContextData applyContextConfigsToAlarm(alarmId)
 
 APPLY context configurations to alarm
 
@@ -28,7 +28,7 @@ APPLY context configurations to alarm
 
 ### Return type
 
-null (empty response body)
+[**ContextData**](../Models/ContextData.md)
 
 ### Authorization
 
@@ -37,7 +37,7 @@ null (empty response body)
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: Not defined
+- **Accept**: application/json
 
 <a name="createContextConfig"></a>
 # **createContextConfig**

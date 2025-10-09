@@ -54,11 +54,9 @@ public class ServiceRequestUpdateService {
 
 	private ContextService<UserCredentials> userContextService;
 
-	private ContextConfigServiceC8y contextConfigService;
-
 	@Autowired
 	public ServiceRequestUpdateService(EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi userAlarmApi, AlarmApi serviceAlarmApi, InventoryApi inventoryApi, ServiceRequestCommentService serviceRequestCommentService,
-			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService, ContextConfigServiceC8y contextConfigService) {
+			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService) {
 		this.eventApi = eventApi;
 		this.userAlarmApi = userAlarmApi;
 		this.inventoryApi = inventoryApi;
@@ -66,16 +64,14 @@ public class ServiceRequestUpdateService {
 		this.contextService = contextService;
 		this.userContextService = userContextService;
 		this.serviceAlarmApi = serviceAlarmApi;
-		this.userAlarmApi = userAlarmApi;
-		this.contextConfigService = contextConfigService;
 	}
 
 	@Async
-	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus, UserCredentials credentials, MicroserviceCredentials microserviceCredentials, Boolean isServiceRequestNew) {
+	public void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus, UserCredentials credentials, MicroserviceCredentials microserviceCredentials) {
 
 		boolean updateSuccessful = userContextService.callWithinContext(credentials, () -> {
 			try {
-				updateAlarm(serviceRequest, alarmRef, srStatus, userAlarmApi, isServiceRequestNew);
+				updateAlarm(serviceRequest, alarmRef, srStatus, userAlarmApi);
 				return true;
 			} catch (SDKException e) {
 				log.warn("Error updating alarm with user credentials: {} {}", credentials.getUsername(), credentials.getTenant(), e);
@@ -87,7 +83,7 @@ public class ServiceRequestUpdateService {
 			log.info("Try to update alarm with microservice credentials instead of user credentials...");
 			contextService.runWithinContext(microserviceCredentials, () -> {
 				try {
-					updateAlarm(serviceRequest, alarmRef, srStatus, serviceAlarmApi, isServiceRequestNew);
+					updateAlarm(serviceRequest, alarmRef, srStatus, serviceAlarmApi);
 				} catch (SDKException e) {
 					log.error("Error updating alarm with microservice credentials", e);
 				}
@@ -96,7 +92,7 @@ public class ServiceRequestUpdateService {
 	}
 
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef,
-			ServiceRequestStatusConfig srStatus, AlarmApi alarmApi, Boolean isServiceRequestNew) throws SDKException {
+			ServiceRequestStatusConfig srStatus, AlarmApi alarmApi) throws SDKException {
 		if ((serviceRequest == null) || (alarmRef == null) || (srStatus == null)) {
 			log.error("updateAlarm(serviceRequest: {}, alarmRef: {}, srStatus: {})", serviceRequest, alarmRef,
 					srStatus);
@@ -125,11 +121,6 @@ public class ServiceRequestUpdateService {
 		AlarmMapper alarmMapper = AlarmMapper.map2(serviceRequest.getId(), alarmRef, alarmStatus);
 		if (alarmMapper != null) {
 			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
-
-			//if service request is created for alarm, automatically apply context configs
-			if (isServiceRequestNew != null && isServiceRequestNew) {
-				contextConfigService.applyContextConfigsToAlarm(alarmRepresentation);
-			}
 			log.info("update Alarm {}", alarmRepresentation.getId().getValue());
 			alarmApi.update(alarmRepresentation);
 		}

@@ -73,8 +73,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -83,8 +83,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -352,8 +352,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -362,8 +362,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -398,8 +398,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -408,8 +408,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -478,8 +478,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -488,8 +488,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -526,8 +526,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -536,8 +536,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -685,12 +685,12 @@
           "required" : true
         },
         "responses" : {
-          "400" : {
-            "description" : "Bad Request, Service request body is invalid!",
+          "201" : {
+            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponseBody"
+                  "$ref" : "#/components/schemas/ServiceRequest"
                 }
               }
             }
@@ -715,12 +715,12 @@
               }
             }
           },
-          "201" : {
-            "description" : "Created",
+          "400" : {
+            "description" : "Bad Request, Service request body is invalid!",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ServiceRequest"
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
                 }
               }
             }
@@ -769,6 +769,16 @@
           }
         } ],
         "responses" : {
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
+                }
+              }
+            }
+          },
           "200" : {
             "description" : "Ok",
             "content" : {
@@ -778,16 +788,6 @@
                   "items" : {
                     "$ref" : "#/components/schemas/ServiceRequestComment"
                   }
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
                 }
               }
             }
@@ -1205,13 +1205,44 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "OK - Context configurations applied successfully"
+            "description" : "OK - Context configurations applied successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContextData"
+                }
+              }
+            }
           },
-          "400" : {
-            "description" : "Bad Request"
+          "500" : {
+            "description" : "Internal Server Error - Context configuration is not valid",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
           },
           "404" : {
-            "description" : "Not Found - Alarm not found"
+            "description" : "Not Found - Alarm not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
           }
         }
       }
@@ -1231,8 +1262,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1241,8 +1272,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1393,8 +1424,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "Ok",
+          "404" : {
+            "description" : "Not found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1406,8 +1437,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not found",
+          "200" : {
+            "description" : "Ok",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2014,6 +2045,56 @@
           }
         },
         "description" : "Defines a custom specific status"
+      },
+      "ContextData" : {
+        "required" : [ "contextConfigId", "dateFrom", "dateTo" ],
+        "type" : "object",
+        "properties" : {
+          "dateFrom" : {
+            "type" : "string",
+            "description" : "Start date and time of the context window",
+            "format" : "date-time"
+          },
+          "dateTo" : {
+            "type" : "string",
+            "description" : "End date and time of the context window",
+            "format" : "date-time"
+          },
+          "datapoints" : {
+            "type" : "array",
+            "description" : "List of measurement datapoints included in this context",
+            "example" : [ "MHAI1.H1RMSA1", "MHAI1.H1RMSA2" ],
+            "items" : {
+              "type" : "string",
+              "description" : "List of measurement datapoints included in this context",
+              "example" : "[\"MHAI1.H1RMSA1\",\"MHAI1.H1RMSA2\"]"
+            }
+          },
+          "events" : {
+            "type" : "array",
+            "description" : "List of event types included in this context",
+            "example" : [ "ec_S:66/11", "ec_S:66/11" ],
+            "items" : {
+              "type" : "string",
+              "description" : "List of event types included in this context",
+              "example" : "[\"ec_S:66/11\",\"ec_S:66/11\"]"
+            }
+          },
+          "alarms" : {
+            "type" : "array",
+            "description" : "List of alarm types included in this context",
+            "items" : {
+              "type" : "string",
+              "description" : "List of alarm types included in this context"
+            }
+          },
+          "contextConfigId" : {
+            "type" : "string",
+            "description" : "ID of the context configuration that generated this context data",
+            "example" : "123456789"
+          }
+        },
+        "description" : "Context data containing time-based contextual information with measurements, events, and alarms for a specific time window"
       },
       "RequestListServiceRequest" : {
         "required" : [ "currentPage", "list", "pageSize", "totalPages" ],

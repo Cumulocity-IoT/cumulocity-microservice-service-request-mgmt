@@ -22,6 +22,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.cumulocity.microservice.context.ContextService;
+import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
+import com.cumulocity.microservice.context.credentials.UserCredentials;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 import com.cumulocity.sdk.client.alarm.AlarmApi;
@@ -31,6 +34,7 @@ import cumulocity.microservice.service.request.mgmt.model.ContextConfig;
 import cumulocity.microservice.service.request.mgmt.model.ContextConfig.ContextApplyRules;
 import cumulocity.microservice.service.request.mgmt.model.ContextConfig.ContextPredicate;
 import cumulocity.microservice.service.request.mgmt.model.ContextConfig.ContextSettings;
+import cumulocity.microservice.service.request.mgmt.service.ContextConfigService;
 
 class ContextConfigServiceC8yTest {
 
@@ -40,12 +44,18 @@ class ContextConfigServiceC8yTest {
     @Mock
     private AlarmApi alarmApi;
 
-    private ContextConfigServiceC8y contextConfigService;
+    @Mock
+    private ContextService<MicroserviceCredentials> contextService;
+
+    @Mock
+    private ContextService<UserCredentials> userContextService;
+
+    private ContextConfigService contextConfigService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        contextConfigService = new ContextConfigServiceC8y(inventoryApi, alarmApi);
+        contextConfigService = new ContextConfigServiceC8y(inventoryApi, alarmApi, contextService, userContextService);
     }
 
     @Test

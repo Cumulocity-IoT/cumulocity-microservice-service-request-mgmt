@@ -10,7 +10,7 @@
         alarmPredicate: [
             { 
                 fragment: "type",
-                regex: "^my_TestAlarm1$"
+                regex: "^my_TestAlarm([1-9]|[1-9][0-9])$"
             }
         ]
     },

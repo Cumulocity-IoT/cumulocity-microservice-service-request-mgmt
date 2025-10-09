@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ContextConfigObjectMapper {
     public static final String MANAGEDOBJECT_TYPE = "ctx_Config";
+    public static final String ALARM_FRAGMENT = "ctx_Data";
     
     public static final String CTX_ID = "id";
     public static final String CTX_DESCRIPTION = "ctx_Description";

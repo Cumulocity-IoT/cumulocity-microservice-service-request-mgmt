@@ -6,9 +6,12 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
+import com.cumulocity.microservice.context.credentials.UserCredentials;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 
 import cumulocity.microservice.service.request.mgmt.model.ContextConfig;
+import cumulocity.microservice.service.request.mgmt.model.ContextDataApply;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -74,17 +77,24 @@ public interface ContextConfigService {
      * Applies all matching context configurations to a specific alarm
      * 
      * @param alarmId the ID of the alarm to apply context configurations to
-     * @throws IllegalArgumentException if alarmId is null or empty
-     * @throws RuntimeException if alarm is not found or if there's an error during processing
+     * @return result of applying context configurations, including any errors
      */
-    void applyContextConfigsToAlarm(@NotNull String alarmId);
+    ContextDataApply applyContextConfigsToAlarm(@NotNull String alarmId);
 
     /**
      * Applies all matching context configurations to a specific alarm. The alarm will not be updated in that method, it will only add this to the alarm given as parameter.
      * 
      * @param alarm the alarm representation to apply context configurations to
-     * @throws IllegalArgumentException if alarm is null or has no ID
-     * @throws RuntimeException if alarm is not found or if there's an error during processing
+     * @return result of applying context configurations, including any errors
      */
-    void applyContextConfigsToAlarm(AlarmRepresentation alarm);
+    ContextDataApply applyContextConfigsToAlarm(AlarmRepresentation alarm);
+
+    /**
+     * Applies all matching context configurations to a specific alarm by alarm ID, using provided user and microservice credentials for context switching.
+     * 
+     * @param alarmId the ID of the alarm to apply context configurations to
+     * @param credentials user credentials for context switching
+     * @param microserviceCredentials microservice credentials for context switching
+     */
+    void applyContextConfigsToAlarm(String alarmId, MicroserviceCredentials microserviceCredentials);
 }

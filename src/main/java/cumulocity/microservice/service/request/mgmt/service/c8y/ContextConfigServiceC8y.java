@@ -15,8 +15,12 @@ import org.joda.time.format.DateTimeFormatter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.cumulocity.microservice.context.ContextService;
+import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
+import com.cumulocity.microservice.context.credentials.UserCredentials;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
@@ -26,9 +30,9 @@ import com.cumulocity.sdk.client.inventory.InventoryApi;
 import com.cumulocity.sdk.client.inventory.InventoryFilter;
 import com.cumulocity.sdk.client.inventory.ManagedObjectCollection;
 
-import ch.qos.logback.core.Context;
 import cumulocity.microservice.service.request.mgmt.model.ContextConfig;
 import cumulocity.microservice.service.request.mgmt.model.ContextData;
+import cumulocity.microservice.service.request.mgmt.model.ContextDataApply;
 import cumulocity.microservice.service.request.mgmt.service.ContextConfigService;
 
 @Service
@@ -37,10 +41,14 @@ public class ContextConfigServiceC8y implements ContextConfigService {
 
     private final InventoryApi inventoryApi;
     private final AlarmApi alarmApi;
-    
-    public ContextConfigServiceC8y(InventoryApi inventoryApi, AlarmApi alarmApi) {
+    private final ContextService<MicroserviceCredentials> contextService;
+    private final ContextService<UserCredentials> userContextService;
+
+    public ContextConfigServiceC8y(InventoryApi inventoryApi, AlarmApi alarmApi, ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService) {
         this.inventoryApi = inventoryApi;
         this.alarmApi = alarmApi;
+        this.contextService = contextService;
+        this.userContextService = userContextService;
     }
 
     @Override
@@ -142,11 +150,23 @@ public class ContextConfigServiceC8y implements ContextConfigService {
     }
 
     @Override
-    public void applyContextConfigsToAlarm(String alarmId) {
-        LOG.debug("Applying context configurations to alarm with ID: {}", alarmId);
+	@Async
+	public void applyContextConfigsToAlarm(String alarmId, MicroserviceCredentials microserviceCredentials) {
+        contextService.runWithinContext(microserviceCredentials, () -> {
+            try {
+                applyContextConfigsToAlarm(alarmId);
+            } catch (SDKException e) {
+                LOG.error("Error updating alarm with microservice credentials", e);
+            }
+        });
+	}
+
+    @Override
+    public ContextDataApply applyContextConfigsToAlarm(String alarmId) {
+        LOG.info("Applying context configurations to alarm with ID: {}", alarmId);
         
         if (alarmId == null || alarmId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Alarm ID cannot be null or empty");
+            return new ContextDataApply(null, ContextDataApply.ContextDataApplyError.ALARM_NOT_DEFINED);
         }
         
         AlarmRepresentation alarm = null;
@@ -154,70 +174,71 @@ public class ContextConfigServiceC8y implements ContextConfigService {
             // Get the alarm
             alarm = alarmApi.getAlarm(GId.asGId(alarmId));
             if (alarm == null) {
-                throw new RuntimeException("Alarm not found with ID: " + alarmId);
+                return new ContextDataApply(null, ContextDataApply.ContextDataApplyError.ALARM_NOT_FOUND);
             }
-        } catch (SDKException e) {
-            if (e.getHttpStatus() == 404) {
-                throw new RuntimeException("Alarm not found with ID: " + alarmId, e);
-            }
-            throw new RuntimeException("Error applying context configurations to alarm: " + alarmId, e);
         } catch (Exception e) {
-            LOG.error("Error applying context configurations to alarm {}: {}", alarmId, e.getMessage(), e);
-            throw new RuntimeException("Error applying context configurations to alarm: " + alarmId, e);
+            return new ContextDataApply(null, ContextDataApply.ContextDataApplyError.ALARM_NOT_FOUND);
         }
 
-        applyContextConfigsToAlarm(alarm); 
+        ContextDataApply applyContextConfigsToAlarm = applyContextConfigsToAlarm(alarm);
+
+        if(applyContextConfigsToAlarm.getError() != null) {
+            return applyContextConfigsToAlarm;
+        }
             
         try {
             // Update the alarm with the context data
             alarmApi.update(alarm);
             LOG.debug("Successfully updated alarm {} with context data", alarm.getId());
-        } catch (SDKException e) {
+            return applyContextConfigsToAlarm;
+        } catch (Exception e) {
             LOG.error("Failed to update alarm {} with context data: {}", alarm.getId(), e.getMessage(), e);
-            throw new RuntimeException("Failed to update alarm with context data", e);
+            applyContextConfigsToAlarm.setError(ContextDataApply.ContextDataApplyError.ALARM_UPDATE_FAILED);
+            return applyContextConfigsToAlarm;
         }
 
     }
 
     @Override
-    public void applyContextConfigsToAlarm(AlarmRepresentation alarm) {
+    public ContextDataApply applyContextConfigsToAlarm(AlarmRepresentation alarm) {
         LOG.debug("Applying context configurations to alarm with ID: {}", alarm.getId());
         
         if (alarm == null || alarm.getId() == null) {
-            throw new IllegalArgumentException("Alarm or Alarm ID cannot be null");
+            return new ContextDataApply(null, ContextDataApply.ContextDataApplyError.ALARM_NOT_DEFINED);
         }
-        
+
+        ManagedObjectRepresentation device = null;
         try {
-            // Get the device associated with the alarm
-            ManagedObjectRepresentation device = null;
             if (alarm.getSource() != null && alarm.getSource().getId() != null) {
                 device = inventoryApi.get(alarm.getSource().getId());
             }
-            
-            // Get all active context configurations
-            List<ContextConfig> activeConfigs = getActiveContextConfigList();
-            
-            int appliedCount = 0;
-            for (ContextConfig config : activeConfigs) {
-                if (shouldApplyConfigToAlarm(config, alarm, device)) {
-                    // Apply the configuration logic here
-                    // This would involve adding context data to the alarm based on the config settings
-                    //applyConfigurationToAlarm(config, alarm);
-                    ContextData contextData = createContextDataFromConfig(config, alarm.getDateTime());
-                    alarm.setProperty("ctx_ContextData", contextData);        
-                    appliedCount++;
-                    LOG.debug("Applied context configuration {} to alarm {}", config.getId(), alarm.getId());
-                }
-            }
-            
-            LOG.info("Applied {} context configurations to alarm {}", appliedCount, alarm.getId());
-            
-        } catch (SDKException e) {
-            throw new RuntimeException("Error applying context configurations to alarm: " + alarm.getId(), e);
         } catch (Exception e) {
             LOG.error("Error applying context configurations to alarm {}: {}", alarm.getId(), e.getMessage(), e);
-            throw new RuntimeException("Error applying context configurations to alarm: " + alarm.getId(), e);
+            return new ContextDataApply(null, ContextDataApply.ContextDataApplyError.DEVICE_NOT_FOUND);
         }
+
+        // Get all active context configurations
+        List<ContextConfig> activeConfigs = getActiveContextConfigList();
+        
+        List<ContextData> existingContextData = new ArrayList<>();
+        for (ContextConfig config : activeConfigs) {
+            if (shouldApplyConfigToAlarm(config, alarm, device)) {
+                // Apply the configuration logic here
+                // This would involve adding context data to the alarm based on the config settings
+                //applyConfigurationToAlarm(config, alarm);
+                ContextData contextData = createContextDataFromConfig(config, alarm.getDateTime());
+                existingContextData.add(contextData);       
+                LOG.debug("Applied context configuration {} to alarm {}", config.getId(), alarm.getId());
+            }
+        }
+        
+        if(!existingContextData.isEmpty()) {
+            //Only one context data is supported for now
+            alarm.setProperty(ContextConfigObjectMapper.ALARM_FRAGMENT, existingContextData.get(0));
+        }
+
+        LOG.info("Applied {} context configurations to alarm {}", existingContextData.size(), alarm.getId());
+        return new ContextDataApply(existingContextData.isEmpty() ? null : existingContextData.get(0), null);
     }
     
     /**
@@ -332,56 +353,6 @@ public class ContextConfigServiceC8y implements ContextConfigService {
             LOG.error("Invalid regex pattern '{}' in predicate for fragment {}: {}", 
                 predicate.getRegex(), predicate.getFragment(), e.getMessage());
             return false;
-        }
-    }
-    
-    /**
-     * Applies the context configuration to the alarm
-     * This creates a ContextData object and stores it as a single property on the alarm
-     */
-    private void applyConfigurationToAlarm(ContextConfig config, AlarmRepresentation alarm) {
-        LOG.debug("Applying configuration {} to alarm {}", config.getId(), alarm.getId());
-        
-        if (config.getConfig() == null) {
-            LOG.warn("Context configuration {} has no settings defined - skipping application", config.getId());
-            return;
-        }
-        
-        // Create ContextData object
-        ContextData contextData = new ContextData();
-        contextData.setContextConfigId(config.getId());
-        
-        // Parse and set date range from relative time strings
-        try {
-            DateTime dateFrom = parseRelativeDateTime(config.getConfig().getDateFrom(), alarm.getDateTime());
-            DateTime dateTo = parseRelativeDateTime(config.getConfig().getDateTo(), alarm.getDateTime());
-            
-            contextData.setDateFrom(dateFrom);
-            contextData.setDateTo(dateTo);
-        } catch (Exception e) {
-            LOG.error("Failed to parse date range for config {}: {}", config.getId(), e.getMessage());
-            // Set default time window (last 24 hours)
-            DateTime now = DateTime.now();
-            contextData.setDateFrom(now.minusDays(1));
-            contextData.setDateTo(now);
-        }
-        
-        // Set data collections
-        contextData.setDatapoints(config.getConfig().getDatapoints());
-        contextData.setEvents(config.getConfig().getEvents());
-        contextData.setAlarms(config.getConfig().getAlarms());
-        
-        // Store as single property on the alarm (overwriting any existing context data)
-        alarm.setProperty("ctx_ContextData", contextData);
-        
-        try {
-            // Update the alarm with the context data
-            alarmApi.update(alarm);
-            LOG.debug("Successfully updated alarm {} with context data from configuration {}", alarm.getId(), config.getId());
-        } catch (SDKException e) {
-            LOG.error("Failed to update alarm {} with context data from configuration {}: {}", 
-                alarm.getId(), config.getId(), e.getMessage(), e);
-            throw new RuntimeException("Failed to update alarm with context data", e);
         }
     }
 
