@@ -107,7 +107,11 @@ public class ContextConfigController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error - Context configuration is not valid", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseBody.class))) })
     @PostMapping(path = "/apply/alarm/{alarmId}")
     public ResponseEntity<?> applyContextConfigsToAlarm(@PathVariable String alarmId) {
-         ContextDataApply applyContextConfigsToAlarm = contextConfigService.applyContextConfigsToAlarm(alarmId);
+        ContextDataApply applyContextConfigsToAlarm = contextConfigService.applyContextConfigsToAlarm(alarmId);
+
+        if (applyContextConfigsToAlarm.getError() == null) {
+            return new ResponseEntity<ContextData>(applyContextConfigsToAlarm.getContextData(), HttpStatus.OK);
+        }
 
         switch (applyContextConfigsToAlarm.getError()) {
             case ALARM_NOT_DEFINED:
@@ -120,6 +124,6 @@ public class ContextConfigController {
                 break;
         }
 
-        return new ResponseEntity<>(applyContextConfigsToAlarm.getContextData(), HttpStatus.OK);
+        return new ResponseEntity<ErrorResponseBody>(new ErrorResponseBody(applyContextConfigsToAlarm.getError()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

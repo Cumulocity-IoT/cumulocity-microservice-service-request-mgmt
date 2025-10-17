@@ -1,0 +1,50 @@
+{
+  "configId": "alarm_6232311986",
+  "label": "W:401/5230 Safety tests - Safety output failure warning",
+  "config": {
+    "datapoints": [
+      {
+        "fragment": "WGRI1/Gri1",
+        "series": "WMeas",
+        "__target": {
+          "id": "685150616899"
+        }
+      },
+      {
+        "fragment": "WGRI1/Gri1",
+        "series": "VArMeas",
+        "__target": {
+          "id": "685150616899"
+        }
+      },
+      {
+        "fragment": "WMET1/Met1",
+        "series": "WdSpd",
+        "__target": {
+          "id": "685150616899"
+        }
+      },
+      {
+        "fragment": "WGEN1/Gn1",
+        "series": "RotSpd",
+        "__target": {
+          "id": "685150616899"
+        }
+      }
+    ],
+     "alarmsEventsConfigs": [
+      {
+        "timelineType": "EVENT",
+        "label": "Status changed",
+        "filters": {
+          "type": "ec_StatusChanged"
+        },
+        "__target": {
+          "id": "685150616899"
+        }
+      }
+    ],
+    "dateFrom": "2025-10-08T13:15:38.153Z",
+    "dateTo": "2025-10-09T13:15:38.153Z"
+  }
+}
