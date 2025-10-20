@@ -3,6 +3,8 @@ package cumulocity.microservice.service.request.mgmt.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +43,7 @@ public class ContextConfigController {
             @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ContextConfig.class))),
             @ApiResponse(responseCode = "400", description = "Bad Request") })
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ContextConfig> createContextConfig(@RequestBody ContextConfig contextConfig) {
+    public ResponseEntity<ContextConfig> createContextConfig(@Valid @RequestBody ContextConfig contextConfig) {
         ContextConfig newContextConfig = contextConfigService.createContextConfig(contextConfig);
         return new ResponseEntity<ContextConfig>(newContextConfig, HttpStatus.CREATED);
     }
@@ -52,8 +54,7 @@ public class ContextConfigController {
             @ApiResponse(responseCode = "404", description = "Not Found"),
             @ApiResponse(responseCode = "400", description = "Bad Request") })
     @PutMapping(path = "/{configId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ContextConfig> updateContextConfig(@PathVariable String configId,
-            @RequestBody ContextConfig contextConfig) {
+    public ResponseEntity<ContextConfig> updateContextConfig(@PathVariable String configId, @Valid @RequestBody ContextConfig contextConfig) {
         Optional<ContextConfig> existingConfig = contextConfigService.getContextConfig(configId);
         if (existingConfig.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

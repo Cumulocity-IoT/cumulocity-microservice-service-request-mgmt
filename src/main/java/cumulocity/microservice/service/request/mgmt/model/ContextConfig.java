@@ -21,6 +21,7 @@ public class ContextConfig {
     private String id;
 
     @Schema(description = "Description of what this context configuration is used for", example = "Context configuration for CS82 control software connection errors")
+    @NotNull
     private String description;
 
     @Schema(required = true, description = "Application rules that define when this context configuration should be applied")
@@ -38,6 +39,7 @@ public class ContextConfig {
 
     @Data
     @Schema(description = "Rules that define when this context configuration should be applied to an alarm")
+    @Validated
     public static class ContextApplyRules {
 
         @Schema(description = "Device predicates that must match for this context to be applied")
@@ -51,6 +53,7 @@ public class ContextConfig {
 
     @Data
     @Schema(description = "Predicate for matching objects based on fragment values")
+    @Validated
     public static class ContextPredicate {
 
         @Schema(required = true, description = "Fragment name to check", example = "ec_ControlSoftware")
@@ -58,12 +61,14 @@ public class ContextConfig {
         private String fragment;
 
         @Schema(description = "Regular expression that the fragment value must match", example = "^CS82$")
+        @NotNull
         private String regex;
 
     }
 
     @Data
     @Schema(description = "Context configuration settings that define the data and time window")
+    @Validated
     public static class ContextSettings {
 
         @Schema(required = true, description = "Relative start time for the context window", example = "-1d")
