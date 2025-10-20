@@ -17,7 +17,9 @@
     config: {
         dateFrom: "-1d",
         dateTo: "0d",
-        datapoints: ["Gn1.RotSpd"]
+        datapoints: ["Gn1.RotSpd", "Gn1.Power"],
+        events: ["my_StatusChangeEvent", "my_OtherEvent"],
+        alarms: ["my_Alarm1", "my_Alarm2"]
     },
     isActive: true
 }
