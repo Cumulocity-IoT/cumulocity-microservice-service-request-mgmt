@@ -26,6 +26,7 @@ import com.cumulocity.sdk.client.event.EventFilter;
 import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
+import cumulocity.microservice.service.request.mgmt.model.ContextConfig;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
@@ -63,7 +64,6 @@ public class ServiceRequestUpdateService {
 		this.contextService = contextService;
 		this.userContextService = userContextService;
 		this.serviceAlarmApi = serviceAlarmApi;
-		this.userAlarmApi = userAlarmApi;
 	}
 
 	@Async
