@@ -13,6 +13,46 @@ commands:
     description: Create context configuration
     method: POST
     path: /service/service-request-mgmt/api/context/config
+  - name: delete
+    description: Delete context configuration
+    method: DELETE
+    path: /service/service-request-mgmt/api/context/config/{id}
+    pathParameters:
+      - name: id
+        type: string
+        description: Context Config ID
+        pipeline: true
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - context 
+            - list
+            - --select 
+            - id,description 
+            - --output 
+            - completion
+  - name: get
+    description: Get context configuration by ID
+    method: GET
+    path: /service/service-request-mgmt/api/context/config/{id}
+    pathParameters:
+      - name: id
+        type: string
+        description: Context Config ID
+        pipeline: true
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - context 
+            - list
+            - --select 
+            - id,description 
+            - --output 
+            - completion
   - name: applyAlarm
     description: Apply context configuration to all existing service requests
     method: POST

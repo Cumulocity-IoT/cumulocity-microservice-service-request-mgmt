@@ -685,22 +685,22 @@
           "required" : true
         },
         "responses" : {
-          "400" : {
-            "description" : "Bad Request, Service request body is invalid!",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponseBody"
-                }
-              }
-            }
-          },
           "201" : {
             "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
+          "412" : {
+            "description" : "Precondition Failed, Alarm of service request not found!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
                 }
               }
             }
@@ -715,8 +715,8 @@
               }
             }
           },
-          "412" : {
-            "description" : "Precondition Failed, Alarm of service request not found!",
+          "400" : {
+            "description" : "Bad Request, Service request body is invalid!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -769,6 +769,16 @@
           }
         } ],
         "responses" : {
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
+                }
+              }
+            }
+          },
           "200" : {
             "description" : "Ok",
             "content" : {
@@ -778,16 +788,6 @@
                   "items" : {
                     "$ref" : "#/components/schemas/ServiceRequestComment"
                   }
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
                 }
               }
             }
@@ -1166,8 +1166,8 @@
           "required" : true
         },
         "responses" : {
-          "201" : {
-            "description" : "Created",
+          "400" : {
+            "description" : "Bad Request",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1176,8 +1176,8 @@
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
+          "201" : {
+            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1204,6 +1204,26 @@
           }
         } ],
         "responses" : {
+          "500" : {
+            "description" : "Internal Server Error - Context configuration is not valid",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found - Alarm not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          },
           "400" : {
             "description" : "Bad Request",
             "content" : {
@@ -1220,26 +1240,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ContextData"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not Found - Alarm not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponseBody"
-                }
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal Server Error - Context configuration is not valid",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponseBody"
                 }
               }
             }
@@ -1262,8 +1262,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1272,8 +1272,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1424,8 +1424,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "Ok",
+          "404" : {
+            "description" : "Not found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1437,8 +1437,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not found",
+          "200" : {
+            "description" : "Ok",
             "content" : {
               "application/json" : {
                 "schema" : {
