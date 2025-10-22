@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/v2/tools/schema/extensionCommands.json
+
+group:
+  name: context
+  description: context configurations
+
+commands:
+  - name: list
+    description: Get List of context configurations
+    method: GET
+    path: /service/service-request-mgmt/api/context/config
+  - name: create
+    description: Create context configuration
+    method: POST
+    path: /service/service-request-mgmt/api/context/config
+  - name: delete
+    description: Delete context configuration
+    method: DELETE
+    path: /service/service-request-mgmt/api/context/config/{id}
+    pathParameters:
+      - name: id
+        type: string
+        description: Context Config ID
+        pipeline: true
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - context 
+            - list
+            - --select 
+            - id,description 
+            - --output 
+            - completion
+  - name: get
+    description: Get context configuration by ID
+    method: GET
+    path: /service/service-request-mgmt/api/context/config/{id}
+    pathParameters:
+      - name: id
+        type: string
+        description: Context Config ID
+        pipeline: true
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - context 
+            - list
+            - --select 
+            - id,description 
+            - --output 
+            - completion
+  - name: applyAlarm
+    description: Apply context configuration to all existing service requests
+    method: POST
+    path: /service/service-request-mgmt/api/context/config/apply/alarm/{id}
+    pathParameters:
+      - name: id
+        type: string
+        description: Alarm ID
+        pipeline: true
+        completion:
+          type: external
+          command: 
+            - c8y
+            - alarms
+            - sr 
+            - list
+            - --select 
+            - id,type,text 
+            - --output 
+            - completion
