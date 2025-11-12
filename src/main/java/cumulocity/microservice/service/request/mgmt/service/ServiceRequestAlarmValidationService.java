@@ -53,7 +53,7 @@ public class ServiceRequestAlarmValidationService {
      * has influence on the alarm status. The service request status is set to STOP when the service request is completed and the alarm status should be cleared. The alarm status can be changed to CLEARED via UI, so the alarm status is not always in sync with the service request status. For this reason, cleared alarms
      * will be set back to ACKNOWLEDGED when the service request status is still ACTIVE.
      */
-    @Scheduled(fixedDelayString = "${validation.job.scheduled.delay.millis:86400000}", initialDelay = 60000)
+    @Scheduled(fixedDelayString = "${validation.job.scheduled.delay.millis:86400000}", initialDelay = 600000) // Wait 10 minutes before first run
     public void validateServiceRequestAlarmStatus() {
         subscriptions.runForEachTenant(() -> {
             Stopwatch stopwatch = Stopwatch.createStarted();
@@ -100,7 +100,7 @@ public class ServiceRequestAlarmValidationService {
                     try {
                         alarm = alarmApi.getAlarm(GId.asGId(serviceRequestDataRef.getId()));
                     } catch (Exception e) {
-                        log.error("Alarm with ID {} not found", serviceRequestDataRef.getId(), e);
+                        log.warn("Alarm not found: sr {} / alarm.ref {}", sr.getId(), serviceRequestDataRef.getId());
                     }
                     // Check if the alarm is not cleared and add it to the invalidAlarmMap if it is not
                     if(alarm != null && alarm.getStatus() != null && !alarm.getStatus().equals(statusConfig.getAlarmStatusTransition())) {
