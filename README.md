@@ -103,6 +103,72 @@ classDiagram
     }
 ```
 
+## Context Configuration Domain Model
+
+Another useful feature of this microservice is the context configuration for alarms. It allows to contextualize alarms with relevant data defined by context configurations.
+
+The following class diagram shows the context configuration data model used for alarm context management. It is a declarative way to define which data (alarms, events, datapoints) should be collected for an specific alarm.
+
+```mermaid
+classDiagram
+    ContextConfig "1" *-- "1" ContextApplyRules
+    ContextConfig "1" *-- "1" ContextSettings
+    ContextApplyRules "1" *-- "*" ContextPredicate : devicePredicate
+    ContextApplyRules "1" *-- "*" ContextPredicate : alarmPredicate
+    
+    class ContextConfig{
+        +String id
+        +String description
+        +ContextApplyRules apply
+        +ContextSettings config
+        +Boolean isActive
+    }
+    
+    class ContextApplyRules{
+        +List~ContextPredicate~ devicePredicate
+        +List~ContextPredicate~ alarmPredicate
+    }
+    
+    class ContextPredicate{
+        +String fragment
+        +String regex
+    }
+    
+    class ContextSettings{
+        +String dateFrom
+        +String dateTo
+        +List~String~ datapoints
+        +List~String~ events
+        +List~String~ alarms
+    }
+```
+
+The alarm gets enriched with context data based on the defined context configurations. The context data is stored in the alarm's `c8y_ContextData` fragment.
+
+```mermaid
+classDiagram
+    Alarm "1" *-- "1" ContextData : contextData
+
+    class Alarm{
+        +String id
+        +String type
+        +String status
+        +String severity
+        +DateTime time
+        +ContextData ctx_Data
+    }
+
+    class ContextData{
+        +DateTime dateFrom
+        +DateTime dateTo
+        +List~String~ datapoints
+        +List~String~ events
+        +List~String~ alarms
+        +String contextConfigId
+    }
+```
+
+
 Detailed information about the REST API can be found here:
 
 [Open API Specification as markdown](./docs/README.md)
