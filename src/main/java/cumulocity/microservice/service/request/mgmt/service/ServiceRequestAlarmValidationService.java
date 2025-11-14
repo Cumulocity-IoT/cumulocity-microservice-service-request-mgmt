@@ -1,5 +1,8 @@
 package cumulocity.microservice.service.request.mgmt.service;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,7 +15,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.cumulocity.microservice.subscription.service.MicroserviceSubscriptionsService;
-import com.cumulocity.model.event.CumulocityAlarmStatuses;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 import com.cumulocity.rest.representation.event.EventRepresentation;
@@ -77,6 +79,35 @@ public class ServiceRequestAlarmValidationService {
 		    long ms = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 		    log.info("validation job finished in {} ms", ms);
         });
+    }
+
+    @Scheduled(fixedDelay = 600000) // Every 10 minutes
+    public void completeMemoryStatus() {
+        Runtime runtime = Runtime.getRuntime();
+        MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+        
+        long maxMemory = runtime.maxMemory();
+        long totalMemory = runtime.totalMemory();
+        long freeMemory = runtime.freeMemory();
+        long usedMemory = totalMemory - freeMemory;
+        
+        MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
+        
+        log.info("=== MEMORY STATUS ===");
+        log.info("JVM Max Heap: {} MB (-Xmx setting)", maxMemory / 1024 / 1024);
+        log.info("JVM Total Allocated: {} MB", totalMemory / 1024 / 1024);
+        log.info("JVM Used: {} MB", usedMemory / 1024 / 1024);
+        log.info("JVM Free: {} MB", freeMemory / 1024 / 1024);
+        log.info("Heap Usage: {} MB / {} MB ({:.1f}%)", 
+            heapUsage.getUsed() / 1024 / 1024, 
+            heapUsage.getMax() / 1024 / 1024,
+            (double) heapUsage.getUsed() / heapUsage.getMax() * 100);
+        
+        // Warning if memory usage is high
+        if (usedMemory > maxMemory * 0.8) {
+            log.warn("HIGH MEMORY USAGE: {:.1f}% of max heap", 
+                (double) usedMemory / maxMemory * 100);
+        }
     }
 
     private Map<String, AlarmRepresentation> getInvalidServiceRequestAlarmStatus(Map<String, ServiceRequestStatusConfig> statusListMap) {
