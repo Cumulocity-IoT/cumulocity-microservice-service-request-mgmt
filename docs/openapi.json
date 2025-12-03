@@ -569,18 +569,8 @@
           "required" : true
         },
         "responses" : {
-          "201" : {
-            "description" : "Created",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ServiceRequest"
-                }
-              }
-            }
-          },
-          "409" : {
-            "description" : "Conflict, Alarm already assigned to service request!",
+          "412" : {
+            "description" : "Precondition Failed, Alarm of service request not found!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -599,8 +589,18 @@
               }
             }
           },
-          "412" : {
-            "description" : "Precondition Failed, Alarm of service request not found!",
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict, Alarm already assigned to service request!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1027,8 +1027,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1037,8 +1037,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
