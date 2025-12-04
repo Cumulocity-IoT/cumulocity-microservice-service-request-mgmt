@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.validation.Valid;
 
@@ -688,46 +687,57 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			Predicate<ServiceRequest> serviceRequestFilter, Integer pageSize, Integer pageNumber,
 			Boolean withTotalPages, final String[] orderBy) {
 		
-		Stopwatch totalStopwatch = Stopwatch.createStarted();
-		
+		// In some cases on higher asset level, the number of service requests can be very high. In order to avoid too long running functions (many page iterations), the amount of pages is limited!
+		//TODO this configuration could also be externalized (REST API Query Parameters)! So that the UI can configure this values!
+		int pageCountMaxEventApi = 5;
+		int pageSizeEventApi = 2000;
+		int elementCountMax = pageCountMaxEventApi * pageSizeEventApi;
+
 		pageNumber = pageNumber != null ? pageNumber : 1;
 		pageSize = pageSize != null ? pageSize : 5;
-		
-		// Measure fetching from Cumulocity
-		Stopwatch fetchStopwatch = Stopwatch.createStarted();
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
-		Iterable<EventRepresentation> allPages = eventList.get(10).allPages();
-		fetchStopwatch.stop();
-		log.info("Fetching events from C8y: {} ms", fetchStopwatch.elapsed(TimeUnit.MILLISECONDS));
+
+		Iterable<EventRepresentation> allPages = eventList.get(pageSizeEventApi).allPages();
+		List<ServiceRequest> serviceRequestList = new ArrayList<>();
+		int i = 1;
+		for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {
+			EventRepresentation eventRepresentation = iterator.next();
+			ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
+			if (serviceRequestFilter.test(sr)) {
+				serviceRequestList.add(sr);
+			};
+			if(i++ >= elementCountMax) {
+				log.info("Reached the limit of {} elements, stopping further processing of events!", elementCountMax);
+				break;
+			}
+		}
 		
-		// Measure mapping and filtering
-		Stopwatch mappingStopwatch = Stopwatch.createStarted();
-		List<ServiceRequest> serviceRequestList = StreamSupport.stream(allPages.spliterator(), true)
-			.map(ServiceRequestEventMapper::map2)
-			.filter(serviceRequestFilter)
-			.collect(Collectors.toList());
-		mappingStopwatch.stop();
-		log.info("Mapping and filtering {} events: {} ms", serviceRequestList.size(), mappingStopwatch.elapsed(TimeUnit.MILLISECONDS));
-		
-		// Measure sorting
 		if(orderBy != null && orderBy.length > 0) {
-			Stopwatch sortStopwatch = Stopwatch.createStarted();
-			serviceRequestList.sort(new ServiceRequestComparator(orderBy));
-			sortStopwatch.stop();
-			log.info("Sorting {} service requests: {} ms", serviceRequestList.size(), sortStopwatch.elapsed(TimeUnit.MILLISECONDS));
+			ServiceRequestComparator srComparator = new ServiceRequestComparator(orderBy);
+			serviceRequestList.sort(srComparator);
 		}
 
-		// Measure pagination calculation
-		Stopwatch paginationStopwatch = Stopwatch.createStarted();
-		int totalElements = serviceRequestList.size();
-		int totalPages = (int) Math.ceil((double) totalElements / pageSize);
+		List<List<ServiceRequest>> pages = getPages(serviceRequestList, pageSize);
+		List<ServiceRequest> currentPage = new ArrayList<>();
 
-		List<ServiceRequest> currentPage = serviceRequestList.stream()
-			.skip((long) (pageNumber - 1) * pageSize)
-			.limit(pageSize)
-			.collect(Collectors.toList());
-		paginationStopwatch.stop();
-		log.info("Pagination calculation: {} ms", paginationStopwatch.elapsed(TimeUnit.MILLISECONDS));
+		if(pages.size() == 0) {
+			log.debug("No pages found! Resultset are empty! List size {}",serviceRequestList.size());
+			RequestList<ServiceRequest> requestList = new RequestList<>();
+			requestList.setCurrentPage(0);
+			requestList.setList(currentPage);
+			requestList.setPageSize(0);
+			requestList.setTotalPages(0);
+			requestList.setTotalElements(0L);
+			return requestList;
+		}
+
+		int totalPages = pages.size()-1;// -1 because page 0 is dummy page
+
+		if(pages.size() > pageNumber) {
+			currentPage = pages.get(pageNumber);
+		}else {
+			log.warn("Page number {} exceeds pages {} !", pageNumber, totalPages);
+		}
 		
 		RequestList<ServiceRequest> requestList = new RequestList<>();
 		requestList.setCurrentPage(pageNumber);
@@ -735,11 +745,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		requestList.setPageSize(pageSize);
 		requestList.setTotalPages(totalPages);
 		requestList.setTotalElements(Long.valueOf(serviceRequestList.size()));
-		
-		totalStopwatch.stop();
-		log.info("getServiceRequestByFilterAndInternalFilter total: {} ms (page {}, {} elements)", 
-			totalStopwatch.elapsed(TimeUnit.MILLISECONDS), pageNumber, currentPage.size());
-		
 		return requestList;
 	}
 
