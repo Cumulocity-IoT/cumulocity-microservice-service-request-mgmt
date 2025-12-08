@@ -707,7 +707,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				serviceRequestList.add(sr);
 			};
 			if(i++ >= elementCountMax) {
-				log.info("Reached the limit of {} elements, stopping further processing of events!", elementCountMax);
+				log.warn("Reached the limit of {} elements, stopping further processing of events!", elementCountMax);
 				break;
 			}
 		}
