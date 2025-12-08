@@ -49,6 +49,7 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatus;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
+import cumulocity.microservice.service.request.mgmt.service.ContextConfigService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestService;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusConfigService;
@@ -81,6 +82,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	private RawTextApi rawTextApi;
 
+	private ContextConfigService contextConfigService;
 	
 	public enum ServiceRequestValidationResult {
 		ALARM_NOT_FOUND("Alarm doesn't exist!"),
@@ -111,7 +113,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 	@Autowired
 	public ServiceRequestServiceC8y(EventApi eventApi, EventAttachmentApi eventAttachmentApi, AlarmApi alarmApi,
-			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService, ServiceRequestUpdateService serviceRequestUpdateService, ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService, ServiceRequestPriorityServiceC8y serviceRequestPriorityServiceC8y, RawTextApi rawTextApi) {
+			InventoryApi inventoryApi, ServiceRequestStatusConfigService serviceRequestStatusConfigService, ServiceRequestCommentService serviceRequestCommentService, ServiceRequestUpdateService serviceRequestUpdateService, ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService, ServiceRequestPriorityServiceC8y serviceRequestPriorityServiceC8y, RawTextApi rawTextApi, ContextConfigService contextConfigService) {
 		this.eventApi = eventApi;
 		this.eventAttachmentApi = eventAttachmentApi;
 		this.alarmApi = alarmApi;
@@ -123,6 +125,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		this.userContextService = userContextService;
 		this.serviceRequestPriorityServiceC8y = serviceRequestPriorityServiceC8y;
 		this.rawTextApi = rawTextApi;
+		this.contextConfigService = contextConfigService;
 	}
 
 	@Override
@@ -300,6 +303,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		// Alarm status transition
 		if(newServiceRequest.getAlarmRefList() != null) {
 			for(ServiceRequestDataRef alarmRef: newServiceRequest.getAlarmRefList()) {
+				applyContextConfigsToAlarm(alarmRef);
 				updateAlarm(newServiceRequest, alarmRef, srStatus);
 			}
 		}
@@ -889,6 +893,10 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	
 	private void updateAlarm(ServiceRequest serviceRequest, ServiceRequestDataRef alarmRef, ServiceRequestStatusConfig srStatus) {
 		serviceRequestUpdateService.updateAlarm(serviceRequest, alarmRef, srStatus, userContextService.getContext(), contextService.getContext());
+	}
+
+	private void applyContextConfigsToAlarm(ServiceRequestDataRef alarmRef) {
+		contextConfigService.applyContextConfigsToAlarm(alarmRef.getId(), contextService.getContext());
 	}
 
 	private void updateEvent(String serviceRequestId, ServiceRequestDataRef eventRef) {
