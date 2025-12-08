@@ -685,12 +685,12 @@
           "required" : true
         },
         "responses" : {
-          "201" : {
-            "description" : "Created",
+          "412" : {
+            "description" : "Precondition Failed, Alarm of service request not found!",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ServiceRequest"
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
                 }
               }
             }
@@ -710,7 +710,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponseBody"
+                  "$ref" : "#/components/schemas/ServiceRequest"
                 }
               }
             }
@@ -1262,8 +1262,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1272,8 +1272,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {

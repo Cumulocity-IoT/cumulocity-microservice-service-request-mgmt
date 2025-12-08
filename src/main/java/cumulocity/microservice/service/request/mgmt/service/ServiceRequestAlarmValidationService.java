@@ -1,5 +1,8 @@
 package cumulocity.microservice.service.request.mgmt.service;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,7 +15,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.cumulocity.microservice.subscription.service.MicroserviceSubscriptionsService;
-import com.cumulocity.model.event.CumulocityAlarmStatuses;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 import com.cumulocity.rest.representation.event.EventRepresentation;
@@ -53,7 +55,7 @@ public class ServiceRequestAlarmValidationService {
      * has influence on the alarm status. The service request status is set to STOP when the service request is completed and the alarm status should be cleared. The alarm status can be changed to CLEARED via UI, so the alarm status is not always in sync with the service request status. For this reason, cleared alarms
      * will be set back to ACKNOWLEDGED when the service request status is still ACTIVE.
      */
-    @Scheduled(fixedDelayString = "${validation.job.scheduled.delay.millis:86400000}", initialDelay = 60000)
+    @Scheduled(fixedDelayString = "${validation.job.scheduled.delay.millis:86400000}", initialDelay = 600000) // Wait 10 minutes before first run
     public void validateServiceRequestAlarmStatus() {
         subscriptions.runForEachTenant(() -> {
             Stopwatch stopwatch = Stopwatch.createStarted();
@@ -79,6 +81,35 @@ public class ServiceRequestAlarmValidationService {
         });
     }
 
+    @Scheduled(fixedDelay = 600000) // Every 10 minutes
+    public void completeMemoryStatus() {
+        Runtime runtime = Runtime.getRuntime();
+        MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+        
+        long maxMemory = runtime.maxMemory();
+        long totalMemory = runtime.totalMemory();
+        long freeMemory = runtime.freeMemory();
+        long usedMemory = totalMemory - freeMemory;
+        
+        MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
+        
+        log.info("=== MEMORY STATUS ===");
+        log.info("JVM Max Heap: {} MB (-Xmx setting)", maxMemory / 1024 / 1024);
+        log.info("JVM Total Allocated: {} MB", totalMemory / 1024 / 1024);
+        log.info("JVM Used: {} MB", usedMemory / 1024 / 1024);
+        log.info("JVM Free: {} MB", freeMemory / 1024 / 1024);
+        log.info("Heap Usage: {} MB / {} MB ({:.1f}%)", 
+            heapUsage.getUsed() / 1024 / 1024, 
+            heapUsage.getMax() / 1024 / 1024,
+            (double) heapUsage.getUsed() / heapUsage.getMax() * 100);
+        
+        // Warning if memory usage is high
+        if (usedMemory > maxMemory * 0.8) {
+            log.warn("HIGH MEMORY USAGE: {:.1f}% of max heap", 
+                (double) usedMemory / maxMemory * 100);
+        }
+    }
+
     private Map<String, AlarmRepresentation> getInvalidServiceRequestAlarmStatus(Map<String, ServiceRequestStatusConfig> statusListMap) {
         EventFilter eventFilter = new EventFilterExtend()
             .byType(ServiceRequestEventMapper.EVENT_TYPE)
@@ -100,7 +131,7 @@ public class ServiceRequestAlarmValidationService {
                     try {
                         alarm = alarmApi.getAlarm(GId.asGId(serviceRequestDataRef.getId()));
                     } catch (Exception e) {
-                        log.error("Alarm with ID {} not found", serviceRequestDataRef.getId(), e);
+                        log.warn("Alarm not found: sr {} / alarm.ref {}", sr.getId(), serviceRequestDataRef.getId());
                     }
                     // Check if the alarm is not cleared and add it to the invalidAlarmMap if it is not
                     if(alarm != null && alarm.getStatus() != null && !alarm.getStatus().equals(statusConfig.getAlarmStatusTransition())) {
