@@ -691,23 +691,23 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		//TODO this configuration could also be externalized (REST API Query Parameters)! So that the UI can configure this values!
 		int pageCountMaxEventApi = 5;
 		int pageSizeEventApi = 2000;
+		int maxReturnElements = 1000;
 		int elementCountMax = pageCountMaxEventApi * pageSizeEventApi;
 
 		pageNumber = pageNumber != null ? pageNumber : 1;
 		pageSize = pageSize != null ? pageSize : 5;
 		EventCollection eventList = eventApi.getEventsByFilter(filter);
 
-		Iterable<EventRepresentation> allPages = eventList.get(pageSizeEventApi).allPages();
+		Iterable<EventRepresentation> allPages = eventList.get(pageSizeEventApi).elements(elementCountMax);
 		List<ServiceRequest> serviceRequestList = new ArrayList<>();
-		int i = 1;
 		for (Iterator<EventRepresentation> iterator = allPages.iterator(); iterator.hasNext();) {
 			EventRepresentation eventRepresentation = iterator.next();
 			ServiceRequest sr = ServiceRequestEventMapper.map2(eventRepresentation);
 			if (serviceRequestFilter.test(sr)) {
 				serviceRequestList.add(sr);
 			};
-			if(i++ >= elementCountMax) {
-				log.warn("Reached the limit of {} elements, stopping further processing of events!", elementCountMax);
+			if(serviceRequestList.size() >= maxReturnElements) {
+				log.warn("Reached the limit of max return elements {}, stopping further processing of events!", maxReturnElements);
 				break;
 			}
 		}
