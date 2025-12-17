@@ -45,8 +45,8 @@ jobs:
       #Packaging Standard backend
     - name: Packaging Small (S) Version
       run: |
-        # Calculate new filename: replace 'service-request-mgmt' with 'service-request-mgmt-S'
-        NEW_FILENAME=$(echo "${{ env.artifact_filename }}" | sed 's/service-request-mgmt/service-request-mgmt-S/')
+        # Calculate new filename: replace 'service-request-mgmt' with 'service-request-mgmt-s'
+        NEW_FILENAME=$(echo "${{ env.artifact_filename }}" | sed 's/service-request-mgmt/service-request-mgmt-s/')
 
         # Merge cumulocity.json with cumulocity-S.json
         jq -s '.[0] * .[1]' ./src/main/configuration/cumulocity.json ./src/main/configuration/cumulocity-S.json > ./target/cumulocity.json
@@ -57,15 +57,15 @@ jobs:
         # Update the cumulocity.json in the copied package
         zip -j ./target/$NEW_FILENAME ./target/cumulocity.json
 
-        echo "artifact_filename_S=$NEW_FILENAME" >> $GITHUB_ENV
+        echo "artifact_filename_s=$NEW_FILENAME" >> $GITHUB_ENV
 
     - name: Upload artifact Small (S) Version
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ env.artifact_filename_S }}
-        path: target/${{ env.artifact_filename_S }}
+        name: ${{ env.artifact_filename_s }}
+        path: target/${{ env.artifact_filename_s }}
         retention-days: 7
     - name: Deploy to test environment
       uses: reubenmiller/setup-go-c8y-cli@main
     - run: |
-        c8y microservices create --file target/${{ env.artifact_filename_S }}
+        c8y microservices create --file target/${{ env.artifact_filename_s }}
