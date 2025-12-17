@@ -71,4 +71,4 @@ jobs:
     - name: Deploy to test environment
       uses: reubenmiller/setup-go-c8y-cli@main
     - run: |
-        c8y microservices create --file target/${{ env.artifact_filename_s }}
+        c8y microservices create --file target/${{ env.artifact_filename_s }} --name service-request-mgmt --key service-request-mgmt
