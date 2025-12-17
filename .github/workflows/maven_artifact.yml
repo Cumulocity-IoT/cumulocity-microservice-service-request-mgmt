@@ -48,8 +48,11 @@ jobs:
         # Calculate new filename: replace 'service-request-mgmt' with 'service-request-mgmt-s'
         NEW_FILENAME=$(echo "${{ env.artifact_filename }}" | sed 's/service-request-mgmt/service-request-mgmt-s/')
 
-        # Merge cumulocity.json with cumulocity-S.json
-        jq -s '.[0] * .[1]' ./src/main/configuration/cumulocity.json ./src/main/configuration/cumulocity-S.json > ./target/cumulocity.json
+        # Extract cumulocity.json from the artifact to a temporary file
+        unzip -p ./target/${{ env.artifact_filename }} cumulocity.json > ./target/cumulocity-base.json
+
+        # Merge extracted cumulocity.json with cumulocity-S.json
+        jq -s '.[0] * .[1]' ./target/cumulocity-base.json ./src/main/configuration/cumulocity-S.json > ./target/cumulocity.json
         
         # Create a copy of the microservice package with the new name
         cp ./target/${{ env.artifact_filename }} ./target/$NEW_FILENAME
