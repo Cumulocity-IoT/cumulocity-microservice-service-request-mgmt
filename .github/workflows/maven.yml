@@ -36,24 +36,11 @@ jobs:
     - name: Packaging Small (S) Version
       run: |
         # Merge cumulocity.json with cumulocity-S.json
-        jq -s '.[0] * .[1]' ./cumulocity-microservice-service-request-mgmt/src/main/configuration/cumulocity.json ./cumulocity-microservice-service-request-mgmt/src/main/configuration/cumulocity-S.json > ./cumulocity-microservice-service-request-mgmt/target/cumulocity.json
+        jq -s '.[0] * .[1]' ./src/main/configuration/cumulocity.json ./src/main/configuration/cumulocity-S.json > ./target/cumulocity.json
         
         # Create a copy of the microservice package
-        cp ./cumulocity-microservice-service-request-mgmt/target/${{ env.artifact_filename }} ./cumulocity-microservice-service-request-mgmt/target/service-request-mgmt-S-${{ steps.project.outputs.version }}.zip
+        cp ./target/${{ env.artifact_filename }} ./target/service-request-mgmt-S-${{ steps.project.outputs.version }}.zip
 
         # Replace the cumulocity.json in the copied package with the merged cumulocity-merged-S.json
-        zip -d ./cumulocity-microservice-service-request-mgmt/target/service-request-mgmt-S-${{ steps.project.outputs.version }}.zip cumulocity.json
-        zip -j ./cumulocity-microservice-service-request-mgmt/target/service-request-mgmt-S-${{ steps.project.outputs.version }}.zip ./cumulocity-microservice-service-request-mgmt/target/cumulocity.json
-
-      #Packaging Medium backend
-    - name: Packaging Small (M) Version
-      run: |
-        # Merge cumulocity.json with cumulocity-M.json
-        jq -s '.[0] * .[1]' ./cumulocity-microservice-service-request-mgmt/src/main/configuration/cumulocity.json ./cumulocity-microservice-service-request-mgmt/src/main/configuration/cumulocity-M.json > ./cumulocity-microservice-service-request-mgmt/target/cumulocity.json
-        
-        # Create a copy of the microservice package
-        cp ./cumulocity-microservice-service-request-mgmt/target/service-request-mgmt-${{ steps.project.outputs.version }}.zip ./cumulocity-microservice-service-request-mgmt/target/service-request-mgmt-M-${{ steps.project.outputs.version }}.zip
-        # Replace the cumulocity.json in the copied package with the merged cumulocity-merged-S.json
-        zip -d ./cumulocity-microservice-service-request-mgmt/target/service-request-mgmt-M-${{ steps.project.outputs.version }}.zip cumulocity.json
-        zip -j ./cumulocity-microservice-service-request-mgmt/target/service-request-mgmt-M-${{ steps.project.outputs.version }}.zip ./cumulocity-microservice-service-request-mgmt/target/cumulocity.json
-
+        zip -d ./target/service-request-mgmt-S-${{ steps.project.outputs.version }}.zip cumulocity.json
+        zip -j ./target/service-request-mgmt-S-${{ steps.project.outputs.version }}.zip ./target/cumulocity.json
