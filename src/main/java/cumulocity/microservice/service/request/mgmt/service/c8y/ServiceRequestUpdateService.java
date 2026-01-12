@@ -1,6 +1,7 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.cumulocity.microservice.context.ContextService;
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
 import com.cumulocity.microservice.context.credentials.UserCredentials;
+import com.cumulocity.microservice.settings.service.MicroserviceSettingsService;
 import com.cumulocity.model.event.CumulocityAlarmStatuses;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.PageStatisticsRepresentation;
@@ -25,14 +27,16 @@ import com.cumulocity.sdk.client.event.EventCollection;
 import com.cumulocity.sdk.client.event.EventFilter;
 import com.cumulocity.sdk.client.event.PagedEventCollectionRepresentation;
 import com.cumulocity.sdk.client.inventory.InventoryApi;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
-import cumulocity.microservice.service.request.mgmt.model.ContextConfig;
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequest;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestComment;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestCommentType;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
+import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,16 +58,22 @@ public class ServiceRequestUpdateService {
 
 	private ContextService<UserCredentials> userContextService;
 
+	private MicroserviceSettingsService microserviceSettingsService;
+
+	private ObjectMapper objectMapper;
+
 	@Autowired
 	public ServiceRequestUpdateService(EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi userAlarmApi, AlarmApi serviceAlarmApi, InventoryApi inventoryApi, ServiceRequestCommentService serviceRequestCommentService,
-			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService) {
+			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService, MicroserviceSettingsService microserviceSettingsService) {
 		this.eventApi = eventApi;
 		this.userAlarmApi = userAlarmApi;
 		this.inventoryApi = inventoryApi;
 		this.serviceRequestCommentService = serviceRequestCommentService;
 		this.contextService = contextService;
 		this.userContextService = userContextService;
+		this.microserviceSettingsService = microserviceSettingsService;
 		this.serviceAlarmApi = serviceAlarmApi;
+		this.objectMapper = new ObjectMapper();
 	}
 
 	@Async
@@ -186,11 +196,34 @@ public class ServiceRequestUpdateService {
 		log.debug("Update Managed Object");
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(serviceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), excludeList);
+		Set<ServiceRequestType> includedTypes = getIncludedTypesMicroserviceSettings();
+		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId(), includedTypes), excludeList);
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 	}
 
-	private RequestList<ServiceRequest> getAllActiveEventsBySource(GId sourceId) {
+	private Set<ServiceRequestType> getIncludedTypesMicroserviceSettings() {
+		String rawValue = microserviceSettingsService.get("activeStatusIncludeTypes");
+		
+		try {
+			// Parse JSON string to Set<String>
+			Set<String> typeStrings = objectMapper.readValue(
+				rawValue, 
+				new TypeReference<Set<String>>() {}
+			);
+			
+			// Convert to Set<ServiceRequestType>
+			return typeStrings.stream()
+				.map(String::toUpperCase)
+				.map(ServiceRequestType::valueOf)
+				.collect(Collectors.toSet());
+				
+		} catch (Exception e) {
+			log.warn("Failed to parse activeStatusIncludeTypes setting: {}. Using default, empty list", rawValue, e);
+			return null;
+		}
+	}
+
+	private RequestList<ServiceRequest> getAllActiveEventsBySource(GId sourceId, Set<ServiceRequestType> includedTypes) {
 		EventFilter filter = new EventFilter();
 		filter.byType(ServiceRequestEventMapper.EVENT_TYPE).bySource(sourceId)
 				.byFragmentType(ServiceRequestEventMapper.SR_ACTIVE).byFragmentValue(Boolean.TRUE.toString());
@@ -204,9 +237,10 @@ public class ServiceRequestUpdateService {
 
 		List<EventRepresentation> events = pagedCollection.getEvents();
 
-		List<ServiceRequest> serviceRequestList = events.stream().map(event -> {
-			return ServiceRequestEventMapper.map2(event);
-		}).collect(Collectors.toList());
+		List<ServiceRequest> serviceRequestList = events.stream()
+				.map(event -> ServiceRequestEventMapper.map2(event))
+				.filter(sr -> includedTypes == null || includedTypes.isEmpty() || includedTypes.contains(sr.getType()))
+				.collect(Collectors.toList());
 
 		RequestList<ServiceRequest> requestList = new RequestList<>();
 		requestList.setCurrentPage(pageStatistics.getCurrentPage());
