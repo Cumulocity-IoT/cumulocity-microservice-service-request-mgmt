@@ -131,7 +131,9 @@ local.properties
 
 ##############################
 
-.vscode/
+.vscode/*
+!.vscode/launch.json
+.env/
 
 
 
