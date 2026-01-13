@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
 
 import cumulocity.microservice.service.request.mgmt.model.RequestList;
@@ -32,6 +33,11 @@ public class ManagedObjectMapper {
 		this.managedObjectRepresentation.setId(managedObjectRepresentation.getId());
 		this.managedObjectRepresentation.set(managedObjectRepresentation.get(SR_ACTIVE_STATUS), SR_ACTIVE_STATUS);
 		this.managedObjectRepresentation.set(managedObjectRepresentation.get(SR_ACTIVE_ORDER_STATUS), SR_ACTIVE_ORDER_STATUS);
+	}
+
+	public ManagedObjectMapper(GId managedObjectId) {
+		this.managedObjectRepresentation = new ManagedObjectRepresentation();
+		this.managedObjectRepresentation.setId(managedObjectId);
 	}
 
 	public Map<String, Long> getServiceRequestPriorityCounterMap() {

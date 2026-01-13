@@ -1,5 +1,6 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +39,7 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusConfigService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -60,11 +62,13 @@ public class ServiceRequestUpdateService {
 
 	private MicroserviceSettingsService microserviceSettingsService;
 
+	private ServiceRequestStatusConfigService serviceRequestStatusConfigService;
+
 	private ObjectMapper objectMapper;
 
 	@Autowired
 	public ServiceRequestUpdateService(EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi userAlarmApi, AlarmApi serviceAlarmApi, InventoryApi inventoryApi, ServiceRequestCommentService serviceRequestCommentService,
-			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService, MicroserviceSettingsService microserviceSettingsService) {
+			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService, MicroserviceSettingsService microserviceSettingsService, ServiceRequestStatusConfigService serviceRequestStatusConfigService) {
 		this.eventApi = eventApi;
 		this.userAlarmApi = userAlarmApi;
 		this.inventoryApi = inventoryApi;
@@ -73,6 +77,7 @@ public class ServiceRequestUpdateService {
 		this.userContextService = userContextService;
 		this.microserviceSettingsService = microserviceSettingsService;
 		this.serviceAlarmApi = serviceAlarmApi;
+		this.serviceRequestStatusConfigService = serviceRequestStatusConfigService;
 		this.objectMapper = new ObjectMapper();
 	}
 
@@ -189,6 +194,29 @@ public class ServiceRequestUpdateService {
 			MicroserviceCredentials credentials) {
 		contextService.runWithinContext(credentials, () -> {
 			updateServiceRequestCounter(serviceRequest, excludeList);
+		});
+	}
+
+	@Async
+	public void refreshServiceRequestCounterForManagedObjects(List<String> managedObjectIds, MicroserviceCredentials credentials) {
+				
+		contextService.runWithinContext(credentials, () -> {
+			List<GId> sourceGIds = managedObjectIds.stream().map(GId::asGId).collect(Collectors.toList());
+			List<String> excludeList = new ArrayList<>();
+			
+			List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
+			for(ServiceRequestStatusConfig srStatusConfig: statusList) {
+				if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
+					excludeList.add(srStatusConfig.getId());
+				}
+			}
+
+			for (GId sourceGId : sourceGIds) {
+				ManagedObjectMapper moMapper = new ManagedObjectMapper(sourceGId);
+				Set<ServiceRequestType> includedTypes = getIncludedTypesMicroserviceSettings();
+				moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(sourceGId, includedTypes), excludeList);
+				inventoryApi.update(moMapper.getManagedObjectRepresentation());
+			}
 		});
 	}
 
