@@ -41,7 +41,7 @@
 	},
 	"settings": [
 		{
-  			"key": "activeStatusIncludeTypes",
+  			"key": "sr.active.status.include.types",
   			"defaultValue": "[\"alarm\"]",
   			"editable": true
 		}
