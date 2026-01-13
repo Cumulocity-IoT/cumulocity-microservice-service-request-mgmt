@@ -314,12 +314,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			}
 		}
 		
-		// Update Managed Object
-		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(newServiceRequest.getSource().getId()));
-		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
-
-		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId()), excludeList);
-		inventoryApi.update(moMapper.getManagedObjectRepresentation());
+		updateServiceRequestCounter(newServiceRequest, excludeList);
 
 		return newServiceRequest;
 	}

@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-App<cumulocity-microservice-service-request-mgmt>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "cumulocity.microservice.service.request.mgmt.App",
+            "projectName": "cumulocity-microservice-service-request-mgmt",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env/dev.env",
+            "vmArgs": "-Dlogging.config=src/main/configuration/service-request-mgmt-logging.xml"
+        }
+    ]
+}
