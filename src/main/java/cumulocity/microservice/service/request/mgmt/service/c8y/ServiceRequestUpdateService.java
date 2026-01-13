@@ -198,9 +198,8 @@ public class ServiceRequestUpdateService {
 	}
 
 	@Async
-	public void refreshServiceRequestCounterForManagedObjects(List<String> managedObjectIds, MicroserviceCredentials credentials) {
-				
-		contextService.runWithinContext(credentials, () -> {
+	public void refreshServiceRequestCounterForManagedObjects(List<String> managedObjectIds) {
+		contextService.runWithinContext(contextService.getContext(), () -> {
 			List<GId> sourceGIds = managedObjectIds.stream().map(GId::asGId).collect(Collectors.toList());
 			List<String> excludeList = new ArrayList<>();
 			
