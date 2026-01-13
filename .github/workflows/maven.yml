@@ -17,6 +17,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      C8Y_BOOTSTRAP_TENANT: '${{ secrets.TEST_BOOTSTRAP_TENANT }}'
+      C8Y_BASEURL: '${{ secrets.TEST_URL }}'
+      C8Y_BOOTSTRAP_USER: '${{ secrets.TEST_BOOTSTRAP_USER }}'
+      C8Y_BOOTSTRAP_PASSWORD: '${{ secrets.TEST_BOOTSTRAP_PASSWORD }}'
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
