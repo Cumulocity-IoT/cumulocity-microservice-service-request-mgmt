@@ -193,7 +193,7 @@ public class ServiceRequestUpdateService {
 	}
 
 	private void updateServiceRequestCounter(ServiceRequest serviceRequest, List<String> excludeList) {
-		log.debug("Update Managed Object");
+		log.debug("Updating Managed Object sr_ActiveStatus counter!");
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(serviceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
 		Set<ServiceRequestType> includedTypes = getIncludedTypesMicroserviceSettings();
@@ -201,10 +201,11 @@ public class ServiceRequestUpdateService {
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
 	}
 
-	private Set<ServiceRequestType> getIncludedTypesMicroserviceSettings() {
-		String rawValue = microserviceSettingsService.get("activeStatusIncludeTypes");
-		
+	private Set<ServiceRequestType> getIncludedTypesMicroserviceSettings() {	
 		try {
+			String rawValue = microserviceSettingsService.get("activeStatusIncludeTypes");
+			log.debug("Fetched activeStatusIncludeTypes setting: {}", rawValue);
+
 			// Parse JSON string to Set<String>
 			Set<String> typeStrings = objectMapper.readValue(
 				rawValue, 
@@ -218,7 +219,7 @@ public class ServiceRequestUpdateService {
 				.collect(Collectors.toSet());
 				
 		} catch (Exception e) {
-			log.warn("Failed to parse activeStatusIncludeTypes setting: {}. Using default, empty list", rawValue, e);
+			log.warn("Failed to fetch or parse activeStatusIncludeTypes setting: Using default, empty list", e);
 			return null;
 		}
 	}

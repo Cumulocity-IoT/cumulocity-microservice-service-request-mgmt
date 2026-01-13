@@ -298,7 +298,7 @@ The property `isSynchronisationActive` defines whether the service request gets 
 
 ## Service Request Counter (sr_ActiveStatus) at Device Managed Object
 
-The microservice maintains a service request counter at the device managed object. This counter reflects all active service requests for this device per status. Which status is counted can be configured in the status configuration see `isExcludeForCounter` property above. But also the type of service request can be filtered. This is useful if you want to count only service requests of type equals `alarm` for example. This can be configured via microservice settings or more persisely via tenant options. The default configuration key: `sr.active.status.include.types`
+The microservice maintains a service request counter at the device managed object. This counter reflects all active service requests for this device per status. Which status is counted can be configured in the status configuration see `isExcludeForCounter` property above. But also the type of service request can be filtered. This is useful if you want to count only service requests of type equals `alarm` for example. This can be configured via microservice settings or more persisely via tenant options. The default configuration key: `activeStatusIncludeTypes`
 
 
 # FSM or ITS integration options 
