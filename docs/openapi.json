@@ -73,8 +73,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -83,8 +83,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -478,8 +478,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -488,8 +488,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -526,8 +526,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -536,8 +536,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -685,12 +685,12 @@
           "required" : true
         },
         "responses" : {
-          "201" : {
-            "description" : "Created",
+          "409" : {
+            "description" : "Conflict, Alarm already assigned to service request!",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ServiceRequest"
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
                 }
               }
             }
@@ -705,8 +705,8 @@
               }
             }
           },
-          "409" : {
-            "description" : "Conflict, Alarm already assigned to service request!",
+          "412" : {
+            "description" : "Precondition Failed, Alarm of service request not found!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -715,12 +715,12 @@
               }
             }
           },
-          "412" : {
-            "description" : "Precondition Failed, Alarm of service request not found!",
+          "201" : {
+            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponseBody"
+                  "$ref" : "#/components/schemas/ServiceRequest"
                 }
               }
             }
@@ -769,6 +769,16 @@
           }
         } ],
         "responses" : {
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
+                }
+              }
+            }
+          },
           "200" : {
             "description" : "Ok",
             "content" : {
@@ -778,16 +788,6 @@
                   "items" : {
                     "$ref" : "#/components/schemas/ServiceRequestComment"
                   }
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
                 }
               }
             }
@@ -1050,10 +1050,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
-                }
+                "$ref" : "#/components/schemas/DeviceIds"
               }
             }
           },
@@ -1192,8 +1189,8 @@
           "required" : true
         },
         "responses" : {
-          "400" : {
-            "description" : "Bad Request",
+          "201" : {
+            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1202,8 +1199,8 @@
               }
             }
           },
-          "201" : {
-            "description" : "Created",
+          "400" : {
+            "description" : "Bad Request",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1230,6 +1227,16 @@
           }
         } ],
         "responses" : {
+          "200" : {
+            "description" : "OK - Context configurations applied successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContextData"
+                }
+              }
+            }
+          },
           "400" : {
             "description" : "Bad Request",
             "content" : {
@@ -1256,16 +1263,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ErrorResponseBody"
-                }
-              }
-            }
-          },
-          "200" : {
-            "description" : "OK - Context configurations applied successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ContextData"
                 }
               }
             }
@@ -1450,8 +1447,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "Ok",
+          "404" : {
+            "description" : "Not found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1463,8 +1460,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not found",
+          "200" : {
+            "description" : "Ok",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -2071,6 +2068,21 @@
           }
         },
         "description" : "Defines a custom specific status"
+      },
+      "DeviceIds" : {
+        "type" : "object",
+        "properties" : {
+          "deviceIds" : {
+            "uniqueItems" : true,
+            "type" : "array",
+            "description" : "Cumulocity managed object IDs",
+            "items" : {
+              "type" : "string",
+              "description" : "Cumulocity managed object IDs"
+            }
+          }
+        },
+        "description" : "Service Order object at Cumulocity IoT Platform."
       },
       "ContextData" : {
         "required" : [ "contextConfigId", "dateFrom", "dateTo" ],

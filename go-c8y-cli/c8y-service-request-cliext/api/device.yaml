@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/v2/tools/schema/extensionCommands.json
+
+group:
+  name: device
+  description: device specific service request operations
+
+commands:
+  - name: refresh
+    description: Refresh sr_ActiveStatus for device(s)
+    method: POST
+    path: /service/service-request-mgmt/api/service/request/device/sr_ActiveStatus/refresh
+    body:
+      - name: deviceIds
+        type: id[]
+        description: IDs of the devices to refresh sr_ActiveStatus for
+        required: true
+        pipeline: true
+        pipelineAliases:
+          - id

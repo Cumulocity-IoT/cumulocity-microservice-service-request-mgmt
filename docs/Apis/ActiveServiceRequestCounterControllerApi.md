@@ -9,7 +9,7 @@ All URIs are relative to *http://localhost:8080*
 
 <a name="refresh"></a>
 # **refresh**
-> refresh(request\_body)
+> refresh(DeviceIds)
 
 Triggers an asynchronous REFRESH of the active service request counter (sr_ActiveStatus)
 
@@ -19,7 +19,7 @@ Triggers an asynchronous REFRESH of the active service request counter (sr_Activ
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **request\_body** | [**List**](../Models/string.md)|  | |
+| **DeviceIds** | [**DeviceIds**](../Models/DeviceIds.md)|  | |
 
 ### Return type
 

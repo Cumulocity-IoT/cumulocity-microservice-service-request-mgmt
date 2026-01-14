@@ -51,6 +51,7 @@ All URIs are relative to *http://localhost:8080*
  - [ContextData](./Models/ContextData.md)
  - [ContextPredicate](./Models/ContextPredicate.md)
  - [ContextSettings](./Models/ContextSettings.md)
+ - [DeviceIds](./Models/DeviceIds.md)
  - [ErrorResponseBody](./Models/ErrorResponseBody.md)
  - [RequestListServiceRequest](./Models/RequestListServiceRequest.md)
  - [RequestListServiceRequestComment](./Models/RequestListServiceRequestComment.md)

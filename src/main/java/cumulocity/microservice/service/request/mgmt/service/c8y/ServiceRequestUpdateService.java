@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.tomcat.jni.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
@@ -198,8 +199,8 @@ public class ServiceRequestUpdateService {
 	}
 
 	@Async
-	public void refreshServiceRequestCounterForManagedObjects(List<String> managedObjectIds) {
-		contextService.runWithinContext(contextService.getContext(), () -> {
+	public void refreshServiceRequestCounterForManagedObjects(Set<String> managedObjectIds, MicroserviceCredentials credentials) {
+		contextService.runWithinContext(credentials, () -> {
 			List<GId> sourceGIds = managedObjectIds.stream().map(GId::asGId).collect(Collectors.toList());
 			List<String> excludeList = new ArrayList<>();
 			
@@ -214,6 +215,7 @@ public class ServiceRequestUpdateService {
 				ManagedObjectMapper moMapper = new ManagedObjectMapper(sourceGId);
 				Set<ServiceRequestType> includedTypes = getIncludedTypesMicroserviceSettings();
 				moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(sourceGId, includedTypes), excludeList);
+				log.debug("Updating Managed Object sr_ActiveStatus counter for managed object ID: {}", sourceGId);
 				inventoryApi.update(moMapper.getManagedObjectRepresentation());
 			}
 		});
@@ -232,6 +234,10 @@ public class ServiceRequestUpdateService {
 		try {
 			String rawValue = microserviceSettingsService.get("activeStatusIncludeTypes");
 			log.debug("Fetched activeStatusIncludeTypes setting: {}", rawValue);
+
+			if(rawValue == null || rawValue.isEmpty()) {
+				return null;
+			}
 
 			// Parse JSON string to Set<String>
 			Set<String> typeStrings = objectMapper.readValue(
