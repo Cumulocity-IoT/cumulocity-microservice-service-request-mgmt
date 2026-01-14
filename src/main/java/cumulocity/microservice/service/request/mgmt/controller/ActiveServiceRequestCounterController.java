@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cumulocity.microservice.service.request.mgmt.service.c8y.ServiceRequestUpdateService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -30,14 +28,13 @@ public class ActiveServiceRequestCounterController {
         this.serviceRequestUpdateService = serviceRequestUpdateService;
     }
 
-    @Operation(summary = "REFRESH active service request counter", description = "Refreshes the active service request counter for the given managed object IDs.", tags={  })
+    @Operation(summary = "Triggers an asynchronous REFRESH of the active service request counter (sr_ActiveStatus)", description = "Refreshes the active service request counter (sr_ActiveStatus) for the given managed object IDs.", tags={  })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
-		@ApiResponse(responseCode = "400", description = "Bad Request, Service request body is invalid!", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseBody.class))),})
-	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> refresh(@Valid @RequestBody List<String> managedObjectIds) {
-        // This is just a dummy endpoint to make the microservice settings available in the microservice UI.
+        @ApiResponse(responseCode = "202", description = "Accepted"),})
+	@PostMapping(path = "/device/sr_ActiveStatus/refresh",produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Void> refresh(@Valid @RequestBody List<String> managedObjectIds) {
+        // This triggers an asynchronous update of the service request counters for the provided managed object IDs. The endpoint doesn't wait for the update to complete.
         serviceRequestUpdateService.refreshServiceRequestCounterForManagedObjects(managedObjectIds);
-        return ResponseEntity.status(200).build();
+        return ResponseEntity.accepted().build();
     }
 }

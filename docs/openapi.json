@@ -73,8 +73,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -83,8 +83,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -478,8 +478,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -488,8 +488,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -526,8 +526,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -536,8 +536,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -685,18 +685,18 @@
           "required" : true
         },
         "responses" : {
-          "412" : {
-            "description" : "Precondition Failed, Alarm of service request not found!",
+          "201" : {
+            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponseBody"
+                  "$ref" : "#/components/schemas/ServiceRequest"
                 }
               }
             }
           },
-          "412" : {
-            "description" : "Precondition Failed, Alarm of service request not found!",
+          "400" : {
+            "description" : "Bad Request, Service request body is invalid!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -710,13 +710,13 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ServiceRequest"
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request, Service request body is invalid!",
+          "412" : {
+            "description" : "Precondition Failed, Alarm of service request not found!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -769,16 +769,6 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
-                }
-              }
-            }
-          },
           "200" : {
             "description" : "Ok",
             "content" : {
@@ -788,6 +778,16 @@
                   "items" : {
                     "$ref" : "#/components/schemas/ServiceRequestComment"
                   }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
                 }
               }
             }
@@ -1040,6 +1040,32 @@
         }
       }
     },
+    "/api/service/request/device/sr_ActiveStatus/refresh" : {
+      "post" : {
+        "tags" : [ "active-service-request-counter-controller" ],
+        "summary" : "Triggers an asynchronous REFRESH of the active service request counter (sr_ActiveStatus)",
+        "description" : "Refreshes the active service request counter (sr_ActiveStatus) for the given managed object IDs.",
+        "operationId" : "refresh",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "202" : {
+            "description" : "Accepted"
+          }
+        }
+      }
+    },
     "/api/service/request/comment/{commentId}/attachment" : {
       "get" : {
         "tags" : [ "service-request-comment-controller" ],
@@ -1204,8 +1230,8 @@
           }
         } ],
         "responses" : {
-          "500" : {
-            "description" : "Internal Server Error - Context configuration is not valid",
+          "400" : {
+            "description" : "Bad Request",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1224,8 +1250,8 @@
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
+          "500" : {
+            "description" : "Internal Server Error - Context configuration is not valid",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1262,8 +1288,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1272,8 +1298,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1424,8 +1450,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not found",
+          "200" : {
+            "description" : "Ok",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1437,8 +1463,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "Ok",
+          "404" : {
+            "description" : "Not found",
             "content" : {
               "application/json" : {
                 "schema" : {

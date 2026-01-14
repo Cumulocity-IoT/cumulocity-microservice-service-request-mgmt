@@ -7,6 +7,7 @@ All URIs are relative to *http://localhost:8080*
 
 | Class | Method | HTTP request | Description |
 |------------ | ------------- | ------------- | -------------|
+| *ActiveServiceRequestCounterControllerApi* | [**refresh**](Apis/ActiveServiceRequestCounterControllerApi.md#refresh) | **POST** /api/service/request/device/sr_ActiveStatus/refresh | Triggers an asynchronous REFRESH of the active service request counter (sr_ActiveStatus) |
 | *ContextConfigControllerApi* | [**applyContextConfigsToAlarm**](Apis/ContextConfigControllerApi.md#applycontextconfigstoalarm) | **POST** /api/context/config/apply/alarm/{alarmId} | APPLY context configurations to alarm |
 *ContextConfigControllerApi* | [**createContextConfig**](Apis/ContextConfigControllerApi.md#createcontextconfig) | **POST** /api/context/config | CREATE context configuration |
 *ContextConfigControllerApi* | [**deleteContextConfigById**](Apis/ContextConfigControllerApi.md#deletecontextconfigbyid) | **DELETE** /api/context/config/{configId} | DELETE context configuration by Id |
