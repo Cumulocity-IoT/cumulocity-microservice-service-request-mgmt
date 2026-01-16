@@ -30,22 +30,19 @@ public class ActiveServiceRequestCounterController {
     
     private ServiceRequestUpdateService serviceRequestUpdateService;
 
-    private ContextService<MicroserviceCredentials> contextService;
-
     @Autowired
     public ActiveServiceRequestCounterController(ServiceRequestUpdateService serviceRequestUpdateService, ContextService<MicroserviceCredentials> contextService) {
         this.serviceRequestUpdateService = serviceRequestUpdateService;
-        this.contextService = contextService;
     }
 
     @Operation(summary = "Triggers an asynchronous REFRESH of the active service request counter (sr_ActiveStatus)", description = "Refreshes the active service request counter (sr_ActiveStatus) for the given managed object IDs.", tags={  })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "202", description = "Accepted"),})
+        @ApiResponse(responseCode = "200", description = "OK"),})
 	@PostMapping(path = "/device/sr_ActiveStatus/refresh",produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> refresh(@Valid @RequestBody DeviceIds deviceIds) {
         // This triggers an asynchronous update of the service request counters for the provided managed object IDs. The endpoint doesn't wait for the update to complete.
         log.info("Received request to refresh sr_ActiveStatus for managedObjectIds: {}", deviceIds.getDeviceIds());
-        serviceRequestUpdateService.refreshServiceRequestCounterForManagedObjects(deviceIds.getDeviceIds(), contextService.getContext());
-        return ResponseEntity.accepted().build();
+        serviceRequestUpdateService.refreshServiceRequestCounterForManagedObjects(deviceIds.getDeviceIds());
+        return ResponseEntity.ok().build();
     }
 }

@@ -14,6 +14,3 @@ commands:
         type: id[]
         description: IDs of the devices to refresh sr_ActiveStatus for
         required: true
-        pipeline: true
-        pipelineAliases:
-          - id

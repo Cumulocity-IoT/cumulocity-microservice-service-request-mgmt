@@ -198,27 +198,25 @@ public class ServiceRequestUpdateService {
 		});
 	}
 
-	@Async
-	public void refreshServiceRequestCounterForManagedObjects(Set<String> managedObjectIds, MicroserviceCredentials credentials) {
-		contextService.runWithinContext(credentials, () -> {
-			List<GId> sourceGIds = managedObjectIds.stream().map(GId::asGId).collect(Collectors.toList());
-			List<String> excludeList = new ArrayList<>();
-			
-			List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
-			for(ServiceRequestStatusConfig srStatusConfig: statusList) {
-				if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
-					excludeList.add(srStatusConfig.getId());
-				}
+	public void refreshServiceRequestCounterForManagedObjects(Set<String> managedObjectIds) {
+		List<GId> sourceGIds = managedObjectIds.stream().map(GId::asGId).collect(Collectors.toList());
+		List<String> excludeList = new ArrayList<>();
+		
+		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
+		for(ServiceRequestStatusConfig srStatusConfig: statusList) {
+			if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
+				excludeList.add(srStatusConfig.getId());
 			}
+		}
+		
+		Set<ServiceRequestType> includedTypes = getIncludedTypesMicroserviceSettings();
 
-			for (GId sourceGId : sourceGIds) {
-				ManagedObjectMapper moMapper = new ManagedObjectMapper(sourceGId);
-				Set<ServiceRequestType> includedTypes = getIncludedTypesMicroserviceSettings();
-				moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(sourceGId, includedTypes), excludeList);
-				log.debug("Updating Managed Object sr_ActiveStatus counter for managed object ID: {}", sourceGId);
-				inventoryApi.update(moMapper.getManagedObjectRepresentation());
-			}
-		});
+		for (GId sourceGId : sourceGIds) {
+			ManagedObjectMapper moMapper = new ManagedObjectMapper(sourceGId);
+			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(sourceGId, includedTypes), excludeList);
+			log.debug("Updating Managed Object sr_ActiveStatus counter for managed object ID: {}", sourceGId);
+			inventoryApi.update(moMapper.getManagedObjectRepresentation());
+		}
 	}
 
 	private void updateServiceRequestCounter(ServiceRequest serviceRequest, List<String> excludeList) {
