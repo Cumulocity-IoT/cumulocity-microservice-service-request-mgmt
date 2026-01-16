@@ -1,9 +1,11 @@
 package cumulocity.microservice.service.request.mgmt.service.c8y;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.tomcat.jni.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
@@ -38,6 +40,7 @@ import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestStatusConfig;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestType;
 import cumulocity.microservice.service.request.mgmt.service.ServiceRequestCommentService;
+import cumulocity.microservice.service.request.mgmt.service.ServiceRequestStatusConfigService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -60,11 +63,13 @@ public class ServiceRequestUpdateService {
 
 	private MicroserviceSettingsService microserviceSettingsService;
 
+	private ServiceRequestStatusConfigService serviceRequestStatusConfigService;
+
 	private ObjectMapper objectMapper;
 
 	@Autowired
 	public ServiceRequestUpdateService(EventApi eventApi, @Qualifier("userAlarmApi") AlarmApi userAlarmApi, AlarmApi serviceAlarmApi, InventoryApi inventoryApi, ServiceRequestCommentService serviceRequestCommentService,
-			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService, MicroserviceSettingsService microserviceSettingsService) {
+			ContextService<MicroserviceCredentials> contextService, ContextService<UserCredentials> userContextService, MicroserviceSettingsService microserviceSettingsService, ServiceRequestStatusConfigService serviceRequestStatusConfigService) {
 		this.eventApi = eventApi;
 		this.userAlarmApi = userAlarmApi;
 		this.inventoryApi = inventoryApi;
@@ -73,6 +78,7 @@ public class ServiceRequestUpdateService {
 		this.userContextService = userContextService;
 		this.microserviceSettingsService = microserviceSettingsService;
 		this.serviceAlarmApi = serviceAlarmApi;
+		this.serviceRequestStatusConfigService = serviceRequestStatusConfigService;
 		this.objectMapper = new ObjectMapper();
 	}
 
@@ -192,6 +198,27 @@ public class ServiceRequestUpdateService {
 		});
 	}
 
+	public void refreshServiceRequestCounterForManagedObjects(Set<String> managedObjectIds) {
+		List<GId> sourceGIds = managedObjectIds.stream().map(GId::asGId).collect(Collectors.toList());
+		List<String> excludeList = new ArrayList<>();
+		
+		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
+		for(ServiceRequestStatusConfig srStatusConfig: statusList) {
+			if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
+				excludeList.add(srStatusConfig.getId());
+			}
+		}
+		
+		Set<ServiceRequestType> includedTypes = getIncludedTypesMicroserviceSettings();
+
+		for (GId sourceGId : sourceGIds) {
+			ManagedObjectMapper moMapper = new ManagedObjectMapper(sourceGId);
+			moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(sourceGId, includedTypes), excludeList);
+			log.debug("Updating Managed Object sr_ActiveStatus counter for managed object ID: {}", sourceGId);
+			inventoryApi.update(moMapper.getManagedObjectRepresentation());
+		}
+	}
+
 	private void updateServiceRequestCounter(ServiceRequest serviceRequest, List<String> excludeList) {
 		log.debug("Updating Managed Object sr_ActiveStatus counter!");
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(serviceRequest.getSource().getId()));
@@ -205,6 +232,10 @@ public class ServiceRequestUpdateService {
 		try {
 			String rawValue = microserviceSettingsService.get("activeStatusIncludeTypes");
 			log.debug("Fetched activeStatusIncludeTypes setting: {}", rawValue);
+
+			if(rawValue == null || rawValue.isEmpty()) {
+				return null;
+			}
 
 			// Parse JSON string to Set<String>
 			Set<String> typeStrings = objectMapper.readValue(
