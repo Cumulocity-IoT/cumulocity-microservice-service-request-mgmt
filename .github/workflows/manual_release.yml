@@ -12,12 +12,6 @@ jobs:
   create-release-branch:
     runs-on: ubuntu-latest
 
-    env:
-      C8Y_BOOTSTRAP_TENANT: '${{ secrets.TEST_BOOTSTRAP_TENANT }}'
-      C8Y_BASEURL: '${{ secrets.TEST_URL }}'
-      C8Y_BOOTSTRAP_USER: '${{ secrets.TEST_BOOTSTRAP_USER }}'
-      C8Y_BOOTSTRAP_PASSWORD: '${{ secrets.TEST_BOOTSTRAP_PASSWORD }}'
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -32,6 +26,13 @@ jobs:
   mvn-release-prepare:
     runs-on: ubuntu-latest
     needs: create-release-branch
+
+    env:
+      C8Y_BOOTSTRAP_TENANT: '${{ secrets.TEST_BOOTSTRAP_TENANT }}'
+      C8Y_BASEURL: '${{ secrets.TEST_URL }}'
+      C8Y_BOOTSTRAP_USER: '${{ secrets.TEST_BOOTSTRAP_USER }}'
+      C8Y_BOOTSTRAP_PASSWORD: '${{ secrets.TEST_BOOTSTRAP_PASSWORD }}'
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
