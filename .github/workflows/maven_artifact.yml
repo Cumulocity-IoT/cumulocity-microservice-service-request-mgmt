@@ -21,6 +21,10 @@ jobs:
       C8Y_HOST: '${{ secrets.C8Y_HOST }}'
       C8Y_USER: '${{ secrets.C8Y_USER }}'
       C8Y_PASSWORD: '${{ secrets.C8Y_PASSWORD }}'
+      C8Y_BOOTSTRAP_TENANT: '${{ secrets.TEST_BOOTSTRAP_TENANT }}'
+      C8Y_BASEURL: '${{ secrets.TEST_URL }}'
+      C8Y_BOOTSTRAP_USER: '${{ secrets.TEST_BOOTSTRAP_USER }}'
+      C8Y_BOOTSTRAP_PASSWORD: '${{ secrets.TEST_BOOTSTRAP_PASSWORD }}'
 
     steps:
     - uses: actions/checkout@v3

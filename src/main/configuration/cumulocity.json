@@ -38,5 +38,12 @@
 		},
 		"initialDelaySeconds": 150,
 		"periodSeconds": 10
-	}
+	},
+	"settings": [
+		{
+  			"key": "activeStatusIncludeTypes",
+  			"defaultValue": "[\"alarm\"]",
+  			"editable": true
+		}
+	]
 }
