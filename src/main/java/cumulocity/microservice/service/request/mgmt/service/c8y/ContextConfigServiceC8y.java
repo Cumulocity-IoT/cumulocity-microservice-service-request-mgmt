@@ -182,13 +182,16 @@ public class ContextConfigServiceC8y implements ContextConfigService {
 
         ContextDataApply applyContextConfigsToAlarm = applyContextConfigsToAlarm(alarm);
 
-        if(applyContextConfigsToAlarm.getError() != null) {
+        if(applyContextConfigsToAlarm.getError() != null || applyContextConfigsToAlarm.getContextData() == null) {
             return applyContextConfigsToAlarm;
         }
             
         try {
             // Update the alarm with the context data
-            alarmApi.update(alarm);
+            AlarmRepresentation updatedAlarm = new AlarmRepresentation();
+            updatedAlarm.setId(alarm.getId());
+            updatedAlarm.setProperty(ContextConfigObjectMapper.ALARM_FRAGMENT, applyContextConfigsToAlarm.getContextData());
+            alarmApi.update(updatedAlarm);
             LOG.debug("Successfully updated alarm {} with context data", alarm.getId());
             return applyContextConfigsToAlarm;
         } catch (Exception e) {
