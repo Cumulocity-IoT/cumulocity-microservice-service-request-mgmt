@@ -122,7 +122,7 @@ public class ServiceRequestUpdateService {
 				: null;
 
 		if (alarmStatus == null) {
-			log.info("No alarm transition defined for service request status: {}", srStatus.getId());
+			log.warn("No alarm transition defined for service request status: {}", srStatus.getId());
 		}
 
 		AlarmRepresentation currentAlarm = null;
@@ -135,11 +135,23 @@ public class ServiceRequestUpdateService {
 		}
 
 		AlarmMapper alarmMapper = AlarmMapper.map2(serviceRequest.getId(), alarmRef, alarmStatus);
-		if (alarmMapper != null) {
-			AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
-			log.info("update Alarm {}", alarmRepresentation.getId().getValue());
-			alarmApi.update(alarmRepresentation);
+		if (alarmMapper == null) {
+			log.warn("AlarmMapper is null, Alarm update will not be processed!");
+			return;
 		}
+		
+		AlarmRepresentation alarmRepresentation = alarmMapper.getAlarm();
+		log.info("update Alarm {}, Status: {}", alarmRepresentation.getId().getValue(), alarmRepresentation.getStatus());
+		log.info(alarmRepresentation.toJSON());
+		try {
+			AlarmRepresentation updatedAlarm = alarmApi.update(alarmRepresentation);
+			log.info("!!!!! Alarm {} updated successfully to Status: {}", updatedAlarm.getId().getValue(), updatedAlarm.getStatus());
+		} catch (Exception e) {
+			log.error("Could not change status for Alarm ID: {}. Proceeding without it.", alarmRepresentation.getId().getValue(), e);
+		}
+
+
+
 	}
 
 	@Async
