@@ -2,7 +2,7 @@ package cumulocity.microservice.service.request.mgmt.controller;
 
 import java.util.Map;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceOrder;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestPriority;

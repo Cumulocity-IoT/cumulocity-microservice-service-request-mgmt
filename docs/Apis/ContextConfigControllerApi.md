@@ -24,7 +24,7 @@ APPLY context configurations to alarm
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **alarmId** | **String**|  | [default to null] |
+| **alarmId** | **String**| Internal alarm Id | [default to null] |
 
 ### Return type
 
@@ -78,7 +78,7 @@ DELETE context configuration by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **configId** | **String**|  | [default to null] |
+| **configId** | **String**| Internal context configuration Id | [default to null] |
 
 ### Return type
 
@@ -99,13 +99,13 @@ null (empty response body)
 
 GET context configuration by Id
 
-    Returns specific context configuration by Id
+    Returns context configuration by internal Id
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **configId** | **String**|  | [default to null] |
+| **configId** | **String**| Internal context configuration Id | [default to null] |
 
 ### Return type
 
@@ -156,7 +156,7 @@ UPDATE context configuration
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **configId** | **String**|  | [default to null] |
+| **configId** | **String**| Internal context configuration Id | [default to null] |
 | **ContextConfig** | [**ContextConfig**](../Models/ContextConfig.md)|  | |
 
 ### Return type

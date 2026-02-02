@@ -2,8 +2,6 @@ package cumulocity.microservice.service.request.mgmt.controller;
 
 import java.io.IOException;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,6 +35,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -58,7 +57,8 @@ public class ServiceRequestCommentController {
 		this.contextService = contextService;
 	}
 
-	@Operation(summary = "Add new service request comment to specific service request.", description = "Each service request can have n comments. This endpoint adds a new comment to a specific service request.")
+	@Operation(summary = "Add new service request comment to specific service request.", description = "Each service request can have n comments. This endpoint adds a new comment to a specific service request.", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "201", description = "Created"),
 			@ApiResponse(responseCode = "404", description = "Not found")})
@@ -73,7 +73,8 @@ public class ServiceRequestCommentController {
 		return new ResponseEntity<ServiceRequestComment>(newServiceRequestComment, HttpStatus.OK);
 	}
 
-	@Operation(summary = "Returns all comments of specific service request by internal Id.", description = "Each service request can have n comments. This endpoint returns the complete list of comments of a specific service request.")
+	@Operation(summary = "Returns all comments of specific service request by internal Id.", description = "Each service request can have n comments. This endpoint returns the complete list of comments of a specific service request.", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ServiceRequestComment.class)))),
 			@ApiResponse(responseCode = "404", description = "Not found")})
@@ -86,7 +87,8 @@ public class ServiceRequestCommentController {
 		return new ResponseEntity<RequestList<ServiceRequestComment>>(commentListByFilter, HttpStatus.OK);
 	}
 	
-	@Operation(summary = "DELETE service request comment by Id", description = "deletes specific service request comment. This operation is only allowed by owner of comment!", tags = {})
+	@Operation(summary = "DELETE service request comment by Id", description = "deletes specific service request comment. This operation is only allowed by owner of comment!", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "commentId", required = true, description = "Internal comment Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "No Content"),
 			@ApiResponse(responseCode = "404", description = "Not Found"),
 			@ApiResponse(responseCode = "403", description = "Forbidden")})
@@ -104,7 +106,8 @@ public class ServiceRequestCommentController {
 		return new ResponseEntity(HttpStatus.NO_CONTENT);
 	}
 	
-	@Operation(summary = "PUT service request comment by Id", description = "updates specific service request comment. This operation is only allowed by owner of comment!", tags = {})
+	@Operation(summary = "PUT service request comment by Id", description = "updates specific service request comment. This operation is only allowed by owner of comment!", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "commentId", required = true, description = "Internal comment Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok"),
 			@ApiResponse(responseCode = "404", description = "Not Found"),
 			@ApiResponse(responseCode = "403", description = "Forbidden")})
@@ -119,7 +122,8 @@ public class ServiceRequestCommentController {
 		return new ResponseEntity(updatedComment, HttpStatus.OK);
 	}
 	
-	@Operation(summary = "UPLOAD attachment for specific comment", description = "Upload attachment for service request comment", tags = {})
+	@Operation(summary = "UPLOAD attachment for specific comment", description = "Upload attachment for service request comment", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "commentId", required = true, description = "Internal comment Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Created"),
 			@ApiResponse(responseCode = "404", description = "Not Found"),
 			@ApiResponse(responseCode = "409", description = "Conflict") })
@@ -139,7 +143,8 @@ public class ServiceRequestCommentController {
 		}
 	}
 	
-	@Operation(summary = "DOWNLOAD attachment for specific comment", description = "Download attachment for comment", tags = {})
+	@Operation(summary = "DOWNLOAD attachment for specific comment", description = "Download attachment for comment", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "commentId", required = true, description = "Internal comment Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@GetMapping(path = "/comment/{commentId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)

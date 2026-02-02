@@ -24,7 +24,7 @@ Add new service request comment to specific service request.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
 | **ServiceRequestCommentRqBody** | [**ServiceRequestCommentRqBody**](../Models/ServiceRequestCommentRqBody.md)|  | |
 
 ### Return type
@@ -52,7 +52,7 @@ DELETE service request comment by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **commentId** | **String**|  | [default to null] |
+| **commentId** | **String**| Internal comment Id | [default to null] |
 
 ### Return type
 
@@ -69,7 +69,7 @@ null (empty response body)
 
 <a name="downloadServiceRequestCommentAttachment"></a>
 # **downloadServiceRequestCommentAttachment**
-> List downloadServiceRequestCommentAttachment(commentId)
+> byte[] downloadServiceRequestCommentAttachment(commentId)
 
 DOWNLOAD attachment for specific comment
 
@@ -79,11 +79,11 @@ DOWNLOAD attachment for specific comment
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **commentId** | **String**|  | [default to null] |
+| **commentId** | **String**| Internal comment Id | [default to null] |
 
 ### Return type
 
-**List**
+**byte[]**
 
 ### Authorization
 
@@ -106,7 +106,7 @@ Returns all comments of specific service request by internal Id.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
 | **pageSize** | **Integer**| Indicates how many entries of the collection shall be returned. The upper limit for one page is 2,000 objects. | [optional] [default to null] |
 | **currentPage** | **Integer**| The current page of the paginated results. | [optional] [default to null] |
 | **withTotalPages** | **Boolean**| When set to true, the returned result will contain in the statistics object the total number of pages. Only applicable on range queries. | [optional] [default to null] |
@@ -136,7 +136,7 @@ PUT service request comment by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **commentId** | **String**|  | [default to null] |
+| **commentId** | **String**| Internal comment Id | [default to null] |
 | **ServiceRequestCommentRqBody** | [**ServiceRequestCommentRqBody**](../Models/ServiceRequestCommentRqBody.md)|  | |
 
 ### Return type
@@ -164,7 +164,7 @@ UPLOAD attachment for specific comment
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **commentId** | **String**|  | [default to null] |
+| **commentId** | **String**| Internal comment Id | [default to null] |
 | **file** | **File**| Mulitpart file, attachment | [default to null] |
 | **force** | **Boolean**| Controls if the attachment can be overwritten. force &#x3D;&#x3D; true means file will be overwritten if exists, otherwise a http 409 will be returned. | [default to null] |
 

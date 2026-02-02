@@ -1,13 +1,12 @@
 package cumulocity.microservice.service.request.mgmt.controller;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.validation.annotation.Validated;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestAttachment;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestCommentType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 

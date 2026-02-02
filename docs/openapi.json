@@ -1,5 +1,5 @@
 {
-  "openapi" : "3.0.1",
+  "openapi" : "3.1.0",
   "info" : {
     "title" : "Cumulocity Service Request API",
     "version" : "1.0"
@@ -21,6 +21,7 @@
         "parameters" : [ {
           "name" : "serviceRequestId",
           "in" : "path",
+          "description" : "Internal service request Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -57,6 +58,7 @@
         "parameters" : [ {
           "name" : "serviceRequestId",
           "in" : "path",
+          "description" : "Internal service request Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -73,8 +75,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -83,8 +85,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -103,6 +105,7 @@
         "parameters" : [ {
           "name" : "serviceRequestId",
           "in" : "path",
+          "description" : "Internal service request Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -127,6 +130,7 @@
         "parameters" : [ {
           "name" : "serviceRequestId",
           "in" : "path",
+          "description" : "Internal service request Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -195,6 +199,7 @@
         "parameters" : [ {
           "name" : "serviceRequestId",
           "in" : "path",
+          "description" : "Internal service request Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -263,6 +268,7 @@
         "parameters" : [ {
           "name" : "commentId",
           "in" : "path",
+          "description" : "Internal comment Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -319,6 +325,7 @@
         "parameters" : [ {
           "name" : "commentId",
           "in" : "path",
+          "description" : "Internal comment Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -341,19 +348,20 @@
       "get" : {
         "tags" : [ "context-config-controller" ],
         "summary" : "GET context configuration by Id",
-        "description" : "Returns specific context configuration by Id",
+        "description" : "Returns context configuration by internal Id",
         "operationId" : "getContextConfigById",
         "parameters" : [ {
           "name" : "configId",
           "in" : "path",
+          "description" : "Internal context configuration Id",
           "required" : true,
           "schema" : {
             "type" : "string"
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -362,8 +370,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -382,6 +390,7 @@
         "parameters" : [ {
           "name" : "configId",
           "in" : "path",
+          "description" : "Internal context configuration Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -398,16 +407,6 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ContextConfig"
-                }
-              }
-            }
-          },
           "404" : {
             "description" : "Not Found",
             "content" : {
@@ -427,6 +426,16 @@
                 }
               }
             }
+          },
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContextConfig"
+                }
+              }
+            }
           }
         }
       },
@@ -438,6 +447,7 @@
         "parameters" : [ {
           "name" : "configId",
           "in" : "path",
+          "description" : "Internal context configuration Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -462,6 +472,7 @@
         "parameters" : [ {
           "name" : "serviceRequestId",
           "in" : "path",
+          "description" : "Internal service request Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -478,8 +489,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -488,8 +499,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -510,6 +521,7 @@
         "parameters" : [ {
           "name" : "serviceRequestId",
           "in" : "path",
+          "description" : "Internal service request Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -526,8 +538,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -536,8 +548,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -685,8 +697,8 @@
           "required" : true
         },
         "responses" : {
-          "400" : {
-            "description" : "Bad Request, Service request body is invalid!",
+          "409" : {
+            "description" : "Conflict, Alarm already assigned to service request!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -715,8 +727,8 @@
               }
             }
           },
-          "409" : {
-            "description" : "Conflict, Alarm already assigned to service request!",
+          "400" : {
+            "description" : "Bad Request, Service request body is invalid!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -737,6 +749,7 @@
         "parameters" : [ {
           "name" : "serviceRequestId",
           "in" : "path",
+          "description" : "Internal service request Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -802,6 +815,7 @@
         "parameters" : [ {
           "name" : "serviceRequestId",
           "in" : "path",
+          "description" : "Internal service request Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -850,6 +864,7 @@
         "parameters" : [ {
           "name" : "serviceRequestId",
           "in" : "path",
+          "description" : "Internal service request Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -861,11 +876,8 @@
             "content" : {
               "application/octet-stream" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string",
-                    "format" : "byte"
-                  }
+                  "type" : "string",
+                  "format" : "byte"
                 }
               }
             }
@@ -875,11 +887,8 @@
             "content" : {
               "application/octet-stream" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string",
-                    "format" : "byte"
-                  }
+                  "type" : "string",
+                  "format" : "byte"
                 }
               }
             }
@@ -894,6 +903,7 @@
         "parameters" : [ {
           "name" : "serviceRequestId",
           "in" : "path",
+          "description" : "Internal service request Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -1072,6 +1082,7 @@
         "parameters" : [ {
           "name" : "commentId",
           "in" : "path",
+          "description" : "Internal comment Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -1083,11 +1094,8 @@
             "content" : {
               "application/octet-stream" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string",
-                    "format" : "byte"
-                  }
+                  "type" : "string",
+                  "format" : "byte"
                 }
               }
             }
@@ -1097,11 +1105,8 @@
             "content" : {
               "application/octet-stream" : {
                 "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string",
-                    "format" : "byte"
-                  }
+                  "type" : "string",
+                  "format" : "byte"
                 }
               }
             }
@@ -1116,6 +1121,7 @@
         "parameters" : [ {
           "name" : "commentId",
           "in" : "path",
+          "description" : "Internal comment Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -1189,8 +1195,8 @@
           "required" : true
         },
         "responses" : {
-          "400" : {
-            "description" : "Bad Request",
+          "201" : {
+            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1199,8 +1205,8 @@
               }
             }
           },
-          "201" : {
-            "description" : "Created",
+          "400" : {
+            "description" : "Bad Request",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1221,22 +1227,13 @@
         "parameters" : [ {
           "name" : "alarmId",
           "in" : "path",
+          "description" : "Internal alarm Id",
           "required" : true,
           "schema" : {
             "type" : "string"
           }
         } ],
         "responses" : {
-          "400" : {
-            "description" : "Bad Request",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponseBody"
-                }
-              }
-            }
-          },
           "404" : {
             "description" : "Not Found - Alarm not found",
             "content" : {
@@ -1249,6 +1246,16 @@
           },
           "500" : {
             "description" : "Internal Server Error - Context configuration is not valid",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1279,6 +1286,7 @@
         "parameters" : [ {
           "name" : "statusId",
           "in" : "path",
+          "description" : "Status Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -1314,6 +1322,7 @@
         "parameters" : [ {
           "name" : "statusId",
           "in" : "path",
+          "description" : "Status Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -1337,6 +1346,7 @@
         "parameters" : [ {
           "name" : "priorityOrdinal",
           "in" : "path",
+          "description" : "Priority ordinal",
           "required" : true,
           "schema" : {
             "type" : "integer",
@@ -1373,6 +1383,7 @@
         "parameters" : [ {
           "name" : "priorityOrdinal",
           "in" : "path",
+          "description" : "Priority ordinal",
           "required" : true,
           "schema" : {
             "type" : "integer",
@@ -1441,6 +1452,7 @@
         "parameters" : [ {
           "name" : "serviceRequestId",
           "in" : "path",
+          "description" : "Internal service request Id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -1481,33 +1493,36 @@
     "schemas" : {
       "ServiceOrder" : {
         "type" : "object",
+        "description" : "Service Order object at Cumulocity IoT Platform.",
         "properties" : {
           "id" : {
             "type" : "string",
             "description" : "External ID of order",
-            "example" : "1335312474"
+            "example" : 1335312474
           },
           "priority" : {
             "type" : "string",
             "description" : "Priority of order",
-            "example" : "1"
+            "example" : 1
           },
           "status" : {
             "type" : "string",
             "description" : "Status of order",
             "example" : "Pending"
           }
-        },
-        "description" : "Service Order object at Cumulocity IoT Platform."
+        }
       },
       "ServiceRequestPatchRqBody" : {
         "type" : "object",
+        "description" : "Service Request object at Cumulocity IoT Platform. This object is the representative / proxy for external system object like ticket, issue, notification, incident etc.. It contains the life cycle information of it, IoT data references (device, alarms, events and measurement) and meta data for the service request like owner, creation time etc.. It has a flexible key & value list \"customProperties\" to add custom properties as well.",
         "properties" : {
           "status" : {
-            "$ref" : "#/components/schemas/ServiceRequestStatus"
+            "$ref" : "#/components/schemas/ServiceRequestStatus",
+            "description" : "Service request status"
           },
           "priority" : {
-            "$ref" : "#/components/schemas/ServiceRequestPriority"
+            "$ref" : "#/components/schemas/ServiceRequestPriority",
+            "description" : "Servcie request priority"
           },
           "title" : {
             "type" : "string",
@@ -1525,24 +1540,24 @@
           "externalId" : {
             "type" : "string",
             "description" : "Service request external ID, contains the service request object ID of the external system.",
-            "example" : "123456789"
+            "example" : 123456789
           },
           "order" : {
-            "$ref" : "#/components/schemas/ServiceOrder"
+            "$ref" : "#/components/schemas/ServiceOrder",
+            "description" : "Service Order"
           },
           "customProperties" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "string",
-              "description" : "Custom specific properties"
+              "type" : "string"
             },
             "description" : "Custom specific properties"
           }
-        },
-        "description" : "Service Request object at Cumulocity IoT Platform. This object is the representative / proxy for external system object like ticket, issue, notification, incident etc.. It contains the life cycle information of it, IoT data references (device, alarms, events and measurement) and meta data for the service request like owner, creation time etc.. It has a flexible key & value list \"customProperties\" to add custom properties as well."
+        }
       },
       "ServiceRequestPriority" : {
         "type" : "object",
+        "description" : "Defines a custom specific priority.",
         "properties" : {
           "name" : {
             "type" : "string",
@@ -1551,21 +1566,20 @@
           },
           "ordinal" : {
             "type" : "integer",
-            "description" : "Priority ordinal",
             "format" : "int64",
+            "description" : "Priority ordinal",
             "example" : 1
           }
-        },
-        "description" : "Defines a custom specific priority."
+        }
       },
       "ServiceRequestStatus" : {
-        "required" : [ "id" ],
         "type" : "object",
+        "description" : "Defines a custom specific status",
         "properties" : {
           "id" : {
             "type" : "string",
             "description" : "Internal id of status",
-            "example" : "0"
+            "example" : 0
           },
           "name" : {
             "type" : "string",
@@ -1573,17 +1587,17 @@
             "example" : "open"
           }
         },
-        "description" : "Defines a custom specific status"
+        "required" : [ "id" ]
       },
       "ServiceRequest" : {
-        "required" : [ "creationTime", "id", "lastUpdated", "owner", "source", "status", "title", "type" ],
         "type" : "object",
+        "description" : "Service Request object at Cumulocity IoT Platform. This object is the representative / proxy for external system object like ticket, issue, notification, incident etc.. It contains the life cycle information of it, IoT data references (device, alarms, events and measurement) and meta data for the service request like owner, creation time etc.. It has a flexible key & value list \"customProperties\" to add custom properties as well.",
         "properties" : {
           "id" : {
             "type" : "string",
             "description" : "Internal ID, set by Cumulocity",
-            "readOnly" : true,
-            "example" : "1335312474"
+            "example" : 1335312474,
+            "readOnly" : true
           },
           "type" : {
             "type" : "string",
@@ -1591,10 +1605,12 @@
             "enum" : [ "alarm", "note", "maintenance", "downtime", "other" ]
           },
           "status" : {
-            "$ref" : "#/components/schemas/ServiceRequestStatus"
+            "$ref" : "#/components/schemas/ServiceRequestStatus",
+            "description" : "Service request status"
           },
           "priority" : {
-            "$ref" : "#/components/schemas/ServiceRequestPriority"
+            "$ref" : "#/components/schemas/ServiceRequestPriority",
+            "description" : "Servcie request priority"
           },
           "title" : {
             "type" : "string",
@@ -1607,43 +1623,49 @@
             "example" : "Device XY is out of order. Please check energy supply."
           },
           "source" : {
-            "$ref" : "#/components/schemas/ServiceRequestSource"
+            "$ref" : "#/components/schemas/ServiceRequestSource",
+            "description" : "Cumulocity Device (managed object) reference"
           },
           "alarmRef" : {
-            "$ref" : "#/components/schemas/ServiceRequestDataRef"
+            "$ref" : "#/components/schemas/ServiceRequestDataRef",
+            "deprecated" : true,
+            "description" : "Cumulocity Alarm reference, deprecated, use alarmRefList instead of alarmRef!"
           },
           "alarmRefList" : {
-            "uniqueItems" : true,
             "type" : "array",
             "description" : "Cumulocity Alarm reference list",
             "items" : {
               "$ref" : "#/components/schemas/ServiceRequestDataRef"
-            }
+            },
+            "uniqueItems" : true
           },
           "eventRef" : {
-            "$ref" : "#/components/schemas/ServiceRequestDataRef"
+            "$ref" : "#/components/schemas/ServiceRequestDataRef",
+            "deprecated" : true,
+            "description" : "Cumulocity Event reference"
           },
           "eventRefList" : {
-            "uniqueItems" : true,
             "type" : "array",
             "description" : "Cumulocity Event reference list",
             "items" : {
               "$ref" : "#/components/schemas/ServiceRequestDataRef"
-            }
+            },
+            "uniqueItems" : true
           },
           "seriesRef" : {
-            "$ref" : "#/components/schemas/ServiceRequestDataRef"
+            "$ref" : "#/components/schemas/ServiceRequestDataRef",
+            "description" : "Cumulocity Measurement series reference"
           },
           "creationTime" : {
             "type" : "string",
-            "description" : "Creation date time",
             "format" : "date-time",
+            "description" : "Creation date time",
             "readOnly" : true
           },
           "lastUpdated" : {
             "type" : "string",
-            "description" : "Update date time",
             "format" : "date-time",
+            "description" : "Update date time",
             "readOnly" : true
           },
           "owner" : {
@@ -1663,33 +1685,34 @@
           "externalId" : {
             "type" : "string",
             "description" : "Service request external ID, contains the service request object ID of the external system.",
-            "example" : "123456789"
+            "example" : 123456789
           },
           "attachment" : {
-            "$ref" : "#/components/schemas/ServiceRequestAttachment"
+            "$ref" : "#/components/schemas/ServiceRequestAttachment",
+            "description" : "File attachment of Service Request"
           },
           "order" : {
-            "$ref" : "#/components/schemas/ServiceOrder"
+            "$ref" : "#/components/schemas/ServiceOrder",
+            "description" : "Service Order, reference object to any kind of service order. Be aware the the order object must be complete. Partial order objects will set all not initialized properties to null!"
           },
           "customProperties" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "string",
-              "description" : "Custom specific properties"
+              "type" : "string"
             },
             "description" : "Custom specific properties"
           }
         },
-        "description" : "Service Request object at Cumulocity IoT Platform. This object is the representative / proxy for external system object like ticket, issue, notification, incident etc.. It contains the life cycle information of it, IoT data references (device, alarms, events and measurement) and meta data for the service request like owner, creation time etc.. It has a flexible key & value list \"customProperties\" to add custom properties as well."
+        "required" : [ "creationTime", "id", "lastUpdated", "owner", "source", "status", "title", "type" ]
       },
       "ServiceRequestAttachment" : {
-        "required" : [ "length", "name", "type" ],
         "type" : "object",
+        "description" : "File attachment (binary)",
         "properties" : {
           "length" : {
             "type" : "integer",
-            "description" : "Length of file",
             "format" : "int64",
+            "description" : "Length of file",
             "example" : 1024
           },
           "name" : {
@@ -1703,16 +1726,16 @@
             "example" : "application/octet-stream"
           }
         },
-        "description" : "File attachment (binary)"
+        "required" : [ "length", "name", "type" ]
       },
       "ServiceRequestDataRef" : {
-        "required" : [ "id" ],
         "type" : "object",
+        "description" : "Reference to data at IoT Platform. It can contain an URI with points to a specific object using id, it could also contain a URI with query parameters to reference a list of objects.",
         "properties" : {
           "id" : {
             "type" : "string",
             "description" : "Internal id of IoT data object",
-            "example" : "18135043"
+            "example" : 18135043
           },
           "uri" : {
             "type" : "string",
@@ -1720,16 +1743,16 @@
             "example" : "https://your-tenant.cumulocity.com/alarm/alarms/18135043"
           }
         },
-        "description" : "Reference to data at IoT Platform. It can contain an URI with points to a specific object using id, it could also contain a URI with query parameters to reference a list of objects."
+        "required" : [ "id" ]
       },
       "ServiceRequestSource" : {
-        "required" : [ "id" ],
         "type" : "object",
+        "description" : "Reference to data at IoT Platform. It can contain an URI with points to a specific object using id, it could also contain a URI with query parameters to reference a list of objects.",
         "properties" : {
           "id" : {
             "type" : "string",
             "description" : "Internal id of IoT data object",
-            "example" : "18135043"
+            "example" : 18135043
           },
           "self" : {
             "type" : "string",
@@ -1737,11 +1760,11 @@
             "example" : "https://your-tenant.cumulocity.com/alarm/alarms/18135043"
           }
         },
-        "description" : "Reference to data at IoT Platform. It can contain an URI with points to a specific object using id, it could also contain a URI with query parameters to reference a list of objects."
+        "required" : [ "id" ]
       },
       "ServiceRequestCommentRqBody" : {
-        "required" : [ "owner", "text", "type" ],
         "type" : "object",
+        "description" : "Comment object of service request. Service request object can have n comments.",
         "properties" : {
           "text" : {
             "type" : "string",
@@ -1751,7 +1774,7 @@
           "externalId" : {
             "type" : "string",
             "description" : "Service request comment external ID, contains the service request comment object ID of the external system.",
-            "example" : "123456789"
+            "example" : 123456789
           },
           "isClosed" : {
             "type" : "boolean",
@@ -1765,45 +1788,48 @@
           "owner" : {
             "type" : "string",
             "description" : "creator / owner ",
-            "readOnly" : true,
-            "example" : "owner@example.com"
+            "example" : "owner@example.com",
+            "readOnly" : true
           },
           "attachment" : {
-            "$ref" : "#/components/schemas/ServiceRequestAttachment"
+            "$ref" : "#/components/schemas/ServiceRequestAttachment",
+            "description" : "File attachment of Service Request"
           }
         },
-        "description" : "Comment object of service request. Service request object can have n comments."
+        "required" : [ "owner", "text", "type" ]
       },
       "ServiceRequestComment" : {
-        "required" : [ "creationTime", "id", "lastUpdated", "owner", "serviceRequestId", "source", "type" ],
         "type" : "object",
+        "description" : "Comment object of service request. Service request object can have n comments.",
         "properties" : {
           "id" : {
             "type" : "string",
             "description" : "Internal id of comment",
-            "readOnly" : true,
-            "example" : "1234"
+            "example" : 1234,
+            "readOnly" : true
           },
           "owner" : {
             "type" : "string",
             "description" : "creator / owner ",
-            "readOnly" : true,
-            "example" : "owner@example.com"
+            "example" : "owner@example.com",
+            "readOnly" : true
           },
           "source" : {
-            "$ref" : "#/components/schemas/ServiceRequestSource"
+            "$ref" : "#/components/schemas/ServiceRequestSource",
+            "description" : "Cumulocity Device (managed object) reference"
           },
           "creationTime" : {
             "type" : "string",
-            "description" : "creation time",
             "format" : "date-time",
-            "readOnly" : true,
-            "example" : "2022-08-24T14:15:22Z"
+            "description" : "creation time",
+            "example" : "2022-08-24T14:15:22Z",
+            "readOnly" : true
           },
           "lastUpdated" : {
             "type" : "string",
-            "description" : "Update date time",
             "format" : "date-time",
+            "description" : "Update date time",
+            "example" : "2023-02-08T12:00:00:00Z",
             "readOnly" : true
           },
           "text" : {
@@ -1823,20 +1849,22 @@
           "externalId" : {
             "type" : "string",
             "description" : "Service request comment external ID, contains the service request comment object ID of the external system.",
-            "example" : "123456789"
+            "example" : 123456789
           },
           "isClosed" : {
             "type" : "boolean",
             "description" : "Service request closed flag, shows if the service request comment is closed! This fragment is basicaly used for retention rules."
           },
           "attachment" : {
-            "$ref" : "#/components/schemas/ServiceRequestAttachment"
+            "$ref" : "#/components/schemas/ServiceRequestAttachment",
+            "description" : "File attachment of Service Request"
           }
         },
-        "description" : "Comment object of service request. Service request object can have n comments."
+        "required" : [ "creationTime", "id", "lastUpdated", "owner", "serviceRequestId", "source", "type" ]
       },
       "ContextApplyRules" : {
         "type" : "object",
+        "description" : "Rules that define when this context configuration should be applied to an alarm",
         "properties" : {
           "devicePredicate" : {
             "type" : "array",
@@ -1852,18 +1880,17 @@
               "$ref" : "#/components/schemas/ContextPredicate"
             }
           }
-        },
-        "description" : "Rules that define when this context configuration should be applied to an alarm"
+        }
       },
       "ContextConfig" : {
-        "required" : [ "apply", "config", "description", "id" ],
         "type" : "object",
+        "description" : "Context Configuration object that defines rules and settings for creating contextualized alarms. Contains device and alarm predicates to determine when to apply the configuration.",
         "properties" : {
           "id" : {
             "type" : "string",
             "description" : "Internal ID, set by Cumulocity",
-            "readOnly" : true,
-            "example" : "123456789"
+            "example" : 123456789,
+            "readOnly" : true
           },
           "description" : {
             "type" : "string",
@@ -1871,10 +1898,12 @@
             "example" : "Context configuration for CS82 control software connection errors"
           },
           "apply" : {
-            "$ref" : "#/components/schemas/ContextApplyRules"
+            "$ref" : "#/components/schemas/ContextApplyRules",
+            "description" : "Application rules that define when this context configuration should be applied"
           },
           "config" : {
-            "$ref" : "#/components/schemas/ContextSettings"
+            "$ref" : "#/components/schemas/ContextSettings",
+            "description" : "Context configuration settings including time windows and data selections"
           },
           "isActive" : {
             "type" : "boolean",
@@ -1882,11 +1911,11 @@
             "example" : true
           }
         },
-        "description" : "Context Configuration object that defines rules and settings for creating contextualized alarms. Contains device and alarm predicates to determine when to apply the configuration."
+        "required" : [ "apply", "config", "description", "id" ]
       },
       "ContextPredicate" : {
-        "required" : [ "fragment", "regex" ],
         "type" : "object",
+        "description" : "Predicate for matching objects based on fragment values",
         "properties" : {
           "fragment" : {
             "type" : "string",
@@ -1899,11 +1928,11 @@
             "example" : "^CS82$"
           }
         },
-        "description" : "Predicate for matching objects based on fragment values"
+        "required" : [ "fragment", "regex" ]
       },
       "ContextSettings" : {
-        "required" : [ "dateFrom", "dateTo" ],
         "type" : "object",
+        "description" : "Context configuration settings that define the data and time window",
         "properties" : {
           "dateFrom" : {
             "type" : "string",
@@ -1920,9 +1949,7 @@
             "description" : "List of measurement data points to include in the context",
             "example" : [ "MHAI1.H1RMSA1", "MHAI1.H1RMSA2" ],
             "items" : {
-              "type" : "string",
-              "description" : "List of measurement data points to include in the context",
-              "example" : "[\"MHAI1.H1RMSA1\",\"MHAI1.H1RMSA2\"]"
+              "type" : "string"
             }
           },
           "events" : {
@@ -1930,9 +1957,7 @@
             "description" : "List of event types to include in the context",
             "example" : [ "ec_S:242/232", "ec_S:66/11" ],
             "items" : {
-              "type" : "string",
-              "description" : "List of event types to include in the context",
-              "example" : "[\"ec_S:242/232\",\"ec_S:66/11\"]"
+              "type" : "string"
             }
           },
           "alarms" : {
@@ -1940,17 +1965,15 @@
             "description" : "List of alarm types to include in the context",
             "example" : [ "ec_S:242/232" ],
             "items" : {
-              "type" : "string",
-              "description" : "List of alarm types to include in the context",
-              "example" : "[\"ec_S:242/232\"]"
+              "type" : "string"
             }
           }
         },
-        "description" : "Context configuration settings that define the data and time window"
+        "required" : [ "dateFrom", "dateTo" ]
       },
       "ServiceRequestPostRqBody" : {
-        "required" : [ "source", "title", "type" ],
         "type" : "object",
+        "description" : "Service Request object at Cumulocity IoT Platform. This object is the representative / proxy for external system object like ticket, issue, notification, incident etc.. It contains the life cycle information of it, IoT data references (device, alarms, events and measurement) and meta data for the service request like owner, creation time etc.. It has a flexible key & value list \"customProperties\" to add custom properties as well.",
         "properties" : {
           "type" : {
             "type" : "string",
@@ -1958,10 +1981,12 @@
             "enum" : [ "alarm", "note", "maintenance", "downtime", "other" ]
           },
           "status" : {
-            "$ref" : "#/components/schemas/ServiceRequestStatus"
+            "$ref" : "#/components/schemas/ServiceRequestStatus",
+            "description" : "Service request status"
           },
           "priority" : {
-            "$ref" : "#/components/schemas/ServiceRequestPriority"
+            "$ref" : "#/components/schemas/ServiceRequestPriority",
+            "description" : "Service request priority"
           },
           "title" : {
             "type" : "string",
@@ -1972,41 +1997,46 @@
             "description" : "Service request detailed description"
           },
           "source" : {
-            "$ref" : "#/components/schemas/ServiceRequestSource"
+            "$ref" : "#/components/schemas/ServiceRequestSource",
+            "description" : "Cumulocity Device (managed object) reference"
           },
           "alarmRef" : {
-            "$ref" : "#/components/schemas/ServiceRequestDataRef"
+            "$ref" : "#/components/schemas/ServiceRequestDataRef",
+            "description" : "Cumulocity Alarm reference. Mutually exclusive with 'alarm'."
           },
           "alarm" : {
             "type" : "string",
             "description" : "Alarm representation. Mutually exclusive with 'alarmRef'."
           },
           "eventRef" : {
-            "$ref" : "#/components/schemas/ServiceRequestDataRef"
+            "$ref" : "#/components/schemas/ServiceRequestDataRef",
+            "description" : "Cumulocity Event reference. Mutually exclusive with 'event'."
           },
           "event" : {
             "type" : "string",
             "description" : "Event representation. Mutually exclusive with 'eventRef'."
           },
           "seriesRef" : {
-            "$ref" : "#/components/schemas/ServiceRequestDataRef"
+            "$ref" : "#/components/schemas/ServiceRequestDataRef",
+            "description" : "Cumulocity Measurement series reference"
           },
           "order" : {
-            "$ref" : "#/components/schemas/ServiceOrder"
+            "$ref" : "#/components/schemas/ServiceOrder",
+            "description" : "Service Order"
           },
           "customProperties" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "string",
-              "description" : "Custom specific properties"
+              "type" : "string"
             },
             "description" : "Custom specific properties"
           }
         },
-        "description" : "Service Request object at Cumulocity IoT Platform. This object is the representative / proxy for external system object like ticket, issue, notification, incident etc.. It contains the life cycle information of it, IoT data references (device, alarms, events and measurement) and meta data for the service request like owner, creation time etc.. It has a flexible key & value list \"customProperties\" to add custom properties as well."
+        "required" : [ "source", "title", "type" ]
       },
       "ErrorResponseBody" : {
         "type" : "object",
+        "description" : "Response body for error. This can contain additional error message for the client.",
         "properties" : {
           "message" : {
             "type" : "string"
@@ -2014,17 +2044,16 @@
           "errorCode" : {
             "type" : "string"
           }
-        },
-        "description" : "Response body for error. This can contain additional error message for the client."
+        }
       },
       "ServiceRequestStatusConfig" : {
-        "required" : [ "id", "name" ],
         "type" : "object",
+        "description" : "Defines a custom specific status",
         "properties" : {
           "id" : {
             "type" : "string",
             "description" : "Internal id of status",
-            "example" : "0"
+            "example" : 0
           },
           "name" : {
             "type" : "string",
@@ -2039,7 +2068,7 @@
           "isSynchronisationActive" : {
             "type" : "boolean",
             "description" : "Set Synchronisation status of service request when this status of Service Request status is set. (Transition)",
-            "example" : false
+            "example" : "NEW"
           },
           "isClosedTransition" : {
             "type" : "boolean",
@@ -2067,45 +2096,44 @@
             "example" : "warning"
           }
         },
-        "description" : "Defines a custom specific status"
+        "required" : [ "id", "name" ]
       },
       "DeviceIds" : {
         "type" : "object",
+        "description" : "Service Order object at Cumulocity IoT Platform.",
         "properties" : {
           "deviceIds" : {
-            "uniqueItems" : true,
             "type" : "array",
             "description" : "Cumulocity managed object IDs",
             "items" : {
-              "type" : "string",
-              "description" : "Cumulocity managed object IDs"
-            }
+              "type" : "string"
+            },
+            "uniqueItems" : true
           }
-        },
-        "description" : "Service Order object at Cumulocity IoT Platform."
+        }
       },
       "ContextData" : {
-        "required" : [ "contextConfigId", "dateFrom", "dateTo" ],
         "type" : "object",
+        "description" : "Context data containing time-based contextual information with measurements, events, and alarms for a specific time window",
         "properties" : {
           "dateFrom" : {
             "type" : "string",
+            "format" : "date-time",
             "description" : "Start date and time of the context window",
-            "format" : "date-time"
+            "example" : "2025-09-20T18:12:09.000"
           },
           "dateTo" : {
             "type" : "string",
+            "format" : "date-time",
             "description" : "End date and time of the context window",
-            "format" : "date-time"
+            "example" : "2025-09-21T18:12:09.000"
           },
           "datapoints" : {
             "type" : "array",
             "description" : "List of measurement datapoints included in this context",
             "example" : [ "MHAI1.H1RMSA1", "MHAI1.H1RMSA2" ],
             "items" : {
-              "type" : "string",
-              "description" : "List of measurement datapoints included in this context",
-              "example" : "[\"MHAI1.H1RMSA1\",\"MHAI1.H1RMSA2\"]"
+              "type" : "string"
             }
           },
           "events" : {
@@ -2113,30 +2141,27 @@
             "description" : "List of event types included in this context",
             "example" : [ "ec_S:66/11", "ec_S:66/11" ],
             "items" : {
-              "type" : "string",
-              "description" : "List of event types included in this context",
-              "example" : "[\"ec_S:66/11\",\"ec_S:66/11\"]"
+              "type" : "string"
             }
           },
           "alarms" : {
             "type" : "array",
             "description" : "List of alarm types included in this context",
             "items" : {
-              "type" : "string",
-              "description" : "List of alarm types included in this context"
+              "type" : "string"
             }
           },
           "contextConfigId" : {
             "type" : "string",
             "description" : "ID of the context configuration that generated this context data",
-            "example" : "123456789"
+            "example" : 123456789
           }
         },
-        "description" : "Context data containing time-based contextual information with measurements, events, and alarms for a specific time window"
+        "required" : [ "contextConfigId", "dateFrom", "dateTo" ]
       },
       "RequestListServiceRequest" : {
-        "required" : [ "currentPage", "list", "pageSize", "totalPages" ],
         "type" : "object",
+        "description" : "Request list",
         "properties" : {
           "list" : {
             "type" : "array",
@@ -2147,34 +2172,34 @@
           },
           "currentPage" : {
             "type" : "integer",
-            "description" : "current page",
             "format" : "int32",
+            "description" : "current page",
             "example" : 2
           },
           "pageSize" : {
             "type" : "integer",
-            "description" : "page size",
             "format" : "int32",
+            "description" : "page size",
             "example" : 1
           },
           "totalPages" : {
             "type" : "integer",
-            "description" : "totalPages",
             "format" : "int32",
+            "description" : "totalPages",
             "example" : 3
           },
           "totalElements" : {
             "type" : "integer",
-            "description" : "totalElements",
             "format" : "int64",
+            "description" : "totalElements",
             "example" : 83
           }
         },
-        "description" : "Request list"
+        "required" : [ "currentPage", "list", "pageSize", "totalPages" ]
       },
       "RequestListServiceRequestComment" : {
-        "required" : [ "currentPage", "list", "pageSize", "totalPages" ],
         "type" : "object",
+        "description" : "Request list",
         "properties" : {
           "list" : {
             "type" : "array",
@@ -2185,30 +2210,30 @@
           },
           "currentPage" : {
             "type" : "integer",
-            "description" : "current page",
             "format" : "int32",
+            "description" : "current page",
             "example" : 2
           },
           "pageSize" : {
             "type" : "integer",
-            "description" : "page size",
             "format" : "int32",
+            "description" : "page size",
             "example" : 1
           },
           "totalPages" : {
             "type" : "integer",
-            "description" : "totalPages",
             "format" : "int32",
+            "description" : "totalPages",
             "example" : 3
           },
           "totalElements" : {
             "type" : "integer",
-            "description" : "totalElements",
             "format" : "int64",
+            "description" : "totalElements",
             "example" : 83
           }
         },
-        "description" : "Request list"
+        "required" : [ "currentPage", "list", "pageSize", "totalPages" ]
       }
     },
     "securitySchemes" : {

@@ -3,8 +3,6 @@ package cumulocity.microservice.service.request.mgmt.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +20,14 @@ import cumulocity.microservice.service.request.mgmt.model.ContextData;
 import cumulocity.microservice.service.request.mgmt.model.ContextDataApply;
 import cumulocity.microservice.service.request.mgmt.service.ContextConfigService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/context/config")
@@ -48,7 +49,8 @@ public class ContextConfigController {
         return new ResponseEntity<ContextConfig>(newContextConfig, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "UPDATE context configuration", description = "Updates an existing context configuration.", tags = {})
+    @Operation(summary = "UPDATE context configuration", description = "Updates an existing context configuration.", parameters = {
+            @Parameter(in = ParameterIn.PATH, name = "configId", required = true, description = "Internal context configuration Id", schema = @Schema(type = "string")) })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ContextConfig.class))),
             @ApiResponse(responseCode = "404", description = "Not Found"),
@@ -73,7 +75,8 @@ public class ContextConfigController {
         return new ResponseEntity<List<ContextConfig>>(contextConfigList, HttpStatus.OK);
     }
 
-    @Operation(summary = "GET context configuration by Id", description = "Returns specific context configuration by Id", tags = {})
+    @Operation(summary = "GET context configuration by Id", description = "Returns context configuration by internal Id", parameters = {
+            @Parameter(in = ParameterIn.PATH, name = "configId", required = true, description = "Internal context configuration Id", schema = @Schema(type = "string")) })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ContextConfig.class))),
             @ApiResponse(responseCode = "404", description = "Not Found") })
@@ -86,7 +89,8 @@ public class ContextConfigController {
         return new ResponseEntity<ContextConfig>(contextConfig.get(), HttpStatus.OK);
     }
 
-    @Operation(summary = "DELETE context configuration by Id", description = "Deletes a context configuration by Id", tags = {})
+    @Operation(summary = "DELETE context configuration by Id", description = "Deletes a context configuration by Id", parameters = {
+            @Parameter(in = ParameterIn.PATH, name = "configId", required = true, description = "Internal context configuration Id", schema = @Schema(type = "string")) })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "404", description = "Not Found") })
@@ -100,7 +104,8 @@ public class ContextConfigController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Operation(summary = "APPLY context configurations to alarm", description = "Applies all matching context configurations to a specific alarm by alarm ID.", tags = {})
+    @Operation(summary = "APPLY context configurations to alarm", description = "Applies all matching context configurations to a specific alarm by alarm ID.", parameters = {
+            @Parameter(in = ParameterIn.PATH, name = "alarmId", required = true, description = "Internal alarm Id", schema = @Schema(type = "string")) })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK - Context configurations applied successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ContextData.class))),
             @ApiResponse(responseCode = "404", description = "Not Found - Alarm not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseBody.class))),

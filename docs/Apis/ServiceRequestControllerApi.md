@@ -27,7 +27,7 @@ Add alarm reference to service request
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
 | **ServiceRequestDataRef** | [**ServiceRequestDataRef**](../Models/ServiceRequestDataRef.md)|  | |
 
 ### Return type
@@ -55,7 +55,7 @@ Add event reference to service request
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
 | **ServiceRequestDataRef** | [**ServiceRequestDataRef**](../Models/ServiceRequestDataRef.md)|  | |
 
 ### Return type
@@ -110,7 +110,7 @@ DELETE service request by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
 
 ### Return type
 
@@ -127,7 +127,7 @@ null (empty response body)
 
 <a name="downloadServiceRequestAttachment"></a>
 # **downloadServiceRequestAttachment**
-> List downloadServiceRequestAttachment(serviceRequestId)
+> byte[] downloadServiceRequestAttachment(serviceRequestId)
 
 DOWNLOAD attachment for specific service request
 
@@ -137,11 +137,11 @@ DOWNLOAD attachment for specific service request
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
 
 ### Return type
 
-**List**
+**byte[]**
 
 ### Authorization
 
@@ -164,7 +164,7 @@ GET service request by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
 
 ### Return type
 
@@ -228,7 +228,7 @@ PUT service request by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
 | **ServiceRequestPatchRqBody** | [**ServiceRequestPatchRqBody**](../Models/ServiceRequestPatchRqBody.md)|  | |
 
 ### Return type
@@ -256,7 +256,7 @@ UPLOAD attachment for specific service request
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
 | **file** | **File**| Mulitpart file, attachment | [default to null] |
 | **force** | **Boolean**| Controls if the attachment can be overwritten. force &#x3D;&#x3D; true means file will be overwritten if exists, otherwise a http 409 will be returned. | [default to null] |
 

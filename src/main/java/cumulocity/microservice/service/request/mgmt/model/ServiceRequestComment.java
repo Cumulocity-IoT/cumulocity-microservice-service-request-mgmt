@@ -1,7 +1,7 @@
 package cumulocity.microservice.service.request.mgmt.model;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
 import org.springframework.validation.annotation.Validated;
