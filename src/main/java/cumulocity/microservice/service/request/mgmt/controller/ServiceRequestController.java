@@ -2,8 +2,6 @@ package cumulocity.microservice.service.request.mgmt.controller;
 
 import java.util.Arrays;
 
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +38,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 
 /**
  * Service request controller
@@ -137,7 +136,8 @@ public class ServiceRequestController {
 		return new ResponseEntity<RequestList<ServiceRequest>>(serviceRequestByFilter, HttpStatus.OK);
 	}
 
-	@Operation(summary = "GET service request by Id", description = "Returns service request by internal Id", tags = {})
+	@Operation(summary = "GET service request by Id", description = "Returns service request by internal Id", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
@@ -150,7 +150,8 @@ public class ServiceRequestController {
 		return new ResponseEntity<ServiceRequest>(serviceRequest, HttpStatus.OK);
 	}
 
-	@Operation(summary = "PUT service request by Id", description = "Updates specific service request.", tags = {})
+	@Operation(summary = "PUT service request by Id", description = "Updates specific service request.", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
@@ -164,7 +165,8 @@ public class ServiceRequestController {
 		return new ResponseEntity<ServiceRequest>(serviceRequest, HttpStatus.OK);
 	}
 
-	@Operation(summary = "DELETE service request by Id", description = "Delete a service request object at Cumulocity IoT. Related object at external system will not be deleted!", tags = {})
+	@Operation(summary = "DELETE service request by Id", description = "Delete a service request object at Cumulocity IoT. Related object at external system will not be deleted!", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "No Content"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@DeleteMapping(path = "/{serviceRequestId}")
@@ -172,7 +174,8 @@ public class ServiceRequestController {
 		serviceRequestService.deleteServiceRequest(serviceRequestId);
 	}
 	
-	@Operation(summary = "UPLOAD attachment for specific service request", description = "Upload attachment from service request", tags = {})
+	@Operation(summary = "UPLOAD attachment for specific service request", description = "Upload attachment from service request", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Created"),
 			@ApiResponse(responseCode = "404", description = "Not Found"),
 			@ApiResponse(responseCode = "409", description = "Conflict") })
@@ -192,7 +195,8 @@ public class ServiceRequestController {
 		}
 	}
 	
-	@Operation(summary = "DOWNLOAD attachment for specific service request", description = "Download attachment from service request", tags = {})
+	@Operation(summary = "DOWNLOAD attachment for specific service request", description = "Download attachment from service request", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@GetMapping(path = "/{serviceRequestId}/attachment", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -208,7 +212,8 @@ public class ServiceRequestController {
 		}
 	}
 
-	@Operation(summary = "Add alarm reference to service request", description = "Add alarm reference to service request", tags = {})
+	@Operation(summary = "Add alarm reference to service request", description = "Add alarm reference to service request", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { 
 		@ApiResponse(responseCode = "200", description = "Ok"),
 		@ApiResponse(responseCode = "404", description = "Not Found"),
@@ -233,7 +238,8 @@ public class ServiceRequestController {
 		return new ResponseEntity<ServiceRequest>(serviceRequest, HttpStatus.OK);
 	}
 
-	@Operation(summary = "Add event reference to service request", description = "Add event reference to service request", tags = {})
+	@Operation(summary = "Add event reference to service request", description = "Add event reference to service request", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { 
 		@ApiResponse(responseCode = "200", description = "Ok"),
 		@ApiResponse(responseCode = "404", description = "Not Found"),

@@ -22,7 +22,7 @@ Returns all user comments of specific service request by internal Id.
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
 
 ### Return type
 
@@ -77,7 +77,7 @@ UPDATE service request active status by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
 | **body** | **Boolean**|  | |
 
 ### Return type
@@ -105,7 +105,7 @@ UPDATE service request status by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **serviceRequestId** | **String**|  | [default to null] |
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
 | **ServiceRequestStatus** | [**ServiceRequestStatus**](../Models/ServiceRequestStatus.md)|  | |
 
 ### Return type

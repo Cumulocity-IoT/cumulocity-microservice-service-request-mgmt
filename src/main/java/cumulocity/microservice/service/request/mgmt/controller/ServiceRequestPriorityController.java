@@ -22,6 +22,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 
 @RestController
 @RequestMapping("/api/service/request/priority")
@@ -54,7 +56,8 @@ public class ServiceRequestPriorityController {
 		return new ResponseEntity<List<ServiceRequestPriority>>(priorityList, HttpStatus.OK);
 	}
 
-	@Operation(summary = "GET service request priority by ordinal", description = "", tags = {})
+	@Operation(summary = "GET service request priority by ordinal", description = "", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "priorityOrdinal", required = true, description = "Priority ordinal", schema = @Schema(type = "integer", format = "int64")) })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequestPriority.class))),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
@@ -67,7 +70,8 @@ public class ServiceRequestPriorityController {
 		return new ResponseEntity<ServiceRequestPriority>(priority, HttpStatus.OK);
 	}
 
-	@Operation(summary = "DELETE service request priority", description = "", tags = {})
+	@Operation(summary = "DELETE service request priority", description = "", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "priorityOrdinal", required = true, description = "Priority ordinal", schema = @Schema(type = "integer", format = "int64")) })
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "No Content"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@DeleteMapping(path = "/{priorityOrdinal}")

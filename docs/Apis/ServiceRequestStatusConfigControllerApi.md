@@ -47,7 +47,7 @@ DELETE service request status by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **statusId** | **String**|  | [default to null] |
+| **statusId** | **String**| Status Id | [default to null] |
 
 ### Return type
 
@@ -74,7 +74,7 @@ GET service request status by Id
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **statusId** | **String**|  | [default to null] |
+| **statusId** | **String**| Status Id | [default to null] |
 
 ### Return type
 
