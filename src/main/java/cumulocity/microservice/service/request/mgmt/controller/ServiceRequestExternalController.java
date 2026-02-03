@@ -1,11 +1,10 @@
 package cumulocity.microservice.service.request.mgmt.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -74,7 +73,8 @@ public class ServiceRequestExternalController {
 		return new ResponseEntity<Collection<ServiceRequest>>(serviceRequestList, HttpStatus.OK);
 	}
 	
-	@Operation(summary = "Returns all user comments of specific service request by internal Id.", description = "Each service request can have n comments. This endpoint returns the complete list of user comments of a specific service request.")
+	@Operation(summary = "Returns all user comments of specific service request by internal Id.", description = "Each service request can have n comments. This endpoint returns the complete list of user comments of a specific service request.", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { 
 			@ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ServiceRequestComment.class)))),
 			@ApiResponse(responseCode = "404", description = "Not found")})
@@ -84,7 +84,8 @@ public class ServiceRequestExternalController {
 		return new ResponseEntity<List<ServiceRequestComment>>(commentListByFilter, HttpStatus.OK);
 	}
 
-	@Operation(summary = "UPDATE service request status by Id", description = "Updates specific service status request.", tags = {})
+	@Operation(summary = "UPDATE service request status by Id", description = "Updates specific service status request.", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
@@ -98,7 +99,8 @@ public class ServiceRequestExternalController {
 		return new ResponseEntity<ServiceRequest>(sr, HttpStatus.OK);
 	}
 
-	@Operation(summary = "UPDATE service request active status by Id", description = "Updates specific service status request.", tags = {})
+	@Operation(summary = "UPDATE service request active status by Id", description = "Updates specific service status request.", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))),
 			@ApiResponse(responseCode = "404", description = "Not Found") })

@@ -7,14 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.cumulocity.microservice.context.credentials.MicroserviceCredentials;
-import com.cumulocity.microservice.context.credentials.UserCredentials;
 import com.cumulocity.rest.representation.alarm.AlarmRepresentation;
 
 import cumulocity.microservice.service.request.mgmt.model.ContextConfig;
 import cumulocity.microservice.service.request.mgmt.model.ContextDataApply;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 @Service
 @Validated

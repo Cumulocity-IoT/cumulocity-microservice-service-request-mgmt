@@ -23,6 +23,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 
 @RestController
 @RequestMapping("/api/service/request/status")
@@ -55,7 +57,8 @@ public class ServiceRequestStatusConfigController {
 		return new ResponseEntity<List<ServiceRequestStatusConfig>>(statusList, HttpStatus.OK);
 	}
 
-	@Operation(summary = "GET service request status by Id", description = "Returns specific service request status by Id", tags = {})
+	@Operation(summary = "GET service request status by Id", description = "Returns specific service request status by Id", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "statusId", required = true, description = "Status Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequestStatusConfig.class))),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
@@ -68,7 +71,8 @@ public class ServiceRequestStatusConfigController {
 		return new ResponseEntity<ServiceRequestStatusConfig>(status.get(), HttpStatus.OK);
 	}
 
-	@Operation(summary = "DELETE service request status by Id", description = "", tags = {})
+	@Operation(summary = "DELETE service request status by Id", description = "", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "statusId", required = true, description = "Status Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "No Content"),
 			@ApiResponse(responseCode = "404", description = "Not Found") })
 	@DeleteMapping(path = "/{statusId}")
