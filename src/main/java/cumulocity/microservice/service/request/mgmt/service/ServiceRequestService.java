@@ -21,7 +21,7 @@ public interface ServiceRequestService {
 
 	public ServiceRequestValidationResult validateAlarm(ServiceRequestDataRef serviceRequestDataRef, String alarmJsonString);
 
-	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef serviceRequestDataRef, String eventJsonString);
+	public ServiceRequestValidationResult validateEvent(String serviceRequestId, ServiceRequestDataRef serviceRequestDataRef, String eventJsonString);
 
 	public ServiceRequest createServiceRequest(ServiceRequestPostRqBody serviceRequest, String owner);
 	
