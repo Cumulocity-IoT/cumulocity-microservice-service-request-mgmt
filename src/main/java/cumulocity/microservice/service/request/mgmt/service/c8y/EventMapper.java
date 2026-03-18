@@ -25,11 +25,7 @@ public class EventMapper {
 		this.event = new EventRepresentation();
 		this.event.setId(GId.asGId(eventId));
 	}
-	
-	// public String getServiceRequestEventId() {
-	// 	return (String) event.get(SR_EVENT_ID);
-	// }
-	
+
 	public void setServiceRequestEventId(String serviceRequestEventId) {
 		if(serviceRequestEventId == null) {
 			return;
