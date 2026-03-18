@@ -6,7 +6,7 @@ import com.cumulocity.rest.representation.event.EventRepresentation;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
 
 public class EventMapper {
-	public static final String SR_EVENT_ID = "sr_EventId";
+	public static final String SR_EVENT_ID = "sr_EventId!";
 
 	private EventRepresentation event;
 	
@@ -25,16 +25,12 @@ public class EventMapper {
 		this.event = new EventRepresentation();
 		this.event.setId(GId.asGId(eventId));
 	}
-	
-	public String getServiceRequestEventId() {
-		return (String) event.get(SR_EVENT_ID);
-	}
-	
+
 	public void setServiceRequestEventId(String serviceRequestEventId) {
 		if(serviceRequestEventId == null) {
 			return;
 		}
-		event.set(serviceRequestEventId, SR_EVENT_ID);
+		event.set(new Object(), SR_EVENT_ID+serviceRequestEventId);
 	}
 
 	public EventRepresentation getEvent() {
