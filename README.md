@@ -51,6 +51,12 @@ classDiagram
         +String externalId
         +ServiceRequestAttachment attachment
         +ServiceOrder order
+        +String fieldAssignee
+        +Date fieldScheduleStart
+        +Date fieldScheduleEnd
+        +Date fieldScheduleDue
+        +Integer fieldProgressPercentage
+        +String fsmLink
         +Map~String,String~ customProperties
     }
 
@@ -301,56 +307,11 @@ The property `isSynchronisationActive` defines whether the service request gets 
 The microservice maintains a service request counter at the device managed object. This counter reflects all active service requests for this device per status. Which status is counted can be configured in the status configuration see `isExcludeForCounter` property above. But also the type of service request can be filtered. This is useful if you want to count only service requests of type equals `alarm` for example. This can be configured via microservice settings or more persisely via tenant options. The default configuration key: `activeStatusIncludeTypes`
 
 
-# FSM or ITS integration options 
-
-## Option 1: Proxy Object Implementation (asynchronous)
+# FSM or ITS integration 
 
 As mentioned above, all objects like Service Request, Comments, etc., are stored as Events in Cumulocity IoT. Synchronization of this data to FSM/ITS data must be implemented in an additional component. This can be done with a frequently running job (polling) or event-based using the Cumulocity notification API. All IoT data needed for FSM/ITS systems is requested via the Cumulocity standard API. Which IoT data is needed is highly dependent on the use case and must be implemented in the Adapter. If the FSM/ITS also provides an event-based mechanism, this should be used for updating Service Request status, etc..
 
 ![Service Request Component Diagram](./docs/service-request-component-diagram.png)
-
-Pros:
-- Asynchronous and decoupled; the API calls of FSM/ITS can be configured and better managed, like polling rates etc.
-- Service Request management functions are already implemented—see features list below
-- Processes are not blocked if connection problems to FSM/ITS occur
-- Feature can also be used without FSM/ITS integration 
-
-Cons:
-- User doesn't get direct feedback if the object is created in FSM/ITS (decoupled)
-- Unnecessary calls if polling is used, particularly when not many service requests are created
-- Boundaries when using user context
-
-Features of standard implementation:
-
-- Declarative configuration of status list. This allows you to introduce your own status list and behavior with additional information like alarm status transition, close transition, icon, etc..
-- Service requests are stored as events
-- Specific retention rules can be configured for EVENTs with fragment type sr_Closed and Type c8y_ServiceRequest
-- Event attachment features are used for Service Request attachments
-- Service request comments are also stored as separate events
-- Service request counter at device managed object
-- Bidirectional reference between alarm and service request
-
-
-## Option 2: Proxy API Implementation (synchronous)
-
-Call directly (forwarding) other APIs of FSM or ITS systems without storing or creating objects in Cumulocity. The service implementation will contain the client for the external FSM/ITS and must also handle the connection details.
-
-![Service Request Component Diagram](./docs/service-request-component-diagram-sync.png)
-
-Pros:
-- Direct and instant communication; UI gets direct feedback if FSM/ITS object couldn't be created
-- No delay between UI feedback and FSM/ITS object creation
-- No additional data stored in Cumulocity (no inbound data transfer)
-
-Cons:
-- Complete feature can only be used if FSM/ITS is available and reachable
-- Additional implementation effort
-- If FSM/ITS system responds slowly, the complete solution will be slow, highly dependent on connectivity
-
-The following service interfaces must be implemented:
-
-[Service Interfaces](src/main/java/cumulocity/microservice/service/request/mgmt/service)
-
 
 # Prerequisites
 
