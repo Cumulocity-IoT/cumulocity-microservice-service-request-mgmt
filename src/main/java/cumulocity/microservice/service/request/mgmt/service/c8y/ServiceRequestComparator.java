@@ -20,6 +20,7 @@ public class ServiceRequestComparator implements Comparator<ServiceRequest> {
 		ComparisonChain comparisonChain = ComparisonChain.start();
 		for(String orderByClass: orderBy) {
 			if("status".equalsIgnoreCase(orderByClass)) {
+				comparisonChain = comparisonChain.compareFalseFirst(Boolean.TRUE.equals(o1.getIsClosed()), Boolean.TRUE.equals(o2.getIsClosed()));
 				comparisonChain = comparisonChain.compare(o1.getStatus().getId(), o2.getStatus().getId());
 			}else if("priority".equalsIgnoreCase(orderByClass)) {
 				comparisonChain = comparisonChain.compare(o1.getPriority().getOrdinal(), o2.getPriority().getOrdinal());

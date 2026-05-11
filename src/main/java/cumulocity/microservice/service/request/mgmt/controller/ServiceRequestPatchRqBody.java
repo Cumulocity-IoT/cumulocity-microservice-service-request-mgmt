@@ -2,6 +2,8 @@ package cumulocity.microservice.service.request.mgmt.controller;
 
 import java.util.Map;
 
+import org.joda.time.DateTime;
+
 import jakarta.validation.Valid;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceOrder;
@@ -38,6 +40,24 @@ public class ServiceRequestPatchRqBody {
 
 	@Schema(description = "Service Order")
 	private ServiceOrder order;
+
+	@Schema(description = "Assignee (service technician) of the service request, shows who is currently assigned to the service task.", example = "user@example.com")
+	private String fieldAssignee;
+
+	@Schema(description = "Schedule start time of the service task, shows when the service task should be started.")
+	private DateTime fieldScheduleStart;
+	
+	@Schema(description = "Schedule end time of the service task, shows when the service task should be finished.")
+	private DateTime fieldScheduleEnd;
+
+	@Schema(description = "Schedule due time of the service task, shows when the service task is due.")
+	private DateTime fieldScheduleDue;
+
+	@Schema(description = "Progress percentage of the service task, shows the current progress of the service task.")
+	private Integer fieldProgressPercentage;
+
+	@Schema(description = "FSM link of the service task, shows the link to the FSM system.")
+	private String fsmLink;
 
 	@Schema(description = "Custom specific properties")
 	private Map<String, String> customProperties;

@@ -100,6 +100,24 @@ public class ServiceRequest {
 	@Schema(description = "Service Order, reference object to any kind of service order. Be aware the the order object must be complete. Partial order objects will set all not initialized properties to null!")
 	private ServiceOrder order;
 
+	@Schema(description = "Assignee (service technician) of the service request, shows who is currently assigned to the service task.", example = "user@example.com")
+	private String fieldAssignee;
+
+	@Schema(description = "Schedule start time of the service task, shows when the service task should be started.")
+	private DateTime fieldScheduleStart;
+	
+	@Schema(description = "Schedule end time of the service task, shows when the service task should be finished.")
+	private DateTime fieldScheduleEnd;
+
+	@Schema(description = "Schedule due time of the service task, shows when the service task is due.")
+	private DateTime fieldScheduleDue;
+
+	@Schema(description = "Progress percentage of the service task, shows the current progress of the service task.")
+	private Integer fieldProgressPercentage;
+
+	@Schema(description = "FSM link of the service task, shows the link to the FSM system.")
+	private String fsmLink;
+
 	@Schema(description = "Custom specific properties")
 	private Map<String, String> customProperties;
 }

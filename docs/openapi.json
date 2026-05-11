@@ -75,8 +75,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -85,8 +85,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -360,8 +360,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -370,8 +370,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -407,6 +407,16 @@
           "required" : true
         },
         "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContextConfig"
+                }
+              }
+            }
+          },
           "404" : {
             "description" : "Not Found",
             "content" : {
@@ -419,16 +429,6 @@
           },
           "400" : {
             "description" : "Bad Request",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ContextConfig"
-                }
-              }
-            }
-          },
-          "200" : {
-            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -463,6 +463,55 @@
         }
       }
     },
+    "/api/adapter/service/request/{serviceRequestId}" : {
+      "put" : {
+        "tags" : [ "service-request-external-controller" ],
+        "summary" : "PUT service request by Id",
+        "description" : "Updates specific service request.",
+        "operationId" : "updateServiceRequestById_1",
+        "parameters" : [ {
+          "name" : "serviceRequestId",
+          "in" : "path",
+          "description" : "Internal service request Id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ServiceRequestPatchRqBody"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/adapter/service/request/{serviceRequestId}/status" : {
       "put" : {
         "tags" : [ "service-request-external-controller" ],
@@ -489,8 +538,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -499,8 +548,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -538,8 +587,8 @@
           "required" : true
         },
         "responses" : {
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -548,8 +597,8 @@
               }
             }
           },
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -707,6 +756,16 @@
               }
             }
           },
+          "400" : {
+            "description" : "Bad Request, Service request body is invalid!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
+                }
+              }
+            }
+          },
           "412" : {
             "description" : "Precondition Failed, Alarm of service request not found!",
             "content" : {
@@ -723,16 +782,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ServiceRequest"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Bad Request, Service request body is invalid!",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponseBody"
                 }
               }
             }
@@ -1195,8 +1244,8 @@
           "required" : true
         },
         "responses" : {
-          "201" : {
-            "description" : "Created",
+          "400" : {
+            "description" : "Bad Request",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1205,8 +1254,8 @@
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
+          "201" : {
+            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1244,8 +1293,8 @@
               }
             }
           },
-          "500" : {
-            "description" : "Internal Server Error - Context configuration is not valid",
+          "400" : {
+            "description" : "Bad Request",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1254,8 +1303,8 @@
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
+          "500" : {
+            "description" : "Internal Server Error - Context configuration is not valid",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1546,6 +1595,35 @@
             "$ref" : "#/components/schemas/ServiceOrder",
             "description" : "Service Order"
           },
+          "fieldAssignee" : {
+            "type" : "string",
+            "description" : "Assignee (service technician) of the service request, shows who is currently assigned to the service task.",
+            "example" : "user@example.com"
+          },
+          "fieldScheduleStart" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "Schedule start time of the service task, shows when the service task should be started."
+          },
+          "fieldScheduleEnd" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "Schedule end time of the service task, shows when the service task should be finished."
+          },
+          "fieldScheduleDue" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "Schedule due time of the service task, shows when the service task is due."
+          },
+          "fieldProgressPercentage" : {
+            "type" : "integer",
+            "format" : "int32",
+            "description" : "Progress percentage of the service task, shows the current progress of the service task."
+          },
+          "fsmLink" : {
+            "type" : "string",
+            "description" : "FSM link of the service task, shows the link to the FSM system."
+          },
           "customProperties" : {
             "type" : "object",
             "additionalProperties" : {
@@ -1694,6 +1772,35 @@
           "order" : {
             "$ref" : "#/components/schemas/ServiceOrder",
             "description" : "Service Order, reference object to any kind of service order. Be aware the the order object must be complete. Partial order objects will set all not initialized properties to null!"
+          },
+          "fieldAssignee" : {
+            "type" : "string",
+            "description" : "Assignee (service technician) of the service request, shows who is currently assigned to the service task.",
+            "example" : "user@example.com"
+          },
+          "fieldScheduleStart" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "Schedule start time of the service task, shows when the service task should be started."
+          },
+          "fieldScheduleEnd" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "Schedule end time of the service task, shows when the service task should be finished."
+          },
+          "fieldScheduleDue" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "Schedule due time of the service task, shows when the service task is due."
+          },
+          "fieldProgressPercentage" : {
+            "type" : "integer",
+            "format" : "int32",
+            "description" : "Progress percentage of the service task, shows the current progress of the service task."
+          },
+          "fsmLink" : {
+            "type" : "string",
+            "description" : "FSM link of the service task, shows the link to the FSM system."
           },
           "customProperties" : {
             "type" : "object",
