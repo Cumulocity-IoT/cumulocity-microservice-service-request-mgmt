@@ -29,6 +29,9 @@ commands:
       - name: all
         description: if set to true, it will return all service requests, otherwise it will return only active service requests
         type: boolean
+      - name: orderBy
+        description: this query parameter will order service requests by status, priority, timestamp or isClosed, e.g. --order-by status,priority
+        type: stringcsv[]
   - name: get
     description: Get service request by ID
     method: GET
@@ -466,3 +469,48 @@ commands:
             - id,name
             - --output
             - completion
+  - name: updateServiceRequest
+    description: Update service request details by ID, including assignee, schedule, progress, and FSM link
+    method: PUT
+    path: service/service-request-mgmt/api/service/request/{serviceRequestId}
+    pathParameters:
+      - name: serviceRequestId
+        type: string
+        description: Service Request ID
+        pipeline: true
+        completion:
+          type: external
+          command: 
+            - c8y
+            - service-request-cliext
+            - sr 
+            - list
+            - --select 
+            - id,title 
+            - --output 
+            - completion
+    body:
+      - name: fieldAssignee
+        type: string
+        description: assign service request to user by user ID
+        required: false
+      - name: fieldScheduleStart
+        type: datetime
+        description: schedule service request by providing start time in ISO format, e.g. 2024-12-31T23:59:59Z
+        required: false
+      - name: fieldScheduleEnd
+        type: datetime
+        description: schedule service request by providing end time in ISO format, e.g. 2024-12-31T23:59:59Z
+        required: false
+      - name: fieldScheduleDue
+        type: datetime
+        description: schedule service request by providing due time in ISO format, e.g. 2024-12-31T23:59:59Z
+        required: false
+      - name: fieldProgressPercentage
+        type: integer
+        description: update service request progress by providing percentage of completion, e.g. 50
+        required: false
+      - name: fsmLink
+        type: string
+        description: link service request to fsm by providing the fsm link
+        required: false

@@ -6,6 +6,7 @@ All URIs are relative to *http://localhost:8080*
 |------------- | ------------- | -------------|
 | [**getServiceRequestCommentList1**](ServiceRequestExternalControllerApi.md#getServiceRequestCommentList1) | **GET** /api/adapter/service/request/{serviceRequestId}/comment | Returns all user comments of specific service request by internal Id. |
 | [**getServiceRequestList1**](ServiceRequestExternalControllerApi.md#getServiceRequestList1) | **GET** /api/adapter/service/request | GET service request list |
+| [**updateServiceRequestById1**](ServiceRequestExternalControllerApi.md#updateServiceRequestById1) | **PUT** /api/adapter/service/request/{serviceRequestId} | PUT service request by Id |
 | [**updateServiceRequestIsActiveById**](ServiceRequestExternalControllerApi.md#updateServiceRequestIsActiveById) | **PUT** /api/adapter/service/request/{serviceRequestId}/active | UPDATE service request active status by Id |
 | [**updateServiceRequestStatusById**](ServiceRequestExternalControllerApi.md#updateServiceRequestStatusById) | **PUT** /api/adapter/service/request/{serviceRequestId}/status | UPDATE service request status by Id |
 
@@ -63,6 +64,34 @@ GET service request list
 ### HTTP request headers
 
 - **Content-Type**: Not defined
+- **Accept**: application/json
+
+<a name="updateServiceRequestById1"></a>
+# **updateServiceRequestById1**
+> ServiceRequest updateServiceRequestById1(serviceRequestId, ServiceRequestPatchRqBody)
+
+PUT service request by Id
+
+    Updates specific service request.
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **serviceRequestId** | **String**| Internal service request Id | [default to null] |
+| **ServiceRequestPatchRqBody** | [**ServiceRequestPatchRqBody**](../Models/ServiceRequestPatchRqBody.md)|  | |
+
+### Return type
+
+[**ServiceRequest**](../Models/ServiceRequest.md)
+
+### Authorization
+
+[basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
 - **Accept**: application/json
 
 <a name="updateServiceRequestIsActiveById"></a>
