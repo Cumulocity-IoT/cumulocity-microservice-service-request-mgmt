@@ -470,7 +470,7 @@ commands:
             - --output
             - completion
   - name: updateServiceRequest
-    description: Update status of service request by ID
+    description: Update service request details by ID, including assignee, schedule, progress, and FSM link
     method: PUT
     path: service/service-request-mgmt/api/service/request/{serviceRequestId}
     pathParameters:
