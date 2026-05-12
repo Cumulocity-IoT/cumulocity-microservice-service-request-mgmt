@@ -114,7 +114,7 @@ public class ServiceRequestExternalController {
 		return new ResponseEntity<ServiceRequest>(sr, HttpStatus.OK);
 	}
 
-		@Operation(summary = "PUT service request by Id", description = "Updates specific service request.", parameters = {
+	@Operation(summary = "PUT service request by Id", description = "Updates specific service request.", parameters = {
 			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))),
