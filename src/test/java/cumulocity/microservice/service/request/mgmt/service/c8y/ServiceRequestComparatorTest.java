@@ -76,12 +76,12 @@ class ServiceRequestComparatorTest {
 		
 		serviceRequestList.sort(comp);
 		serviceRequestList.forEach((sr)->System.out.println(sr.getId()));
-		String expecte[] = new String[] {
+		String expected[] = new String[] {
 				"5", "1", "3", "4", "7", "6", "2", "8"
 		};
 		
-		for (int i = 0; i < expecte.length; i++) {
-			assertEquals(expecte[i], serviceRequestList.get(i).getId());
+		for (int i = 0; i < expected.length; i++) {
+			assertEquals(expected[i], serviceRequestList.get(i).getId());
 		}
 		
 	}
@@ -95,12 +95,12 @@ class ServiceRequestComparatorTest {
 		
 		serviceRequestList.sort(comp);
 		serviceRequestList.forEach((sr)->System.out.println(sr.getId()));
-		String expecte[] = new String[] {
+		String expected[] = new String[] {
 				"8", "7", "6", "5", "1", "2", "3", "4"
 		};
 		
-		for (int i = 0; i < expecte.length; i++) {
-			assertEquals(expecte[i], serviceRequestList.get(i).getId());
+		for (int i = 0; i < expected.length; i++) {
+			assertEquals(expected[i], serviceRequestList.get(i).getId());
 		}
 		
 	}
