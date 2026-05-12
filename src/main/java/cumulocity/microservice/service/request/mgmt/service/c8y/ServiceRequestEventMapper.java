@@ -153,6 +153,12 @@ public class ServiceRequestEventMapper {
 		serviceRequest.setExternalId(mapper.getExternalId());
 		serviceRequest.setIsClosed(mapper.getIsClosed());
 		serviceRequest.setOrder(mapper.getOrder());
+		serviceRequest.setFieldAssignee(mapper.getFieldAssignee());
+		serviceRequest.setFieldScheduleStart(mapper.getFieldScheduleStart());
+		serviceRequest.setFieldScheduleEnd(mapper.getFieldScheduleEnd());
+		serviceRequest.setFieldScheduleDue(mapper.getFieldScheduleDue());
+		serviceRequest.setFieldProgressPercentage(mapper.getFieldProgressPercentage());
+		serviceRequest.setFsmLink(mapper.getFsmLink());
 		serviceRequest.setCustomProperties(mapper.getCustomProperties());
 		return serviceRequest;
 	}
