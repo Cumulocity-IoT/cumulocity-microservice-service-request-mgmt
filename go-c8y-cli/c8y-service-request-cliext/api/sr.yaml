@@ -512,5 +512,5 @@ commands:
         required: false
       - name: fsmLink
         type: string
-        description: link service request to fsm by providing fsm external ID
+        description: link service request to fsm by providing the fsm link
         required: false
