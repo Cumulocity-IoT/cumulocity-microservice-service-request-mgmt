@@ -2,7 +2,6 @@ package cumulocity.microservice.service.request.mgmt.service.c8y;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.security.Provider.Service;
 import java.util.ArrayList;
 import java.util.List;
 
