@@ -19,8 +19,9 @@ public class ServiceRequestComparator implements Comparator<ServiceRequest> {
 	public int compare(ServiceRequest o1, ServiceRequest o2) {
 		ComparisonChain comparisonChain = ComparisonChain.start();
 		for(String orderByClass: orderBy) {
-			if("status".equalsIgnoreCase(orderByClass)) {
+			if("isClosed".equalsIgnoreCase(orderByClass)) {
 				comparisonChain = comparisonChain.compareFalseFirst(Boolean.TRUE.equals(o1.getIsClosed()), Boolean.TRUE.equals(o2.getIsClosed()));
+			}else if("status".equalsIgnoreCase(orderByClass)) {
 				comparisonChain = comparisonChain.compare(o1.getStatus().getId(), o2.getStatus().getId());
 			}else if("priority".equalsIgnoreCase(orderByClass)) {
 				comparisonChain = comparisonChain.compare(o1.getPriority().getOrdinal(), o2.getPriority().getOrdinal());
@@ -30,5 +31,4 @@ public class ServiceRequestComparator implements Comparator<ServiceRequest> {
 		}
 		return comparisonChain.result();
 	}
-
 }

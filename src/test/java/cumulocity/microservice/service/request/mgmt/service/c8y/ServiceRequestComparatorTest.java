@@ -70,7 +70,7 @@ class ServiceRequestComparatorTest {
 	@Test
 	void testStatusPriorityTimestamp() {
 		String orderBy[] = new String[] {
-				"status", "priority", "timestamp"
+				"isClosed", "status", "priority", "timestamp"
 		};
 		ServiceRequestComparator comp = new ServiceRequestComparator(orderBy);
 		
