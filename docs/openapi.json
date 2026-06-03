@@ -75,8 +75,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -85,8 +85,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -489,8 +489,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -499,8 +499,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -538,8 +538,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -548,8 +548,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -587,8 +587,8 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -597,8 +597,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -676,7 +676,7 @@
         }, {
           "name" : "orderBy",
           "in" : "query",
-          "description" : "OrderBy, orders list by status and/or priority and/or timestamp.",
+          "description" : "OrderBy, orders list by `isClosed` and/or `status` and/or `priority` and/or `timestamp`.",
           "required" : false,
           "schema" : {
             "type" : "array",
@@ -746,16 +746,6 @@
           "required" : true
         },
         "responses" : {
-          "409" : {
-            "description" : "Conflict, Alarm already assigned to service request!",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ErrorResponseBody"
-                }
-              }
-            }
-          },
           "400" : {
             "description" : "Bad Request, Service request body is invalid!",
             "content" : {
@@ -766,8 +756,8 @@
               }
             }
           },
-          "412" : {
-            "description" : "Precondition Failed, Alarm of service request not found!",
+          "409" : {
+            "description" : "Conflict, Alarm already assigned to service request!",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -782,6 +772,16 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
+          "412" : {
+            "description" : "Precondition Failed, Alarm of service request not found!",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResponseBody"
                 }
               }
             }
@@ -831,6 +831,16 @@
           }
         } ],
         "responses" : {
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
+                }
+              }
+            }
+          },
           "200" : {
             "description" : "Ok",
             "content" : {
@@ -840,16 +850,6 @@
                   "items" : {
                     "$ref" : "#/components/schemas/ServiceRequestComment"
                   }
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "Not found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RequestListServiceRequestComment"
                 }
               }
             }
@@ -1244,8 +1244,8 @@
           "required" : true
         },
         "responses" : {
-          "400" : {
-            "description" : "Bad Request",
+          "201" : {
+            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1254,8 +1254,8 @@
               }
             }
           },
-          "201" : {
-            "description" : "Created",
+          "400" : {
+            "description" : "Bad Request",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1283,8 +1283,8 @@
           }
         } ],
         "responses" : {
-          "404" : {
-            "description" : "Not Found - Alarm not found",
+          "500" : {
+            "description" : "Internal Server Error - Context configuration is not valid",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1303,8 +1303,8 @@
               }
             }
           },
-          "500" : {
-            "description" : "Internal Server Error - Context configuration is not valid",
+          "404" : {
+            "description" : "Not Found - Alarm not found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1508,8 +1508,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "Ok",
+          "404" : {
+            "description" : "Not found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1521,8 +1521,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not found",
+          "200" : {
+            "description" : "Ok",
             "content" : {
               "application/json" : {
                 "schema" : {
