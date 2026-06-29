@@ -7,7 +7,7 @@
 | **priority** | [**ServiceRequestPriority**](ServiceRequestPriority.md) | Servcie request priority | [optional] [default to null] |
 | **title** | **String** | Service request title / summary | [optional] [default to null] |
 | **description** | **String** | Service request detailed description | [optional] [default to null] |
-| **isActive** | **Boolean** | Service request active flag, shows if the service request is active! | [optional] [default to null] |
+| **isActive** | **Boolean** | Service request active flag, shows if the service request is active! Deprecated: this field is managed internally and will be removed in the next version. | [optional] [default to null] |
 | **externalId** | **String** | Service request external ID, contains the service request object ID of the external system. | [optional] [default to null] |
 | **order** | [**ServiceOrder**](ServiceOrder.md) | Service Order | [optional] [default to null] |
 | **fieldAssignee** | **String** | Assignee (service technician) of the service request, shows who is currently assigned to the service task. | [optional] [default to null] |

@@ -360,8 +360,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -370,8 +370,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -407,16 +407,6 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ContextConfig"
-                }
-              }
-            }
-          },
           "404" : {
             "description" : "Not Found",
             "content" : {
@@ -429,6 +419,16 @@
           },
           "400" : {
             "description" : "Bad Request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContextConfig"
+                }
+              }
+            }
+          },
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -746,6 +746,16 @@
           "required" : true
         },
         "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ServiceRequest"
+                }
+              }
+            }
+          },
           "400" : {
             "description" : "Bad Request, Service request body is invalid!",
             "content" : {
@@ -762,16 +772,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ErrorResponseBody"
-                }
-              }
-            }
-          },
-          "201" : {
-            "description" : "Created",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ServiceRequest"
                 }
               }
             }
@@ -1244,8 +1244,8 @@
           "required" : true
         },
         "responses" : {
-          "201" : {
-            "description" : "Created",
+          "400" : {
+            "description" : "Bad Request",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1254,8 +1254,8 @@
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request",
+          "201" : {
+            "description" : "Created",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1283,8 +1283,8 @@
           }
         } ],
         "responses" : {
-          "500" : {
-            "description" : "Internal Server Error - Context configuration is not valid",
+          "404" : {
+            "description" : "Not Found - Alarm not found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1303,8 +1303,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found - Alarm not found",
+          "500" : {
+            "description" : "Internal Server Error - Context configuration is not valid",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1342,8 +1342,8 @@
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
+          "404" : {
+            "description" : "Not Found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1352,8 +1352,8 @@
               }
             }
           },
-          "404" : {
-            "description" : "Not Found",
+          "200" : {
+            "description" : "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1583,7 +1583,8 @@
           },
           "isActive" : {
             "type" : "boolean",
-            "description" : "Service request active flag, shows if the service request is active!",
+            "deprecated" : true,
+            "description" : "Service request active flag, shows if the service request is active! Deprecated: this field is managed internally and will be removed in the next version.",
             "example" : true
           },
           "externalId" : {

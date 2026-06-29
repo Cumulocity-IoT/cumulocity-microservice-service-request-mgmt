@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.Valid;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceOrder;
@@ -32,7 +34,8 @@ public class ServiceRequestPatchRqBody {
 	@Schema(description = "Service request detailed description")
 	private String description;
 
-	@Schema(description = "Service request active flag, shows if the service request is active!", example = "true")
+	@Deprecated(since = "1.6.2", forRemoval = true)
+	@Schema(description = "Service request active flag, shows if the service request is active! Deprecated: this field is managed internally and will be removed in the next version.", example = "true", deprecated = true)
 	private Boolean isActive;
 	
 	@Schema(description = "Service request external ID, contains the service request object ID of the external system.", example = "123456789")
