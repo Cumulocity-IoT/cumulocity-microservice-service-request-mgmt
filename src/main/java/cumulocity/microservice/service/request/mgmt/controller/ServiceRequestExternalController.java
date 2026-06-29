@@ -113,4 +113,19 @@ public class ServiceRequestExternalController {
 		}
 		return new ResponseEntity<ServiceRequest>(sr, HttpStatus.OK);
 	}
+
+	@Operation(summary = "PUT service request by Id", description = "Updates specific service request.", parameters = {
+			@Parameter(in = ParameterIn.PATH, name = "serviceRequestId", required = true, description = "Internal service request Id", schema = @Schema(type = "string")) })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceRequest.class))),
+			@ApiResponse(responseCode = "404", description = "Not Found") })
+	@PutMapping(path = "/{serviceRequestId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ServiceRequest> updateServiceRequestById(@PathVariable String serviceRequestId,
+			@Valid @RequestBody ServiceRequestPatchRqBody serviceRequestRqBody) {
+		ServiceRequest serviceRequest = serviceRequestService.updateServiceRequest(serviceRequestId, serviceRequestRqBody);
+		if(serviceRequest == null) {
+			return new ResponseEntity<ServiceRequest>(HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<ServiceRequest>(serviceRequest, HttpStatus.OK);
+	}
 }

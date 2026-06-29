@@ -143,7 +143,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 				// Decision to use no reference for downtime service requests!
 				return ServiceRequestValidationResult.VALID;
 			case NOTE:
-				return validateEvent(serviceRequestRqBody.getEventRef(), serviceRequestRqBody.getEvent());
+				return validateEvent(null, serviceRequestRqBody.getEventRef(), serviceRequestRqBody.getEvent());
 			case OTHER:
 				return ServiceRequestValidationResult.VALID;
 			default:
@@ -199,7 +199,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	}
 
 	@Override
-	public ServiceRequestValidationResult validateEvent(ServiceRequestDataRef eventRef, String eventJsonString) {
+	public ServiceRequestValidationResult validateEvent(String serviceRequestId, ServiceRequestDataRef eventRef, String eventJsonString) {
 		if (eventRef == null && eventJsonString == null) {
 			return ServiceRequestValidationResult.MISSING_EVENT_REF;
 		}
@@ -222,10 +222,15 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		if(event == null) {
 			return ServiceRequestValidationResult.EVENT_NOT_FOUND;
 		}
-		Object srId = event.get(EventMapper.SR_EVENT_ID);
-		if (srId != null) {
-			return ServiceRequestValidationResult.EVENT_ASSIGNED;
+
+		if(serviceRequestId != null) {
+			// Check if the event already has a service request ID associated with it.
+			// If `srId` is not null and not equal to the current service request ID, it means the event is already assigned to another service request.
+			Object srId = event.get(EventMapper.SR_EVENT_ID + serviceRequestId);
+			if (srId != null) {
+				return ServiceRequestValidationResult.EVENT_ASSIGNED;
 			
+			}
 		}
 		return ServiceRequestValidationResult.VALID;
 	}

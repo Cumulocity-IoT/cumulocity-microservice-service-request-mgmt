@@ -42,6 +42,13 @@ public class ServiceRequestEventMapper {
 	public static final String C8Y_IS_BINARY = "c8y_IsBinary";
 	public static final String SR_SYNC_STATUS = "sr_SyncStatus";
 	public static final String SR_ORDER = "sr_Order";
+	public static final String SR_FIELD_ASSIGNEE = "sr_FieldAssignee";
+	public static final String SR_FIELD_SCHEDULE_START = "sr_FieldScheduleStart";
+	public static final String SR_FIELD_SCHEDULE_END = "sr_FieldScheduleEnd";
+	public static final String SR_FIELD_SCHEDULE_DUE = "sr_FieldScheduleDue";
+	public static final String SR_FIELD_PROGRESS_PERCENTAGE = "sr_FieldProgressPercentage";
+	public static final String SR_FSM_LINK = "sr_FsmLink";
+	
 	public static final String SR_CUSTOM_PROPERTIES = "sr_CustomProperties";
 	
 	public enum SyncStatus {
@@ -87,6 +94,12 @@ public class ServiceRequestEventMapper {
 		mapper.setIsActive(serviceRequest.getIsActive());
 		mapper.setExternalId(serviceRequest.getExternalId());
 		mapper.setOrder(serviceRequest.getOrder());
+		mapper.setFieldAssignee(serviceRequest.getFieldAssignee());
+		mapper.setFieldScheduleStart(serviceRequest.getFieldScheduleStart());
+		mapper.setFieldScheduleEnd(serviceRequest.getFieldScheduleEnd());
+		mapper.setFieldScheduleDue(serviceRequest.getFieldScheduleDue());
+		mapper.setFieldProgressPercentage(serviceRequest.getFieldProgressPercentage());
+		mapper.setFsmLink(serviceRequest.getFsmLink());
 		mapper.setCustomProperties(serviceRequest.getCustomProperties());
 		return mapper;
 		
@@ -140,6 +153,12 @@ public class ServiceRequestEventMapper {
 		serviceRequest.setExternalId(mapper.getExternalId());
 		serviceRequest.setIsClosed(mapper.getIsClosed());
 		serviceRequest.setOrder(mapper.getOrder());
+		serviceRequest.setFieldAssignee(mapper.getFieldAssignee());
+		serviceRequest.setFieldScheduleStart(mapper.getFieldScheduleStart());
+		serviceRequest.setFieldScheduleEnd(mapper.getFieldScheduleEnd());
+		serviceRequest.setFieldScheduleDue(mapper.getFieldScheduleDue());
+		serviceRequest.setFieldProgressPercentage(mapper.getFieldProgressPercentage());
+		serviceRequest.setFsmLink(mapper.getFsmLink());
 		serviceRequest.setCustomProperties(mapper.getCustomProperties());
 		return serviceRequest;
 	}
@@ -424,6 +443,90 @@ public class ServiceRequestEventMapper {
 	public ServiceOrder getOrder() {
 		Object obj = event.get(SR_ORDER);
 		return parseOrder(obj);
+	}
+
+	public void setFieldAssignee(String assignee) {
+		if(assignee == null) {
+			return;
+		}
+		event.set(assignee, SR_FIELD_ASSIGNEE);
+	}
+
+	public String getFieldAssignee() {
+		Object obj = event.get(SR_FIELD_ASSIGNEE);
+		return (String) obj;
+	}
+
+	public void setFieldScheduleStart(DateTime fieldScheduleStart) {
+		if(fieldScheduleStart == null) {
+			return;
+		}
+		event.set(fieldScheduleStart, SR_FIELD_SCHEDULE_START);
+	}
+
+	public DateTime getFieldScheduleStart() {
+		Object obj = event.get(SR_FIELD_SCHEDULE_START);
+		if(obj == null) {
+			return null;
+		}
+		return DateTime.parse(obj.toString());
+	}
+
+	public void setFieldScheduleEnd(DateTime fieldScheduleEnd) {
+		if(fieldScheduleEnd == null) {
+			return;
+		}
+		event.set(fieldScheduleEnd, SR_FIELD_SCHEDULE_END);
+	}
+
+	public DateTime getFieldScheduleEnd() {
+		Object obj = event.get(SR_FIELD_SCHEDULE_END);
+		if(obj == null) {
+			return null;
+		}
+		return DateTime.parse(obj.toString());
+	}
+
+	public void setFieldScheduleDue(DateTime fieldScheduleDue) {
+		if(fieldScheduleDue == null) {
+			return;
+		}
+		event.set(fieldScheduleDue, SR_FIELD_SCHEDULE_DUE);
+	}
+
+	public DateTime getFieldScheduleDue() {
+		Object obj = event.get(SR_FIELD_SCHEDULE_DUE);
+		if(obj == null) {
+			return null;
+		}
+		return DateTime.parse(obj.toString());
+	}
+
+	public void setFieldProgressPercentage(Integer fieldProgressPercentage) {
+		if(fieldProgressPercentage == null) {
+			return;
+		}
+		event.set(fieldProgressPercentage, SR_FIELD_PROGRESS_PERCENTAGE);
+	}
+
+	public Integer getFieldProgressPercentage() {
+		Object obj = event.get(SR_FIELD_PROGRESS_PERCENTAGE);
+		if(obj == null) {
+			return null;
+		}
+		return ((Number) obj).intValue();
+	}
+
+	public void setFsmLink(String fsmLink) {
+		if(fsmLink == null) {
+			return;
+		}
+		event.set(fsmLink, SR_FSM_LINK);
+	}
+
+	public String getFsmLink() {
+		Object obj = event.get(SR_FSM_LINK);
+		return (String) obj;
 	}
 
 	public EventRepresentation getEvent() {

@@ -2,6 +2,10 @@ package cumulocity.microservice.service.request.mgmt.controller;
 
 import java.util.Map;
 
+import org.joda.time.DateTime;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.Valid;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceOrder;
@@ -30,7 +34,8 @@ public class ServiceRequestPatchRqBody {
 	@Schema(description = "Service request detailed description")
 	private String description;
 
-	@Schema(description = "Service request active flag, shows if the service request is active!", example = "true")
+	@Deprecated(since = "1.6.2", forRemoval = true)
+	@Schema(description = "Service request active flag, shows if the service request is active! Deprecated: this field is managed internally and will be removed in the next version.", example = "true", deprecated = true)
 	private Boolean isActive;
 	
 	@Schema(description = "Service request external ID, contains the service request object ID of the external system.", example = "123456789")
@@ -38,6 +43,24 @@ public class ServiceRequestPatchRqBody {
 
 	@Schema(description = "Service Order")
 	private ServiceOrder order;
+
+	@Schema(description = "Assignee (service technician) of the service request, shows who is currently assigned to the service task.", example = "user@example.com")
+	private String fieldAssignee;
+
+	@Schema(description = "Schedule start time of the service task, shows when the service task should be started.")
+	private DateTime fieldScheduleStart;
+	
+	@Schema(description = "Schedule end time of the service task, shows when the service task should be finished.")
+	private DateTime fieldScheduleEnd;
+
+	@Schema(description = "Schedule due time of the service task, shows when the service task is due.")
+	private DateTime fieldScheduleDue;
+
+	@Schema(description = "Progress percentage of the service task, shows the current progress of the service task.")
+	private Integer fieldProgressPercentage;
+
+	@Schema(description = "FSM link of the service task, shows the link to the FSM system.")
+	private String fsmLink;
 
 	@Schema(description = "Custom specific properties")
 	private Map<String, String> customProperties;
