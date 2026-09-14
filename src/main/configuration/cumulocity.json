@@ -45,5 +45,6 @@
   			"defaultValue": "[\"alarm\"]",
   			"editable": true
 		}
-	]
+	],
+	"openApiSpec": "/v3/api-docs"
 }

@@ -5,7 +5,7 @@
 
 	<groupId>cumulocity.microservice</groupId>
 	<artifactId>cumulocity-microservice-service-request-mgmt</artifactId>
-	<version>1.6.1</version>
+	<version>1.6.2</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -99,6 +99,13 @@
 					<include>**/application*.properties</include>
 					<include>**/application.properties</include>
 					<include>**/banner.txt</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>${basedir}/docs</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/openapi.json</include>
 				</includes>
 			</resource>
 		</resources>
@@ -238,7 +245,7 @@
 		<connection>scm:git:https://github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</connection>
 		<developerConnection>scm:git:https://github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</developerConnection>
 		<url>https://github.com/Cumulocity-IoT/cumulocity-microservice-service-request-mgmt.git</url>
-		<tag>v1.6.1</tag>
+		<tag>v1.6.2</tag>
 	</scm>
 
 </project>
