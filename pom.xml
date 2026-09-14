@@ -101,6 +101,13 @@
 					<include>**/banner.txt</include>
 				</includes>
 			</resource>
+			<resource>
+				<directory>${basedir}/docs</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/openapi.json</include>
+				</includes>
+			</resource>
 		</resources>
 
 		<plugins>
