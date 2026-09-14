@@ -159,7 +159,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 	 * @return A {@link ServiceRequestValidationResult} indicating the validation outcome:
 	 *         - {@code MISSING_ALARM_REF} if the alarm reference is missing.
 	 *         - {@code ALARM_NOT_FOUND} if the alarm does not exist.
-	 *         - {@code ALARM_ASSIGNED} if the alarm is already assigned to another service request.
+	 *         - {@code ALARM_ASSIGNED} if the alarm is already assigned to another, still existing, service request.
 	 *         - {@code VALID} if the alarm is valid and not assigned.
 	 */
 	@Override
@@ -184,18 +184,34 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			log.error("Fetching alarm failed!", e);
 		}
 
-		
+
 		if(alarm == null) {
 			return ServiceRequestValidationResult.ALARM_NOT_FOUND;
 		}
 		// Check if the alarm already has a service request ID associated with it.
-		// If `srId` is not null, it means the alarm is already assigned to another service request.
+		// If `srId` is not null, it means the alarm was assigned to a service request in the past.
 		Object srId = alarm.get(AlarmMapper.SR_EVENT_ID);
-		if(srId != null) {
-			// Return validation result indicating the alarm is already assigned.
+		if(srId != null && isServiceRequestStillAvailable(String.valueOf(srId))) {
+			// The referenced service request still exists, so the alarm is really assigned.
 			return ServiceRequestValidationResult.ALARM_ASSIGNED;
 		}
+		// srId was null, or it pointed to a service request that no longer exists (e.g. removed by retention rules),
+		// so the alarm counts as unassigned. A new service request will overwrite the stale sr_EventId on the alarm.
 		return ServiceRequestValidationResult.VALID;
+	}
+
+	/**
+	 * Checks whether the service request (event) referenced by the given id still exists.
+	 * Used to detect stale sr_EventId references left behind on an alarm after the referenced
+	 * service request was removed by another process, e.g. retention rules.
+	 */
+	private boolean isServiceRequestStillAvailable(String serviceRequestEventId) {
+		try {
+			return eventApi.getEvent(GId.asGId(serviceRequestEventId)) != null;
+		}catch(Exception e){
+			log.debug("Service request event with id {} referenced by alarm no longer exists, treating alarm as unassigned!", serviceRequestEventId);
+			return false;
+		}
 	}
 
 	@Override
@@ -957,4 +973,3 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 	}
 }
-
