@@ -1,16 +1,15 @@
 package cumulocity.microservice.service.request.mgmt.controller;
 
-import java.io.IOException;
 import java.util.Map;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import cumulocity.microservice.service.request.mgmt.model.ServiceOrder;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestDataRef;
@@ -22,10 +21,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
 @NoArgsConstructor
 @Schema(description = "Service Request object at Cumulocity IoT Platform. This object is the representative / proxy for external system object like ticket, issue, notification, incident etc.. It contains the life cycle information of it, IoT data references (device, alarms, events and measurement) and meta data for the service request like owner, creation time etc.. It has a flexible key & value list \"customProperties\" to add custom properties as well.")
 public class ServiceRequestPostRqBody {
@@ -92,9 +89,9 @@ public class ServiceRequestPostRqBody {
 
 }
 
-class RawJsonDeserializer extends JsonDeserializer<String> {
+class RawJsonDeserializer extends ValueDeserializer<String> {
     @Override
-    public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        return p.readValueAsTree().toString();
+    public String deserialize(JsonParser p, DeserializationContext ctxt) {
+        return ctxt.readTree(p).toString();
     }
 }

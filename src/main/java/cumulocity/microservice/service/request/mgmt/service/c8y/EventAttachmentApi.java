@@ -87,10 +87,10 @@ public class EventAttachmentApi {
 			response = restTemplate.postForEntity(serverUrl, requestEntity, EventBinary.class);
 		}
 
-		if(response.getStatusCodeValue() >= 300) {
+		if(response.getStatusCode().isError()) {
 			log.error("Upload event binary failed with http code {}", response.getStatusCode().toString());;
 		}
-		return response.getStatusCodeValue();
+		return response.getStatusCode().value();
 	}
 	
 	public EventAttachment downloadEventAttachment(final String eventId) {
@@ -117,9 +117,7 @@ public class EventAttachmentApi {
 			eventAttachment.setContentType(clientHttpResponse.getHeaders().getContentType());
 			eventAttachment.setAttachment(clientHttpResponse.getBody().readAllBytes());
 			
-			clientHttpResponse.getRawStatusCode();
-			clientHttpResponse.getStatusText();
-			log.info("Download event attachment response; HTTP StatusCode: {}, Text: {}", clientHttpResponse.getRawStatusCode(), clientHttpResponse.getStatusText());
+			log.info("Download event attachment response; HTTP StatusCode: {}, Text: {}", clientHttpResponse.getStatusCode(), clientHttpResponse.getStatusText());
 			return eventAttachment;
 		});
 		
