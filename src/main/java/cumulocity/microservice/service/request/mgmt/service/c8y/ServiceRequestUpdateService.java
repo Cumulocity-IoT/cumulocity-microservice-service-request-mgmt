@@ -202,24 +202,15 @@ public class ServiceRequestUpdateService {
 	}
 
 	@Async
-	public void updateServiceRequestCounter(ServiceRequest serviceRequest, List<String> excludeList,
-			MicroserviceCredentials credentials) {
+	public void updateServiceRequestCounter(ServiceRequest serviceRequest, MicroserviceCredentials credentials) {
 		contextService.runWithinContext(credentials, () -> {
-			updateServiceRequestCounter(serviceRequest, excludeList);
+			updateServiceRequestCounter(serviceRequest);
 		});
 	}
 
 	public void refreshServiceRequestCounterForManagedObjects(Set<String> managedObjectIds) {
 		List<GId> sourceGIds = managedObjectIds.stream().map(GId::asGId).collect(Collectors.toList());
-		List<String> excludeList = new ArrayList<>();
-		
-		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
-		for(ServiceRequestStatusConfig srStatusConfig: statusList) {
-			if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
-				excludeList.add(srStatusConfig.getId());
-			}
-		}
-		
+		List<String> excludeList = getStatusIdsExcludedFromCounter();
 		Set<ServiceRequestType> includedTypes = getIncludedTypesMicroserviceSettings();
 
 		for (GId sourceGId : sourceGIds) {
@@ -230,13 +221,32 @@ public class ServiceRequestUpdateService {
 		}
 	}
 
-	private void updateServiceRequestCounter(ServiceRequest serviceRequest, List<String> excludeList) {
+	void updateServiceRequestCounter(ServiceRequest serviceRequest) {
 		log.debug("Updating Managed Object sr_ActiveStatus counter!");
 		ManagedObjectRepresentation source = inventoryApi.get(GId.asGId(serviceRequest.getSource().getId()));
 		ManagedObjectMapper moMapper = ManagedObjectMapper.map2(source);
+		List<String> excludeList = getStatusIdsExcludedFromCounter();
 		Set<ServiceRequestType> includedTypes = getIncludedTypesMicroserviceSettings();
 		moMapper.updateServiceRequestPriorityCounter(getAllActiveEventsBySource(source.getId(), includedTypes), excludeList);
 		inventoryApi.update(moMapper.getManagedObjectRepresentation());
+	}
+
+	/**
+	 * The status configuration is the single source of truth for which status IDs are excluded from the
+	 * sr_ActiveStatus counter. It is read on every recount, independent of which fields an update request contained.
+	 */
+	private List<String> getStatusIdsExcludedFromCounter() {
+		List<String> excludeList = new ArrayList<>();
+		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
+		if (statusList == null) {
+			return excludeList;
+		}
+		for (ServiceRequestStatusConfig srStatusConfig : statusList) {
+			if (Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
+				excludeList.add(srStatusConfig.getId());
+			}
+		}
+		return excludeList;
 	}
 
 	private Set<ServiceRequestType> getIncludedTypesMicroserviceSettings() {	
