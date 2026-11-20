@@ -3,16 +3,14 @@ package cumulocity.microservice.service.request.mgmt.config;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.datatype.joda.JodaModule;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,13 +19,18 @@ import lombok.extern.slf4j.Slf4j;
 @EnableAsync
 public class MicroserviceConfig {
 
+	/**
+	 * Registers Joda-Time support with the auto-configured Jackson 3 JsonMapper
+	 * used by Spring MVC for request and response bodies.
+	 */
 	@Bean
-	@Primary
-	public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
-		ObjectMapper objectMapper = builder.build();
-		objectMapper.registerModule(new JodaModule());
-		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		return objectMapper;
+	public JodaModule jodaModule() {
+		return new JodaModule();
+	}
+
+	@Bean
+	public JsonMapperBuilderCustomizer dateTimeFormatCustomizer() {
+		return builder -> builder.disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS);
 	}
 
 	@Bean

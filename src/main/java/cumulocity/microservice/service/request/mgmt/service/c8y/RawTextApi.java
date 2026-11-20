@@ -50,7 +50,7 @@ public class RawTextApi {
             return null;
         }
 
-        log.debug("Creating alarm returns status code: {}", response.getStatusCodeValue());
+        log.debug("Creating alarm returns status code: {}", response.getStatusCode().value());
         return response.getBody();
     }
 
@@ -73,7 +73,7 @@ public class RawTextApi {
         }
 
 
-        log.debug("Creating event returns status code: {}", response.getStatusCodeValue());
+        log.debug("Creating event returns status code: {}", response.getStatusCode().value());
         return response.getBody();
     }
 
