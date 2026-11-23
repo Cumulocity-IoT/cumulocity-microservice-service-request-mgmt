@@ -276,7 +276,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		}
 
 		List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
-		List<String> excludeList = new ArrayList<>();
 
 		if(serviceRequestRqBody.getStatus() == null) {
 			serviceRequestRqBody.setStatus(
@@ -291,9 +290,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		ServiceRequestStatusConfig srStatus = null;
 
 		for(ServiceRequestStatusConfig srStatusConfig: statusList) {
-			if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
-				excludeList.add(srStatusConfig.getId());
-			}
 			if(srStatusConfig.getId().equals(serviceRequestRqBody.getStatus().getId())) {
 				serviceRequestRqBody.getStatus().setName(srStatusConfig.getName());
 				srStatus = srStatusConfig;
@@ -333,7 +329,7 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			}
 		}
 		
-		updateServiceRequestCounter(newServiceRequest, excludeList);
+		updateServiceRequestCounter(newServiceRequest);
 
 		return newServiceRequest;
 	}
@@ -365,7 +361,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			eventMapper.setSyncStatus(SyncStatus.ACTIVE);
 		}
 		ServiceRequest updatedServiceRequest = null;
-		List<String> excludeList = new ArrayList<>();
 		
 		if(serviceRequest.getStatus() == null) {
 			log.debug("Service Request update without status changes!");
@@ -381,17 +376,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			EventRepresentation updatedEvent = eventApi.update(eventMapper.getEvent());
 			updatedServiceRequest = ServiceRequestEventMapper.map2(updatedEvent);
 
-			//if service request priority is changed, update the managed object, active counter
-			if(serviceRequest.getPriority() != null) {
-				List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
-				for(ServiceRequestStatusConfig srStatusConfig: statusList) {
-					if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
-						excludeList.add(srStatusConfig.getId());
-					}
-				}
-				updateServiceRequestCounter(updatedServiceRequest, excludeList);
-			}
-
 		} else {	
 			log.debug("Service Request update with status changes!");
 			List<ServiceRequestStatusConfig> statusList = serviceRequestStatusConfigService.getStatusList();
@@ -399,9 +383,6 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 			ServiceRequestStatusConfig srStatus = null;
 
 			for(ServiceRequestStatusConfig srStatusConfig: statusList) {
-				if(Boolean.TRUE.equals(srStatusConfig.getIsExcludeForCounter())) {
-					excludeList.add(srStatusConfig.getId());
-				}
 				if(srStatusConfig.getId().equals(serviceRequest.getStatus().getId())) {
 					srStatus = srStatusConfig;
 				}
@@ -473,7 +454,9 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 
 		}
 		
-		updateServiceRequestCounter(updatedServiceRequest, excludeList);
+		// the counter is always recalculated from all active service requests of the device, the status
+		// configuration (isExcludeForCounter) is applied regardless of which fields this update contained
+		updateServiceRequestCounter(updatedServiceRequest);
 
 		stopwatch.stop();
 		long ms = stopwatch.elapsed(TimeUnit.MILLISECONDS);
@@ -937,8 +920,8 @@ public class ServiceRequestServiceC8y implements ServiceRequestService {
 		serviceRequestUpdateService.updateAllCommentsToClosed(serviceRequest, contextService.getContext());
 	}
 
-	private void updateServiceRequestCounter(ServiceRequest serviceRequest, List<String> excludeList) {
-		serviceRequestUpdateService.updateServiceRequestCounter(serviceRequest, excludeList, contextService.getContext());
+	private void updateServiceRequestCounter(ServiceRequest serviceRequest) {
+		serviceRequestUpdateService.updateServiceRequestCounter(serviceRequest, contextService.getContext());
 	}
 
 	private void updateAlarmDataRef(ServiceRequestDataRef alarmRef) {
