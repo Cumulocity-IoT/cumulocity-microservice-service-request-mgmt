@@ -12,7 +12,7 @@ import org.joda.time.DateTime;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPatchRqBody;
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestPostRqBody;

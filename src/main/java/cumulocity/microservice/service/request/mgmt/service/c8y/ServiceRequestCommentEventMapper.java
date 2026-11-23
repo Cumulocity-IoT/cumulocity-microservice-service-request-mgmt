@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 import com.cumulocity.model.idtype.GId;
 import com.cumulocity.rest.representation.event.EventRepresentation;
 import com.cumulocity.rest.representation.inventory.ManagedObjectRepresentation;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cumulocity.microservice.service.request.mgmt.controller.ServiceRequestCommentRqBody;
 import cumulocity.microservice.service.request.mgmt.model.ServiceRequestAttachment;
@@ -214,7 +213,6 @@ public class ServiceRequestCommentEventMapper {
 			return null;
 		}
 
-		ObjectMapper mapper = new ObjectMapper();
 		ServiceRequestSource source = new ServiceRequestSource();
 		source.setId(obj.getId().getValue());
 		source.setSelf(obj.getSelf());
